@@ -7,23 +7,26 @@ set /A failure_count=1
 ..\adb root > nul
 ..\adb connect 192.168.43.1 > nul
 ..\adb wait-for-device > nul
-sleep 1
+timeout /T 1 /NOBREAK > nul
+rem sleep 1
 ..\adb remount > nul
 
-echo ------------------------------------
-echo       	SWC tx-rx test
-echo NOTE: Test MCU board has to be connected        
-echo ------------------------------------
+rem echo ------------------------------------
+rem echo       	SWC tx-rx test
+rem echo NOTE: Test MCU board has to be connected        
+rem echo ------------------------------------
 
-sleep 2
+timeout /T 2 /NOBREAK > nul
+rem sleep 2
 
 :REPEAT_TEST
 
-echo setup and data capture takes upto 10 seconds
+rem echo setup and data capture takes upto 10 seconds
 
 rem Start process on device that cats the output of the ttyACM3 port and writes it to a file
 ..\adb shell "nohup cat /dev/ttyACM3 > /sdcard/swc_device.log 2>/dev/null &"
-sleep 2
+timeout /T 2 /NOBREAK > nul
+rem sleep 2
 
 REM rem Setup SWC
 rem sleep .1
@@ -34,18 +37,20 @@ rem sleep .1
 ..\adb shell "echo -ne 'Mt000007E8u0003\r' > /dev/ttyACM3"
 rem sleep .1
 ..\adb shell "echo -ne 'S2u0004\r' > /dev/ttyACM3"
-sleep 2
+timeout /T 2 /NOBREAK > nul
+rem sleep 2
 ..\adb shell "echo -ne 'O1u0005\r' > /dev/ttyACM3"
-
-sleep 3
+timeout /T 3 /NOBREAK > nul
+rem sleep 3
 
 rem Send SWC packet with a flow control byte0 = 10
 
 ..\adb shell "echo -ne 't7E08103456789abcdef0\r' > /dev/ttyACM3"
-sleep 1
+timeout /T 1 /NOBREAK > nul
+rem sleep 1
 ..\adb shell "echo -ne 't7E08103456789abcdef0\r' > /dev/ttyACM3"
-
-sleep 1
+timeout /T 1 /NOBREAK > nul
+rem sleep 1
 
 ..\adb pull /sdcard/swc_device.log > nul
 

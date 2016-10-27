@@ -7,15 +7,16 @@ set /A failure_count=0
 ..\adb root > nul
 ..\adb connect 192.168.43.1 > nul
 ..\adb wait-for-device > nul
-sleep 1
+timeout /T 1 /NOBREAK > nul
+rem sleep 1
 ..\adb remount > nul
 
-echo ------------------------------------
-echo       	J1708 tx-rx test        
-echo NOTE: Test MCU board has to be connected 
-echo ------------------------------------
-
-sleep 2
+rem echo ------------------------------------
+rem echo       	J1708 tx-rx test        
+rem echo NOTE: Test MCU board has to be connected 
+rem echo ------------------------------------
+timeout /T 2 /NOBREAK > nul
+rem sleep 2
 
 :REPEAT_TEST
 
@@ -26,21 +27,24 @@ rem adb shell "mctl api 02fc01"
 
 rem Start process on device that cats the output of the ttyACM4 port and writes it to a file
 ..\adb shell "nohup cat /dev/ttyACM4 > /sdcard/j1708_device.log 2>/dev/null &"
-
-sleep 1
+timeout /T 1 /NOBREAK > nul
+rem sleep 1
 
 rem Send a j1708 message with msg id = 0x31, data = "j1708" (0x6a,0x31,0x37,0x30,0x38) and checksum = 95
 ..\adb shell "echo -ne '\x7e\x31\x6a\x31\x37\x30\x38\x95\x7e' > /dev/ttyACM4"
 
 rem sometimes messages are not being received back, so requesting multiple times (not sure why - Abid)
-sleep 0.1
+timeout /T 1 /NOBREAK > nul
+rem sleep 0.1
 ..\adb shell "echo -ne '\x7e\x31\x6a\x31\x37\x30\x38\x95\x7e' > /dev/ttyACM4"
-sleep 0.1
+timeout /T 1 /NOBREAK > nul
+rem sleep 0.1
 ..\adb shell "echo -ne '\x7e\x31\x6a\x31\x37\x30\x38\x95\x7e' > /dev/ttyACM4"
 
 
-echo waiting for data for 3 seconds
-sleep 3
+rem echo waiting for data for 3 seconds
+timeout /T 3 /NOBREAK > nul
+rem sleep 3
 
 ..\adb pull /sdcard/j1708_device.log > nul
 

@@ -12,7 +12,7 @@ rem echo ------------------------------------
 
 
 :_is_sdcard_exits
-..\adb shell 'ls ./storage/sdcard1/' > %file_name%
+..\adb shell ls ./storage/sdcard1/ > %file_name%
 rem Read the first 14 characters to see if get an error 
 set /p Result=<%file_name%
 if not "%Result:~0,14%" == "opendir failed" goto :_Copy_file
