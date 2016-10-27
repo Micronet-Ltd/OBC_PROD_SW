@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.3
+set test_script_version=1.2.4
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -40,13 +40,13 @@ rem echo installing files ....
 call install_files_test.bat
 rem timeout /T 5 /NOBREAK
 
+call sd-card_test.bat
+if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+
 call SWC_TEST.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
 call J1708_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
-
-call sd-card_test.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
 call NFC_TEST.bat
