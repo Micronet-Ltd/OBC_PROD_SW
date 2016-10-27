@@ -15,7 +15,7 @@ rem echo ------------------------------------
 rem echo       	J1708 tx-rx test        
 rem echo NOTE: Test MCU board has to be connected 
 rem echo ------------------------------------
-timeout /T 2 /NOBREAK > nul
+timeout /T 4 /NOBREAK > nul
 rem sleep 2
 
 :REPEAT_TEST
@@ -27,7 +27,7 @@ rem adb shell "mctl api 02fc01"
 
 rem Start process on device that cats the output of the ttyACM4 port and writes it to a file
 ..\adb shell "nohup cat /dev/ttyACM4 > /sdcard/j1708_device.log 2>/dev/null &"
-timeout /T 1 /NOBREAK > nul
+timeout /T 3 /NOBREAK > nul
 rem sleep 1
 
 rem Send a j1708 message with msg id = 0x31, data = "j1708" (0x6a,0x31,0x37,0x30,0x38) and checksum = 95
@@ -50,13 +50,13 @@ rem sleep 3
 
 rem search for the word 'j1708' in the file
 set /p j1708_data=<%j1708_file%
-set j1708_data=%j1708_data:~2,5%
 
-ECHO %j1708_data%
-IF "%j1708_data%" == "j1708" (
+echo %j1708_data% | findstr /C:"j1708" 1>nul
+rem ECHO %j1708_data%
+if errorlevel 0 (
 	GOTO TEST_PASS
 ) ELSE (
-	if %failure_count% GTR 5 (
+	if %failure_count% GTR 0 (
 		GOTO TEST_FAIL
 	)
 	set /A failure_count+=1
@@ -68,13 +68,13 @@ IF "%j1708_data%" == "j1708" (
 )
 
 :TEST_PASS
-	ECHO J1708 tx-rx test - passed
+	ECHO ** J1708 tx-rx test - passed
 	@echo J1708 tx-rx test - passed  >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
 	
 :TEST_FAIL
 	set ERRORLEVEL=1
-	ECHO J1708 tx-rx test - failed
+	ECHO ** J1708 tx-rx test - failed
 	@echo J1708 tx-rx test - failed, j1708 data: %j1708_data% >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
 

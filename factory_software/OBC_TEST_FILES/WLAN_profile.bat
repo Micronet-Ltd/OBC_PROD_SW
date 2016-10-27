@@ -192,7 +192,7 @@ Netsh WLAN add profile filename="Wi-Fi-TREQr_5.xml" >nul 2>&1
 EXIT /B
 rem End creating the profile -------------------------------------------------------------------------
 :_WALN_addProfle_pass
-echo WALN profile- Passed 
+echo WLAN profile- Passed 
 
 :_end_of_test
 set myhex=

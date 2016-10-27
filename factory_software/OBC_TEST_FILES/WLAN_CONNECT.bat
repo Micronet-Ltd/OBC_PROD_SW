@@ -39,7 +39,7 @@ goto _end_of_test
 
 :_WALN_test_pass
 rem echo.
-echo WALN connect - Passed : Connected successfully to %OBC_TESTER_WLAN_HOTSPOT%
+echo WLAN connect - Passed : Connected successfully to %OBC_TESTER_WLAN_HOTSPOT%
 
 :_end_of_test
 if exist %network_file_name% del %network_file_name% 
