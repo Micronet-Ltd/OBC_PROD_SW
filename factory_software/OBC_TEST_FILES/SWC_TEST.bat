@@ -16,7 +16,7 @@ rem echo       	SWC tx-rx test
 rem echo NOTE: Test MCU board has to be connected        
 rem echo ------------------------------------
 
-timeout /T 2 /NOBREAK > nul
+timeout /T 4 /NOBREAK > nul
 rem sleep 2
 
 :REPEAT_TEST
@@ -25,7 +25,7 @@ rem echo setup and data capture takes upto 10 seconds
 
 rem Start process on device that cats the output of the ttyACM3 port and writes it to a file
 ..\adb shell "nohup cat /dev/ttyACM3 > /sdcard/swc_device.log 2>/dev/null &"
-timeout /T 2 /NOBREAK > nul
+timeout /T 3 /NOBREAK > nul
 rem sleep 2
 
 REM rem Setup SWC
@@ -56,17 +56,20 @@ rem sleep 1
 
 rem get last line of file and then get the first 21 chars
 
-for /F "delims=" %%i in (%swc_file%) do set "swc_data=%%i"
+rem for /F "delims=" %%i in (%swc_file%) do set "swc_data=%%i"
 
-set swc_data=%swc_data:~0,21%
+rem set swc_data=%swc_data:~0,21%
 
-ECHO %swc_data%
+set /p swc_data=<%swc_file%
+echo %swc_data% | findstr /C:"t7e880102030405060708" 1>nul
 
-IF "%swc_data%" == "t7e880102030405060708" (
+rem ECHO %swc_data%
+
+if errorlevel 0 (
 	GOTO TEST_PASS
 ) ELSE (
 	rem if no data captured from SWC, try again
-	if %failure_count% GTR 5 (
+	if %failure_count% GTR 4 (
 		GOTO TEST_FAIL
 	)
 	set /A failure_count+=1
@@ -77,13 +80,14 @@ IF "%swc_data%" == "t7e880102030405060708" (
 )
 
 :TEST_PASS
-	ECHO SWC tx-rx test - passed
+	ECHO ** SWC tx-rx test - passed
 	@echo SWC tx-rx test - passed  >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
 	
 :TEST_FAIL
 	set ERRORLEVEL=1
-	ECHO SWC tx-rx test - failed
+	ECHO ** SWC tx-rx test - failed
+	ECHO error level %ERRORLEVEL%
 	@echo SWC tx-rx test - failed, %swc_data% >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
 

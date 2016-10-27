@@ -9,7 +9,7 @@ rem echo                AUDIO TEST
 rem echo ------------------------------------
 
 rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
+..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
 timeout /T 1 /NOBREAK > nul 
 ..\adb shell input keyevent 20
 
@@ -63,7 +63,7 @@ goto _end_of_file
 
 
 :_retest
-adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
+..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
 timeout /T 1 /NOBREAK > nul 
 goto _start_test
 

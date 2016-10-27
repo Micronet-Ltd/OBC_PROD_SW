@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.4
+set test_script_version=1.2.5
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -43,6 +43,9 @@ rem timeout /T 5 /NOBREAK
 call sd-card_test.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
+call CANBus.bat
+if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+
 call SWC_TEST.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
@@ -67,9 +70,6 @@ if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 call ReadRTC_TEST.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
-call CANBus.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
-
 call Accelerometer.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
@@ -80,6 +80,7 @@ call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
 
 if /I not %OBC_TEST_STSATUS%==PASS goto _test_failed
+color 20
 echo **************************************
 echo ***** Entire OBC test passed !!! *****
 echo **************************************
@@ -95,9 +96,13 @@ echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test failed !!! ***** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
+color 47
+
 :_end_of_tests
 set test_script_version=
 set OBC_TEST_STSATUS=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_00%1>nul
 cd ..
+timeout /t 2 /NOBREAK > nul
+color 07
