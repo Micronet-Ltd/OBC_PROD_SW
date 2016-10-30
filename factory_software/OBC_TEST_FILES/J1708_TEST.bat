@@ -1,6 +1,6 @@
 @echo off
 set ERRORLEVEL=0
-setlocal enabledelayedexpansion
+rem setlocal enabledelayedexpansion
 set j1708_file=j1708_device.log
 set /A failure_count=0
 
@@ -48,32 +48,58 @@ rem sleep 3
 
 ..\adb pull /sdcard/j1708_device.log > nul
 
-rem search for the word 'j1708' in the file
 set /p j1708_data=<%j1708_file%
 
-echo %j1708_data% | findstr /C:"j1708" 1>nul
-rem ECHO %j1708_data%
-if errorlevel 0 (
-	GOTO TEST_PASS
+rem check that the log file has data
+call :strlen size j1708_data
+if %size% LSS 5 goto TEST_REPEAT_INIT
+
+rem search for the chars 'j1708' in the file
+IF "%j1708_data%"=="%j1708_data:j1708=%" (
+	GOTO TEST_REPEAT_INIT
 ) ELSE (
-	if %failure_count% GTR 0 (
+	GOTO TEST_PASS
+)
+
+:strlen <resultVar> <stringVar>
+(   
+    setlocal EnableDelayedExpansion
+    set "s=!%~2!#"
+    set "len=0"
+    for %%P in (4096 2048 1024 512 256 128 64 32 16 8 4 2 1) do (
+        if "!s:~%%P,1!" NEQ "" ( 
+            set /a "len+=%%P"
+            set "s=!s:~%%P!"
+        )
+    )
+)
+( 
+    endlocal
+    set "%~1=%len%"
+    exit /b
+)
+
+:TEST_REPEAT_INIT
+	IF %failure_count% GTR 5 (
 		GOTO TEST_FAIL
 	)
 	set /A failure_count+=1
-	ECHO repeat test, failure count = %failure_count%
+	ECHO repeat test, failure count = %failure_count% 
 	..\adb shell "busybox pkill cat" > nul
 	..\adb shell "rm /sdcard/j1708_device.log" > nul
 	set j1708_data=
 	GOTO REPEAT_TEST
-)
+
 
 :TEST_PASS
 	ECHO ** J1708 tx-rx test - passed
+	rem ECHO error level %errorlevel%
 	@echo J1708 tx-rx test - passed  >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
 	
 :TEST_FAIL
 	set ERRORLEVEL=1
+	rem ECHO error level %errorlevel%
 	ECHO ** J1708 tx-rx test - failed
 	@echo J1708 tx-rx test - failed, j1708 data: %j1708_data% >> testResults\%result_file_name%.txt
 	GOTO CLEANUP
