@@ -1,8 +1,8 @@
 @ECHO OFF
 set ERRORLEVEL=0
-setlocal enabledelayedexpansion
+rem setlocal enabledelayedexpansion
 set swc_file=swc_device.log
-set /A failure_count=1
+set /A failure_count=0
 
 ..\adb root > nul
 ..\adb connect 192.168.43.1 > nul
@@ -52,32 +52,50 @@ rem sleep 1
 timeout /T 1 /NOBREAK > nul
 rem sleep 1
 
-..\adb pull /sdcard/swc_device.log > nul
-
-rem get last line of file and then get the first 21 chars
-
-rem for /F "delims=" %%i in (%swc_file%) do set "swc_data=%%i"
-
-rem set swc_data=%swc_data:~0,21%
+..\adb pull /sdcard/swc_device.log 2>&1>nul
 
 set /p swc_data=<%swc_file%
-echo %swc_data% | findstr /C:"t7e880102030405060708" 1>nul
 
-rem ECHO %swc_data%
+rem check that the log file has data
+call :strlen size swc_data
+if %size% LSS 21 goto TEST_REPEAT_INIT
 
-if errorlevel 0 (
-	GOTO TEST_PASS
+rem search for the chars 't7e880102030405060708' in the file
+IF "%swc_data%"=="%swc_data:t7e880102030405060708=%" (
+	GOTO TEST_REPEAT_INIT 
 ) ELSE (
+	GOTO TEST_PASS
+)
+
+:strlen <resultVar> <stringVar>
+(   
+    setlocal EnableDelayedExpansion
+    set "s=!%~2!#"
+    set "len=0"
+    for %%P in (4096 2048 1024 512 256 128 64 32 16 8 4 2 1) do (
+        if "!s:~%%P,1!" NEQ "" ( 
+            set /a "len+=%%P"
+            set "s=!s:~%%P!"
+        )
+    )
+)
+( 
+    endlocal
+    set "%~1=%len%"
+    exit /b
+)
+
+:TEST_REPEAT_INIT
 	rem if no data captured from SWC, try again
-	if %failure_count% GTR 4 (
+	if %failure_count% GTR 5 (
 		GOTO TEST_FAIL
 	)
 	set /A failure_count+=1
 	ECHO repeat test, failure count = %failure_count%
 	..\adb shell "busybox pkill cat" > nul
 	..\adb shell "rm /sdcard/swc_device.log" > nul
+	set swc_data=
 	GOTO REPEAT_TEST
-)
 
 :TEST_PASS
 	ECHO ** SWC tx-rx test - passed
@@ -99,6 +117,7 @@ if errorlevel 0 (
 	set swc_file=
 	set failure_count=
 	set swc_data=
+	endlocal
 	GOTO EXIT
 	
 :EXIT
