@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.6
+set test_script_version=1.2.7
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -10,9 +10,9 @@ cd OBC_TEST_FILES
 set OBC_TEST_STSATUS=PASS
 
 rem echo %OBC_TESTER_WLAN_HOTSPOT%
-call WLAN_profile.bat %1
-IF %ERRORLEVEL% NEQ 0 goto _end_of_tests
-call WLAN_CONNECT.bat %1
+rem call WLAN_profile.bat %1
+rem IF %ERRORLEVEL% NEQ 0 goto _end_of_tests
+rem call WLAN_CONNECT.bat %1
 call adb_CONNECT.bat %1
 rem echo wait for devices 
 rem ..\adb devices
