@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.7
+set test_script_version=1.2.8
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -27,57 +27,142 @@ set mydate=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%
 rem echo device Serial Number: %deviceSN%, Date:  %mydate%
 set result_file_name=%deviceSN%
 rem _%mydate%
-@echo Device SN : %deviceSN%  > testResults\%result_file_name%.txt
+@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
 @echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
+
+rem add new line to summary file
+echo: >>testResults\summary.csv
+
+<nul set /p ".=%mydate%," >> testResults\summary.csv
+<nul set /p ".=%deviceSN%," >> testResults\summary.csv
+
 set mydate=
 set deviceSN=
 rem end create status file ----------
 
 call LED_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 rem echo installing files ....
 call install_files_test.bat
 rem timeout /T 5 /NOBREAK
 
 call sd-card_test.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call CANBus.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call SWC_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call J1708_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call NFC_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call VERSION_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call HELP_KEY_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call audio_test.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call Temperature_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call ReadRTC_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call Accelerometer.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call GPIO_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call SUPERCAP_TEST.bat
-if %ERRORLEVEL% == 1 set OBC_TEST_STSATUS=Fail
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+rem put a field for whether all tests passed or not
+if "%OBC_TEST_STSATUS%" == "Fail" (
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 if /I not %OBC_TEST_STSATUS%==PASS goto _test_failed
 color 20
