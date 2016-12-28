@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.8
+set test_script_version=1.2.9
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -51,6 +51,14 @@ if %ERRORLEVEL% == 1 (
 rem echo installing files ....
 call install_files_test.bat
 rem timeout /T 5 /NOBREAK
+
+call IMEI_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
 
 call sd-card_test.bat
 if %ERRORLEVEL% == 1 (
