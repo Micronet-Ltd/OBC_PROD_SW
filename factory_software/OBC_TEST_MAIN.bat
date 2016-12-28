@@ -84,6 +84,10 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+rem get imei
+rem start python GetOBCValues1.py
+
+
 call NFC_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STSATUS=Fail

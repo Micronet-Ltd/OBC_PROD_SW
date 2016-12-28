@@ -13,6 +13,8 @@ rem   ############## display message to the tester ############
 
 rem echo. 
 rem echo ***************************************
+echo NFC test - Get ready with NFC card
+pause
 echo Touch the device with NFC tag
 set /a loop_cnt = 0
 

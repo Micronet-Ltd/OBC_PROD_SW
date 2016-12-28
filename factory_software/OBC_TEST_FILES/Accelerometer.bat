@@ -8,7 +8,7 @@ rem echo         acceleromete Test
 rem echo ------------------------------------
 
 :_test_acceleromete
-echo | set /p=move the devcie ...  
+echo | set /p=move the device ...  
 rem pause> nul 
 ..\adb shell "testframe > /sdcard/acceleromete.txt 2>&1 &"
 timeout /T 6 /NOBREAK > nul

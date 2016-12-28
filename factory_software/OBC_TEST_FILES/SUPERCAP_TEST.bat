@@ -59,8 +59,8 @@ if %loop_cnt%   GTR  100 goto _Power_loss_error
 rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing 
 goto _SC_LOOP
 
-------------------this check cancled, in this time the voltage is much more then the voltage in the beringing
-_check_discharge
+rem ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing
+rem _check_discharge
 rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR
 rem goto _test_pass
 
