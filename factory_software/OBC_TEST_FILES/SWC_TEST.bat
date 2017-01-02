@@ -4,10 +4,10 @@ rem setlocal enabledelayedexpansion
 set swc_file=swc_device.log
 set /A failure_count=0
 
-..\adb root > nul
-..\adb connect 192.168.43.1 > nul
-..\adb wait-for-device > nul
-timeout /T 1 /NOBREAK > nul
+rem ..\adb root > nul
+rem ..\adb connect 192.168.43.1 > nul
+rem ..\adb wait-for-device > nul
+rem timeout /T 1 /NOBREAK > nul
 rem sleep 1
 ..\adb remount > nul
 
@@ -54,6 +54,7 @@ rem sleep 1
 
 ..\adb pull /sdcard/swc_device.log 2>&1>nul
 
+
 set /p swc_data=<%swc_file%
 
 rem check that the log file has data
@@ -61,7 +62,13 @@ call :strlen size swc_data
 if %size% LSS 21 goto TEST_REPEAT_INIT
 
 rem search for the chars 't7e880102030405060708' in the file
-IF "%swc_data%"=="%swc_data:t7e880102030405060708=%" (
+rem IF "%swc_data%"=="%swc_data:t7e880102030405060708=%" (
+findstr /m t7e880102030405060708 %swc_file% > tmp.txt
+set found="Not Found"
+set /p found= < tmp.txt
+rem if the the string 't7e880102030405060708' exists the the findster will return the file name
+rem echo  found = %found%
+if %found% NEQ swc_device.log (
 	GOTO TEST_REPEAT_INIT 
 ) ELSE (
 	GOTO TEST_PASS
@@ -114,9 +121,11 @@ IF "%swc_data%"=="%swc_data:t7e880102030405060708=%" (
 	..\adb shell "busybox pkill cat" > nul
 	..\adb shell "rm /sdcard/swc_device.log" > nul
 	del swc_device.log
+	if exist tmp.txt del tmp.txt
 	set swc_file=
 	set failure_count=
 	set swc_data=
+	set found=
 	endlocal
 	GOTO EXIT
 	
