@@ -7,7 +7,7 @@ import time
 import re
 from threading import Thread
 appName = "OBC 5 Serial # and IMEI Pull"
-appVersion = "0.1"
+appVersion = "0.2"
 
 filename = "testResults/SerialIMEI.csv"
 
@@ -50,8 +50,8 @@ def getIMEI():
 	
 	imeiValue = -1
 	
-	cmd = '../adb.exe root'
-	s = subprocess.check_output(cmd.split())
+#	cmd = '../adb.exe root'   - The "adb_CONNECT.bat" Batch file is handling the root. 
+#	s = subprocess.check_output(cmd.split())
 				
 	cmd = '../adb.exe shell service call iphonesubinfo 1'
 	s = subprocess.check_output(cmd.split())
@@ -79,7 +79,11 @@ def getIMEI():
 	print('IMEI Value: ')
 	print(imeiValue)
 	print('\r')
-		
+	fh = open('IMEIrsult.txt', 'w')
+	fh.write(str(imeiValue)+"\n")
+	fh.close()
+	
+				
 	return imeiValue;
 
 # **************************
@@ -90,8 +94,8 @@ def getSerialNumber():
 
 	serialNumber = ""
 	
-	cmd = '../adb.exe root'
-	s = subprocess.check_output(cmd.split())
+#	cmd = '../adb.exe root' - The "adb_CONNECT.bat" Batch file is handling the root.
+#	s = subprocess.check_output(cmd.split())
 	
 	cmd = '../adb.exe shell getprop | grep ro.serialno'
 	s = subprocess.check_output(cmd.split())
@@ -156,4 +160,4 @@ if(imeiBoolean == True and serialNumberBoolean == True):
 	loginfo('%s, %s' % (serialNumber, imeiValue), False)
 else:
 	print("Error in reading Serial Number and IMEI")
-	
+

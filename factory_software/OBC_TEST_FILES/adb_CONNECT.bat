@@ -29,8 +29,8 @@ rem Connection request was completed successfully.       OR
 rem There is no profile assigned to the specified interface.
 rem if the 1st letter is 'C', connection succeded or 'a' already connected, else faild
 
-if %OBC_TESTER_WLAN_CON:~0,1% == c goto _WALN_test_pass
-if %OBC_TESTER_WLAN_CON:~0,1% == a goto _WALN_test_pass
+if %OBC_TESTER_WLAN_CON:~0,1% == c goto _get_root
+if %OBC_TESTER_WLAN_CON:~0,1% == a goto _get_root
 if %loop_cnt% LSS 20 goto _WLAN_LOOP
 
 rem   ############## TEST STATUS ############
@@ -38,6 +38,9 @@ set ERRORLEVEL=1
 echo adb connect faild  %OBC_TESTER_WLAN_CON% 
 goto _end_of_test
 
+:_get_root
+..\adb root > nul
+..\adb connect 192.168.43.1> nul
 :_WALN_test_pass
 echo adb Connected Passed
 
