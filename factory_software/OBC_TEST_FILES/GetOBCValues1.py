@@ -7,7 +7,7 @@ import time
 import re
 from threading import Thread
 appName = "OBC 5 Serial # and IMEI Pull"
-appVersion = "0.1"
+appVersion = "0.2"
 
 filename = "testResults/SerialIMEI.csv"
 
@@ -79,7 +79,11 @@ def getIMEI():
 	print('IMEI Value: ')
 	print(imeiValue)
 	print('\r')
-		
+	fh = open('IMEIrsult.txt', 'w')
+	fh.write(str(imeiValue)+"\n")
+	fh.close()
+	
+				
 	return imeiValue;
 
 # **************************
@@ -129,20 +133,13 @@ os.system('color 07')
 
 print('%s, Version: %s \r\n' % (appName, appVersion))
 
-imeiScan=str(sys.argv[1])
-print('Scaned IMEI Value: ')
-print(imeiScan)
-print('\r')
-
-
 # Gets the IMEI number.		
 	
 imeiValue = getIMEI()
 imeiBoolean = False
 
-
 # Checks to see if it is a number and has the correct length		
-if(isNumber(imeiValue) and len(imeiValue) == 15 and imeiValue==imeiScan):
+if(isNumber(imeiValue) and len(imeiValue) == 15):
 	imeiBoolean = True
 else:
 	print('IMEI not found or not read correctly.\r\n')
@@ -152,18 +149,15 @@ else:
 serialNumberBoolean = False	
 serialNumber = getSerialNumber()
 
-
-
 # Check to see if correct length
 if(len(serialNumber) == 8):
 	serialNumberBoolean = True
 else:
 	print('Serial Number not found or not read correctly.\r\n')
-loginfo('%s, %s' % (serialNumber, imeiScan), False)
 
 #If both are true, proceed to write to .csv file
 if(imeiBoolean == True and serialNumberBoolean == True):
 	loginfo('%s, %s' % (serialNumber, imeiValue), False)
 else:
 	print("Error in reading Serial Number and IMEI")
-	
+

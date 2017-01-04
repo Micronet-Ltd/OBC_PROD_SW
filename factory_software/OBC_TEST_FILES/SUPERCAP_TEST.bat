@@ -19,6 +19,10 @@ rem verify supercap is charged but not over charged
 if %sc_voltage% LSS 3000 goto _SC_LEVEL_ERROR
 if %sc_voltage% GTR 5500 goto _SC_LEVEL_ERROR
 
+rem Change the default of wi-fi off during power loss
+..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"
+..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay"
+
 rem --------- end check supercap charging  _-----------
 
 rem --------- check deivces is off ---------------------

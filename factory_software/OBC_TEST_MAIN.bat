@@ -41,10 +41,20 @@ set deviceSN=
 rem end create status file ----------
 
 rem get imei
-rem get IMEI from the user 
-set /p imei=Scan IMEI: 
-set /p imei=Scan IMEI: 
-start python GetOBCValues1.py %imei%
+start python GetOBCValues1.py
+
+rem get IMEI from the user
+set deviceIMEI=error
+set /p scannedIMEI=Scan IMEI: 
+set /p deviceIMEI=<IMEIrsult.txt
+if %scannedIMEI%==%deviceIMEI% (
+	echo ** IMEI test - passed
+	@echo IMEI test - passed.  >> testResults\%result_file_name%.txt
+	) else (
+	echo ** IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%
+	@echo IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%  >> testResults\%result_file_name%.txt
+	)
+if exist IMEIrsult.txt del IMEIrsult.txt
 
 call LED_TEST.bat
 if %ERRORLEVEL% == 1 (
