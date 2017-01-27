@@ -7,34 +7,31 @@ import time
 import re
 from threading import Thread
 appName = "OBC 5 Serial # and IMEI Pull"
-appVersion = "0.2"
+appVersion = "0.3"
 
 filename = "testResults/SerialIMEI.csv"
+count = 1
 
 # **************************
 # loginfo function
 # **************************
 
-def loginfo(stuff2log,includeTime):
+def loginfo(stuff2log):
 
 	if (os.path.isfile(filename)) == False:
 		try:
 			f = open(filename, 'a')
-			# FORMAT is: Serial Number, IMEI
-			f.write("Serial Number, IMEI\n")
+			# FORMAT is: Serial Number,IMEI
+			f.write("Serial Number,IMEI\n")
 		except IOError:
 			print("Error: can\'t find file or read data.")
 		else:
 			f.close()
-	
-	localtime = time.asctime( time.localtime(time.time()) )
 
 	try:
 		f = open(filename, 'a')
-		if includeTime == False:
-			f.write(stuff2log + "\n")
-		else:
-			f.write(localtime + ", " + stuff2log + "\n")
+		f.write(stuff2log + "\n")
+		
 	except IOError:
 		print("Error: can\'t find file or read data.")
 	else:
@@ -50,10 +47,10 @@ def getIMEI():
 	
 	imeiValue = -1
 	
-#	cmd = '../adb.exe root'   - The "adb_CONNECT.bat" Batch file is handling the root. 
-#	s = subprocess.check_output(cmd.split())
+	# cmd = '../adb.exe wait-for-device root' - The "adb_CONNECT.bat" Batch file is handling the root.
+	# s = subprocess.check_output(cmd.split())
 				
-	cmd = '../adb.exe shell service call iphonesubinfo 1'
+	cmd = '../adb.exe wait-for-device shell service call iphonesubinfo 1'
 	s = subprocess.check_output(cmd.split())
 	adbRetVal = s.decode("ascii")
 	
@@ -76,14 +73,6 @@ def getIMEI():
 		
 	imeiValue = imeiNumberOne + imeiNumberTwo + imeiNumberThree 
 		
-	print('IMEI Value: ')
-	print(imeiValue)
-	print('\r')
-	fh = open('IMEIrsult.txt', 'w')
-	fh.write(str(imeiValue)+"\n")
-	fh.close()
-	
-				
 	return imeiValue;
 
 # **************************
@@ -94,10 +83,10 @@ def getSerialNumber():
 
 	serialNumber = ""
 	
-#	cmd = '../adb.exe root' - The "adb_CONNECT.bat" Batch file is handling the root.
-#	s = subprocess.check_output(cmd.split())
+	# cmd = '../adb.exe wait-for-device root' - The "adb_CONNECT.bat" Batch file is handling the root.
+	# s = subprocess.check_output(cmd.split())
 	
-	cmd = '../adb.exe shell getprop | grep ro.serialno'
+	cmd = '../adb.exe wait-for-device shell getprop | grep ro.serialno'
 	s = subprocess.check_output(cmd.split())
 	adbRetVal = s.decode("ascii")
 	
@@ -105,11 +94,42 @@ def getSerialNumber():
 	
 	serialNumber = serialNumber.upper()
 	
-	print('Serial Number: ')
-	print(serialNumber)
-	print('\r')
+	print('Serial Number: %s\r\n' % (serialNumber))
 	
 	return serialNumber
+
+# **************************
+# getCheckIMEI function
+# **************************
+def getCheckIMEI():
+
+	global count
+
+	if(count > 10):
+		print('Error getting IMEI. Device needs to be rescanned.')
+		return -1
+	
+	imeiValue = getIMEI()
+	
+	# If IMEI is correct length and a number, then continue.
+	if(isNumber(imeiValue) and len(imeiValue) == 15):
+		print('IMEI Value: %s\r\n' % (imeiValue))
+		
+		# Added to write IMEI to file to check IMEI on the device vs the IMEI on the label
+		try:
+			fh = open('IMEIrsult.txt', 'w')
+			fh.write(str(imeiValue)+"\n")
+			fh.close()
+		except:
+			print('Error writing IMEI to IMEIrsult.txt')
+		
+		return imeiValue
+		
+	else:
+		count = count + 1
+		print('Trying Again: Test %d \r' % (count))
+		time.sleep(5)
+		getCheckIMEI()	
 	
 # **************************
 # isNumber function
@@ -133,31 +153,13 @@ os.system('color 07')
 
 print('%s, Version: %s \r\n' % (appName, appVersion))
 
-# Gets the IMEI number.		
-	
-imeiValue = getIMEI()
-imeiBoolean = False
-
-# Checks to see if it is a number and has the correct length		
-if(isNumber(imeiValue) and len(imeiValue) == 15):
-	imeiBoolean = True
-else:
-	print('IMEI not found or not read correctly.\r\n')
-
-# Gets the Serial Number
-
-serialNumberBoolean = False	
+imeiValue = getCheckIMEI()
 serialNumber = getSerialNumber()
 
-# Check to see if correct length
-if(len(serialNumber) == 8):
-	serialNumberBoolean = True
-else:
-	print('Serial Number not found or not read correctly.\r\n')
-
-#If both are true, proceed to write to .csv file
-if(imeiBoolean == True and serialNumberBoolean == True):
-	loginfo('%s, %s' % (serialNumber, imeiValue), False)
-else:
-	print("Error in reading Serial Number and IMEI")
-
+try:
+	loginfo('%s,%s' % (serialNumber, imeiValue))
+	input('Press enter to continue')
+except:
+	input('There was an error writing to SerialImei.csv.')
+	
+	
