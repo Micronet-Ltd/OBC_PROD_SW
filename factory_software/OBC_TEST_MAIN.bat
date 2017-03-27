@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.10
+set test_script_version=1.2.11
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%
@@ -41,20 +41,20 @@ set deviceSN=
 rem end create status file ----------
 
 rem get imei
-start python GetOBCValues1.py
+rem start python GetOBCValues1.py
 
 rem get IMEI from the user
-set deviceIMEI=error
-set /p scannedIMEI=Scan IMEI: 
-set /p deviceIMEI=<IMEIrsult.txt
-if %scannedIMEI%==%deviceIMEI% (
-	echo ** IMEI test - passed
-	@echo IMEI test - passed.  >> testResults\%result_file_name%.txt
-	) else (
-	echo ** IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%
-	@echo IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%  >> testResults\%result_file_name%.txt
+rem set deviceIMEI=error
+rem set /p scannedIMEI=Scan IMEI: 
+rem set /p deviceIMEI=<IMEIrsult.txt
+rem if %scannedIMEI%==%deviceIMEI% (
+rem 	echo ** IMEI test - passed
+rem 	@echo IMEI test - passed.  >> testResults\%result_file_name%.txt
+rem 	) else (
+rem 	echo ** IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%
+rem 	@echo IMEI test - failed. Device IMEI = %deviceIMEI%, Lable IMEI = %scannedIMEI%  >> testResults\%result_file_name%.txt
 	)
-if exist IMEIrsult.txt del IMEIrsult.txt
+rem if exist IMEIrsult.txt del IMEIrsult.txt
 
 call LED_TEST.bat
 if %ERRORLEVEL% == 1 (
@@ -93,6 +93,30 @@ if %ERRORLEVEL% == 1 (
 )
 
 call J1708_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+call COM_TEST.bat 
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+call SERIAL_TEST.bat 
+if %ERRORLEVEL% == 1 (
+	set OBC_TEST_STSATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+call IMEI_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STSATUS=Fail
 	<nul set /p ".=fail," >> testResults\summary.csv
