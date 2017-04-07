@@ -1,4 +1,4 @@
-@ECHO OFF
+ @ECHO OFF
 set ERRORLEVEL=0
 rem setlocal enabledelayedexpansion
 set swc_file=swc_device.log

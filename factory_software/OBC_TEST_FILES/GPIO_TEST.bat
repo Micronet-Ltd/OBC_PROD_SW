@@ -17,7 +17,7 @@ set /p input1=<%file_name%
 set /a input1=%input1:~24,5%
 rem @echo input1=%input1%
 if %input1% LSS 7000 set ERRORLEVEL=1
-if %input1% GTR  13000 set ERRORLEVEL=1
+if %input1% GTR  13100 set ERRORLEVEL=1
 
 :_test_GPIO2
 ..\adb shell mctl api 020402 > %file_name%
@@ -33,7 +33,7 @@ set /p  input3=<%file_name%
 set /a input3=%input3:~24,5%>nul
 rem @echo input3=%input3%
 if %input3% LSS 7000 set ERRORLEVEL=1
-if %input3% GTR  13000 set ERRORLEVEL=1
+if %input3% GTR  13100 set ERRORLEVEL=1
 
 :_test_GPIO4
 ..\adb shell mctl api 020404 > %file_name%
@@ -49,7 +49,7 @@ set /p  input5=<%file_name%
 set /a input5=%input5:~24,5%>nul
 rem @echo input5=%input5%
 if %input5% LSS 7000 set ERRORLEVEL=1
-if %input5% GTR  13000 set ERRORLEVEL=1
+if %input5% GTR  13100 set ERRORLEVEL=1
 
 
 :_test_GPIO6
@@ -66,7 +66,7 @@ set /p  input7=<%file_name%
 set /a input7=%input7:~24,5%>nul
 rem @echo input7=%input7%
 if %input7% LSS 7000 set ERRORLEVEL=1
-if %input7% GTR  13000 set ERRORLEVEL=1
+if %input7% GTR  13100 set ERRORLEVEL=1
 
 :_test_Ignition
 ..\adb shell mctl api 020400 > %file_name%
@@ -74,7 +74,7 @@ set /p  Ignition=<%file_name%
 set /a Ignition=%Ignition:~24,5%>nul
 rem @echo Ignition=%Ignition%
 if %Ignition% LSS 4500 set ERRORLEVEL=1
-if %Ignition% GTR 13001 set ERRORLEVEL=1
+if %Ignition% GTR 13200 set ERRORLEVEL=1
 
 if %ERRORLEVEL% == 1 goto _error_found
 

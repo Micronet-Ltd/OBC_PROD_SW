@@ -41,8 +41,8 @@ rem echo %readstring% , %writestring%
 if %readstring% NEQ %writestring% goto :_CanTest_error
 
 :_test_pass
-@echo ** CANBus 1/2  test - passed
-@echo CANBus 1/2  test - passed >> testResults\%result_file_name%.txt
+@echo ** CANBus test - passed
+@echo CANBus test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :strlen <resultVar> <stringVar>
@@ -83,8 +83,8 @@ exit /b
 
 :_CanTest_error
 set ERRORLEVEL=1
-@echo ** CANBus 1/2 test - failed
-@echo CANBus 1/2 test - failed >> testResults\%result_file_name%.txt
+@echo ** CANBus test - failed
+@echo CANBus test - failed >> testResults\%result_file_name%.txt
 
 
 

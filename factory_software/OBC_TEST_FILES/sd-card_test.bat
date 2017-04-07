@@ -35,8 +35,8 @@ rem Read the file size in supposed to be 888 bytes
 set /p Result=<%file_name%
 if %Result:~35,2% == 18 goto _Delete_File
 set ERRORLEVEL=1
-echo  SD-card  test failed 
-@echo SD-card  test failed - didn't get the expected size >> testResults\%result_file_name%.txt
+echo ** SD-card test - failed 
+@echo SD-card test - failed - didn't get the expected size >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_Delete_File
@@ -45,12 +45,12 @@ set Result=
 set /p Result=<%file_name%
 if "%Result%" == "" goto _Test_pass
 set ERRORLEVEL=1
-echo  SD-card delete failed 
+echo ** SD-card delete failed 
 @echo SD-card delete failed  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_Test_pass
-echo ** SD-card test passed
+echo ** SD-card test - passed
 @echo SD-card test passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

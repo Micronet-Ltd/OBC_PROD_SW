@@ -11,7 +11,7 @@ rem echo ------------------------------------
 
 rem   ############## display message to the tester ############
 
-rem echo. 
+echo. 
 rem echo ***************************************
 echo NFC test - Get ready with NFC card
 pause

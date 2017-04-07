@@ -8,6 +8,9 @@ if exist %file_name% del %file_name%
 rem echo ------------------------------------
 rem echo                HELP KEY            
 rem echo ------------------------------------
+
+echo.
+
 ..\adb shell echo 1014 ^> /sys/class/gpio/export
 
 :_test_value_default
@@ -19,7 +22,7 @@ rem if exist %file_name% del %file_name%
 if not %key_test%==1 goto _key_test_value1_error
 
 rem   ############## VALUE 0 TEST ############
-echo | set /p=PRESS HELP KEY on the device
+echo | set /p=Press Help Key on the device
 
 set /a loop_cnt = 0
 
@@ -57,8 +60,8 @@ goto _key_test_value1_error
 rem   ############## TEST STATUS ############
 :_test_pass
 rem echo.
-echo ** HELP KEY test - Passed
-@echo HELP KEY test - passed  >> testResults\%result_file_name%.txt
+echo ** Help Key test - Passed
+@echo Help Key test - passed  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 
@@ -66,7 +69,7 @@ goto _end_of_file
 set ERRORLEVEL=1
 rem echo.
 rem echo ****** ERROR: Expected to get 1 - got %key_test% ******
-echo HELP KEY test- failed
+echo Help Key test - failed
 goto _end_of_file
 
 :_key_test_value0_error
@@ -74,8 +77,8 @@ set ERRORLEVEL=1
 rem echo.
 rem echo RELEASE HELP KEY
 rem echo ****** ERROR: Expected to get 0 - got %key_test% ******
-echo HELP KEY test- failed
-@echo HELP KEY test - failed  >> testResults\%result_file_name%.txt
+echo Help Key test - failed
+@echo Help Key test - failed  >> testResults\%result_file_name%.txt
 
 
 :_end_of_file

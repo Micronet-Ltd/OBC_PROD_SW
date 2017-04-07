@@ -10,6 +10,8 @@ rem echo ------------------------------------
 rem echo                SERIAL test            
 rem echo ------------------------------------
 
+echo.
+
 rem Prompt user to scan in serial number
 set /p read_in_serial=Scan Serial Number:
 
@@ -31,12 +33,11 @@ set pm_serial=PM%Result:~58,8%
 rem If serial number scanned is the same as the one in the device then goto pass
 if "%pm_serial%" == "%read_in_serial%" goto _test_pass
 
-
+:_test_fail
 set ERRORLEVEL=1
 echo  ** Serial test - failed expected %pm_serial% got %read_in_serial%
 @echo Serial test - failed expected %pm_serial% got %read_in_serial% >> testResults\%result_file_name%.txt
 goto _end_of_file
-
 
 rem   ############## TEST STATUS ############
 :_test_pass

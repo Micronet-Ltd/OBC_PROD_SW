@@ -71,31 +71,31 @@ rem goto _test_pass
 rem   ############## TEST STATUS ############
 :_SC_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** supercap test - failed (SC voltage = %sc_voltage%) 
-@echo supercap test - failed (SC voltage = %sc_voltage%) >> testResults\%result_file_name%.txt
+echo ** Supercap test - failed (SC voltage = %sc_voltage%) 
+@echo Supercap test - failed (SC voltage = %sc_voltage%) >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_VIN_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** supercap test - failed  Device NOT OFF (Input voltage = %power_in_voltage%) 
-@echo supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) >> testResults\%result_file_name%.txt
+echo ** Supercap test - failed  Device NOT OFF (Input voltage = %power_in_voltage%) 
+@echo Supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_DisCharge_ERROR
 set ERRORLEVEL=1
-echo ** supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) 
-@echo supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) >> testResults\%result_file_name%.txt
+echo ** Supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) 
+@echo Supercap test - failed Device NOT OFF (Input voltage = %power_in_voltage%) >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_Power_loss_error
 set ERRORLEVEL=1
-echo ** supercap test - failed didn't get power loss notification 
-@echo supercap test - failed didn't get power loss notification >> testResults\%result_file_name%.txt
+echo ** Supercap test - failed didn't get power loss notification 
+@echo Supercap test - failed didn't get power loss notification >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_pass
-echo ** supercap test - passed
-@echo supercap test - passed supercap voltage : %sc_voltage%, voltage after off: %power_in_voltage% >> testResults\%result_file_name%.txt
+echo ** Supercap test - passed
+@echo Supercap test - passed supercap voltage : %sc_voltage%, voltage after off: %power_in_voltage% >> testResults\%result_file_name%.txt
 :_end_of_test
 if exist %sc_voltage_file_name% del %sc_voltage_file_name%
 if exist %tmp_file_name%  del %tmp_file_name%
