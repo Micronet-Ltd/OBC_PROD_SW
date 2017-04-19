@@ -82,3 +82,10 @@ rem Uninstall app
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 
+set temp_result=
+set data=
+set com1_fail=
+set com2_fail=
+set com3_fail=
+set com4_fail=
+set loop_count=
