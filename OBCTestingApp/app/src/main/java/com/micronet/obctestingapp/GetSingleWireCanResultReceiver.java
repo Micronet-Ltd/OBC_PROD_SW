@@ -104,9 +104,13 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
         FileOutputStream output = new FileOutputStream(mFd);
 
         output.write("C\r".getBytes());
+        //output.write("mt000007F0u0002\r".getBytes());
+        //output.write("Mt000007E8u0003\r".getBytes());
+        //output.write("mt000007F0u0004\r".getBytes());
+        //output.write("Mt000007E0u0005\r".getBytes());
         output.write("mt00000100\r".getBytes());
         output.write("Mt00000700\r".getBytes());
-        output.write("S2\r".getBytes()); // Sets the baud rate to 33.3 (this is what makes it single wire can
+        output.write("S2\r".getBytes()); // Sets the baud rate to 33.3 (this is what makes it single wire can)
         output.write("O1\r".getBytes());
 
         Thread.sleep(1000);
@@ -192,6 +196,12 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             pass = false;
         }
 
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Log.e(TAG, e.toString());
+        }
+
         // After the data has been sent now try to read the data.
         try{
             sb = new StringBuilder();
@@ -212,7 +222,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
             Future<Integer> future = executor.submit(readTask);
             // Give read two seconds to finish
-            int bytesRead = future.get(2000, TimeUnit.MILLISECONDS);
+            int bytesRead = future.get(3000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
             if(bytesRead > 0){
@@ -231,7 +241,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             inputStream.close();
 
         }catch (TimeoutException e){
-            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
+            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (3 seconds): Timeout" + e.toString());
             finalResult = false;
             pass = false;
 

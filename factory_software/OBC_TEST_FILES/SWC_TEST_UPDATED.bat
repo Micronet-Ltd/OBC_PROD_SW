@@ -40,7 +40,7 @@ if "%Result:~28,1%" == "%success%" goto _test_pass
 
 set /a loop_count=%loop_count%+1
 set Result=
-rem If com port test has failed multiple times then goto _test_fail
+rem If SWC test has failed multiple times then goto _test_fail
 if %loop_count% GTR 4 goto _test_fail
 echo repeat test, failure count = %loop_count%
 goto _test_loop
@@ -48,7 +48,7 @@ goto _test_loop
 :_test_fail
 set ERRORLEVEL=1
 echo  ** SWC test - failed 
-rem If one of the Com Ports failed then write that to the test result file
+rem If SWC test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set swc_fail="SWC failed: tx out of Can1 did not rx a succesful response in Can1",
 )

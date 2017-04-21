@@ -16,6 +16,9 @@ import java.io.InputStreamReader;
  */
 
 public class GetSerialReceiver extends BroadcastReceiver {
+
+    private final String TAG = "OBCTestingApp";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         setResultData(getSerialNumber());
@@ -30,7 +33,8 @@ public class GetSerialReceiver extends BroadcastReceiver {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.toLowerCase().contains("serialno")) {
                     serialNumber = line;
-                    return serialNumber.toUpperCase();
+                    Log.i(TAG, "Serial Number: " + serialNumber.substring(21,29).toUpperCase());
+                    return serialNumber.substring(21,29).toUpperCase();
                 }
             }
             process.destroy();
