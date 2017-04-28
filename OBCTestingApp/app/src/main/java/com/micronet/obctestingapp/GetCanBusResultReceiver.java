@@ -58,9 +58,11 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
         automatedCanBusTest();
 
         if(finalResult){
+            Log.i(TAG, "*** CANBus Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
+            Log.i(TAG, "*** CANBus Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
@@ -68,12 +70,13 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     }
 
-
     public native String stringFromJNI();
     private native static FileDescriptor open(String path, int Baudrate);
     private native void close();
 
     public void automatedCanBusTest(){
+
+        Log.i(TAG,"*** CANBus Test Started ***");
 
         finalResult = true;
 
@@ -199,7 +202,7 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
         try{
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
-            Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
+            //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
@@ -243,8 +246,8 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
         try{
             sb = new StringBuilder();
 
-            readBuffer = new byte [128];
-            char[] bufferChar = new char [128];
+            readBuffer = new byte [32];
+            char[] bufferChar = new char [32];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).

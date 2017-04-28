@@ -23,7 +23,7 @@ public class GetIMEIReceiver extends BroadcastReceiver {
             imei = telephonyManager.getDeviceId();
             Log.i(TAG, "IMEI: " + imei);
         } catch (Exception e) {
-            imei = "Error!!";
+            imei = "Error";
         }
 
         setResultData(imei);

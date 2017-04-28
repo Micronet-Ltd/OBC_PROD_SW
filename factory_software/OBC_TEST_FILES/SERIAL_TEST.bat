@@ -28,7 +28,7 @@ rem Parse serial number
 set /p Result=<%serial_name%
 
 rem Final serial number from device with PM
-set pm_serial=PM%Result:~38,8%
+set pm_serial=PM%Result:~37,8%
 
 rem If serial number scanned is the same as the one in the device then goto pass
 if "%pm_serial%" == "%read_in_serial%" goto _test_pass

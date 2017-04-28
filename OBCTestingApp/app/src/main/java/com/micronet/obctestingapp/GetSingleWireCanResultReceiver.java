@@ -52,9 +52,11 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
         automatedSingleWireCanTest();
 
         if(finalResult){
+            Log.i(TAG, "*** SWC Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
+            Log.i(TAG, "*** SWC Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
@@ -66,6 +68,8 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
     private native void close();
 
     public void automatedSingleWireCanTest(){
+
+        Log.i(TAG, "*** SWC Test Started ***");
 
         finalResult = true;
 
@@ -151,7 +155,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
         try{
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
-            Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
+            //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
@@ -172,6 +176,16 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             //
             outputStream.write(bytesToSend);
 
+            /*Thread.sleep(250);
+
+            outputStream.write(bytesToSend);
+
+            Thread.sleep(250);
+
+            outputStream.write(bytesToSend);*/
+
+            //Thread.sleep(250);
+
             /*Thread.sleep(1000);
 
             outputStream.write(bytesToSend);*/
@@ -187,7 +201,6 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             //      Read: t700499112231a34d\r
             sentSB.append(stringToSend);
             sentSB.deleteCharAt(sentSB.length()-1);
-
             outputStream.close();
 
         }catch (Exception e){
@@ -196,18 +209,22 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             pass = false;
         }
 
+
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             Log.e(TAG, e.toString());
         }
 
+
+
         // After the data has been sent now try to read the data.
         try{
             sb = new StringBuilder();
 
-            readBuffer = new byte [128];
-            char[] bufferChar = new char [128];
+            readBuffer = new byte [32];
+            char[] bufferChar = new char [32];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).
@@ -222,7 +239,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
             Future<Integer> future = executor.submit(readTask);
             // Give read two seconds to finish
-            int bytesRead = future.get(3000, TimeUnit.MILLISECONDS);
+            int bytesRead = future.get(4000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
             if(bytesRead > 0){
@@ -241,7 +258,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             inputStream.close();
 
         }catch (TimeoutException e){
-            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (3 seconds): Timeout" + e.toString());
+            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
             finalResult = false;
             pass = false;
 

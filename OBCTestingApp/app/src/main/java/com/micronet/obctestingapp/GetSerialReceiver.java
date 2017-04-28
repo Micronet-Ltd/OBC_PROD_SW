@@ -44,6 +44,6 @@ public class GetSerialReceiver extends BroadcastReceiver {
             Log.e(this.toString(), e.getMessage());
         }
 
-        return "Error!!";
+        return "Error";
     }
 }

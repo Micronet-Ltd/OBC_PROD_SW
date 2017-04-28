@@ -8,10 +8,11 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by scott.krstyen on 4/21/2017.
@@ -47,6 +48,7 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
     private BufferedReader br;
 
     private String[] outputValues;
+    private String[] inputValues;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -62,9 +64,11 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
         }
 
         if(finalResult){
+            Log.i(TAG, "*** GPIO Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
+            Log.i(TAG, "*** CANBus Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
@@ -72,8 +76,103 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
 
     private void automatedGPOTest() throws Exception {
 
-        outputValues = new String[4];
+        Log.i(TAG, "*** GPIO Test Started ***");
 
+        // Set initially to false. If it makes it through the whole test without returning then it is successful
+        finalResult = false;
+
+        // Arrays to hold values of outputs and inputs
+        outputValues = new String[4];
+        inputValues = new String[4];
+
+        // Export all the gpio values
+        exportGPIO();
+
+        if(!setAndCheckGPIOValues(new String[]{"0","0","0","0"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"1","0","0","0"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"0","1","0","0"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"0","0","1","0"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"0","0","0","1"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"1","1","1","1"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"0","1","1","1"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"1","0","1","1"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"1","1","0","1"})){
+            finalResult = false;
+            return;
+        }
+
+        if(!setAndCheckGPIOValues(new String[]{"1","1","1","0"})){
+            finalResult = false;
+            return;
+        }
+
+        // Return outputs all to zero to end test
+        if(!setAndCheckGPIOValues(new String[]{"0","0","0","0"})){
+            finalResult = false;
+            return;
+        }
+
+        finalResult = true;
+        return;
+
+    }
+
+    private boolean setAndCheckGPIOValues(String[] testArray) throws Exception {
+
+        // Set all output values array values passed in
+        setGPIOValue(GPOutput0, testArray[0]);
+        setGPIOValue(GPOutput1, testArray[1]);
+        setGPIOValue(GPOutput2, testArray[2]);
+        setGPIOValue(GPOutput3, testArray[3]);
+
+        Thread.sleep(500);
+
+        // Get all values to compare them with the array passed in
+        getOutputValues();
+        getInputValues();
+
+        // If values aren't correct then set final result to false
+        if(!(Arrays.equals(outputValues, testArray) && Arrays.equals(inputValues, testArray))){
+            return false;
+        }
+        else{ // Values are all correct so return true
+            return true;
+        }
+    }
+
+    private void exportGPIO() throws IOException {
         bw = new BufferedWriter(new FileWriter(export));
 
         // Export GPInputs 1-4
@@ -90,20 +189,20 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
 
         bw.flush();
         bw.close();
+    }
 
-        // Get default values
+    private void getInputValues() throws Exception {
+        inputValues[0] = readValueFromFile(GPInput1);
+        inputValues[1] = readValueFromFile(GPInput2);
+        inputValues[2] = readValueFromFile(GPInput3);
+        inputValues[3] = readValueFromFile(GPInput4);
+    }
+
+    private void getOutputValues() throws Exception {
         outputValues[0] = readValueFromFile(GPOutput0);
         outputValues[1] = readValueFromFile(GPOutput1);
         outputValues[2] = readValueFromFile(GPOutput2);
         outputValues[3] = readValueFromFile(GPOutput3);
-
-        // First set GPOutput 0 and 2 to high, then switch to GPOutput 1 and 4 high
-
-        setGPIOValue(GPOutput0, "0");
-        setGPIOValue(GPOutput0, "0");
-        setGPIOValue(GPOutput0, "0");
-        setGPIOValue(GPOutput0, "0");
-
     }
 
     private void setGPIOValue(File file, String s) throws Exception {

@@ -52,9 +52,11 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
         automatedTest();
 
         if(finalResult){
+            Log.i(TAG, "*** Com Port Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString()); // + resultStringBuilder.toString());
         }else{
+            Log.i(TAG, "*** Com Port Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString()); // + resultStringBuilder.toString());
         }
@@ -63,6 +65,9 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
 
     // Idea to be used for automated testing
     private void automatedTest()  {
+
+        Log.i(TAG, "*** Com Port Test Started ***");
+
         // Reset final result to be used to test.
         finalResult = true;
 
@@ -134,7 +139,7 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
         try{
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
-            Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
+            //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }

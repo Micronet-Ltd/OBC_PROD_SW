@@ -107,7 +107,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call CANBus.bat
+call CANBus_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set canbus_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -116,7 +116,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call SWC_TEST.bat
+call SWC_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set swc_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -125,7 +125,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call J1708_TEST.bat
+call J1708_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set j1708_test=fail
 	set OBC_TEST_STATUS=Fail

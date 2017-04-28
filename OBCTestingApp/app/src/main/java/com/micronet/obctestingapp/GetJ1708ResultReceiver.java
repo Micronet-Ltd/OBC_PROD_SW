@@ -52,9 +52,11 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
         automatedJ1708Test();
 
         if(finalResult){
+            Log.i(TAG, "*** J1708 Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
+            Log.i(TAG, "*** J1708 Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
@@ -66,6 +68,8 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
     private native void close();
 
     public void automatedJ1708Test(){
+
+        Log.i(TAG, "*** J1708 Test Started ***");
 
         finalResult = true;
 
@@ -122,7 +126,7 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
         try{
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
-            Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
+            //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
@@ -161,8 +165,8 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
         try{
             sb = new StringBuilder();
 
-            readBuffer = new byte [128];
-            char[] bufferChar = new char [128];
+            readBuffer = new byte [32];
+            char[] bufferChar = new char [32];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).

@@ -14,3 +14,5 @@ rem Install application
 ..\adb install -r INSTALL_FILES\obc_testing_app.apk >nul 2>&1
 rem Start main activity
 ..\adb shell "am start -n com.micronet.obctestingapp/com.micronet.obctestingapp.MainActivity" >nul 2>&1
+
+timeout /T 6 /NOBREAK > nul
