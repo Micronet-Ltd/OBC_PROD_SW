@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.11
+set test_script_version=1.2.12
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -75,7 +75,41 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+rem Get the device type
+echo.
+echo Please enter the number for which type of device you are testing (1, 2, or 3):
+echo 				[1] MTR-A001-XXX
+echo 				[2] MTR-A002-XXX
+echo 				[3] MTR-A003-XXX
+echo.
+:_get_device_type
+set /p deviceChoice=
 
+if "%deviceChoice%" == "1" GOTO _device_A0001
+
+if "%deviceChoice%" == "2" GOTO _device_A0002
+
+if "%deviceChoice%" == "3" GOTO _device_A0003
+
+rem User did not enter valid value, try again
+echo. 
+echo Invalid selection. Please enter valid device type (1, 2 , or 3):
+echo.
+goto _get_device_type
+
+:_device_A0001
+set deviceType=MTR-A001-XXX
+goto _resume_test
+
+:_device_A0002
+set deviceType=MTR-A002-XXX
+goto _resume_test
+
+:_device_A0003
+set deviceType=MTR-A003-XXX
+goto _resume_test
+
+:_resume_test
 rem Reset variable values
 set mydate=
 set deviceSN=
@@ -134,6 +168,17 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+rem if device doesn't have com ports then skip this test
+if "%deviceType%" == "MTR-A001-XXX" GOTO _skip_com_test
+rem else run the test
+GOTO _com_test
+
+:_skip_com_test
+set com_test=pass
+<nul set /p ".=N/A," >> testResults\summary.csv
+goto _nfc_test
+
+:_com_test
 call COM_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set com_test=fail
@@ -143,6 +188,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+:_nfc_test
 call NFC_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set nfc_test=fail

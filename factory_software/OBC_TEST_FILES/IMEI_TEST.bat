@@ -2,6 +2,10 @@
 
 set ERRORLEVEL=0
 
+set Result= 
+set imei= 
+set pm_serial=
+set trueIMEI=
 set file_name=tmp.txt
 set serial_name=serial_tmp.txt
 set list_name=SerialIMEI
@@ -27,6 +31,8 @@ echo %xprvar% > %file_name%
 
 set /p Result=<%file_name%
 
+set trueIMEI=%Result:~37,15%
+
 rem If IMEI scanned in is same as IMEI on device then goto pass
 if "%Result:~37,15%" == "%imei%" goto _test_pass
 
@@ -36,7 +42,7 @@ echo  ** IMEI test - failed expected %Result:~37,15% got %imei%
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei% >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%imei%" >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto :_write_serial_imei
 
@@ -46,7 +52,7 @@ echo ** IMEI test - passed %imei%
 rem Write result to individual device file
 @echo IMEI test - passed %imei% >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%imei%" >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 
 :_write_serial_imei
@@ -61,10 +67,10 @@ echo %xprvar% > %serial_name%
 set /p Result=<%serial_name%
 
 rem Parse serial number
-set pm_serial=%Result:~58,8%
+set pm_serial=%Result:~37,8%
 
 rem Write Serial and IMEI to SerialIMEI.csv
-@echo %pm_serial%,%imei% >> testResults\%list_name%.csv
+@echo %pm_serial%,%trueIMEI% >> testResults\%list_name%.csv
 goto _end_of_file
 
 
@@ -74,3 +80,4 @@ if exist %serial_name% del %serial_name%
 set Result= 
 set imei= 
 set pm_serial=
+set trueIMEI=
