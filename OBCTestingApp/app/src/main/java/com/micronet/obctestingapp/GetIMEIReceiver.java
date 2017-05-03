@@ -7,11 +7,9 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 /**
- * Created by scott.krstyen on 3/20/2017.
- */
-
-/**
  * Returns the IMEI from the device.
+ *
+ * Created by scott.krstyen on 3/20/2017.
  */
 public class GetIMEIReceiver extends BroadcastReceiver {
 

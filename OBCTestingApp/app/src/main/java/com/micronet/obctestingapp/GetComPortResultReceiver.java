@@ -22,11 +22,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by scott.krstyen on 3/24/2017.
- */
-
-/**
  * Runs an automated ComPort test and returns the result.
+ *
+ * Created by scott.krstyen on 3/24/2017.
  */
 public class GetComPortResultReceiver extends BroadcastReceiver {
 

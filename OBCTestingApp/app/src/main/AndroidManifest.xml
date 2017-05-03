@@ -50,6 +50,11 @@
                 <action android:name="com.micronet.obctestingapp.GET_J1708_RESULT"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".GetGPIOResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_GPIO_RESULT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

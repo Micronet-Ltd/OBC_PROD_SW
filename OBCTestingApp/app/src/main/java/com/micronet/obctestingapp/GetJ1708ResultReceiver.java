@@ -20,11 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by scott.krstyen on 4/19/2017.
- */
-
-/**
  * Runs an automated J1708 test and returns the result.
+ *
+ * Created by scott.krstyen on 4/19/2017.
  */
 public class GetJ1708ResultReceiver extends BroadcastReceiver {
 

@@ -12,11 +12,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Created by scott.krstyen on 3/20/2017.
- */
-
-/**
  * Returns the Serial Number from the device.
+ *
+ * Created by scott.krstyen on 3/20/2017.
  */
 public class GetSerialReceiver extends BroadcastReceiver {
 

@@ -24,12 +24,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by scott.krstyen on 4/10/2017.
- */
-
-/**
  * Runs an automated CanBus test and returns the result. In general all these tests will return a result code of 1 for
  * a pass and a 2 for a fail.
+ *
+ * Created by scott.krstyen on 4/10/2017.
  */
 public class GetCanBusResultReceiver extends BroadcastReceiver {
 

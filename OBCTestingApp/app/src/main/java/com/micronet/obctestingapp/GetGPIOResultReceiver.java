@@ -18,7 +18,7 @@ import java.util.Arrays;
  * Created by scott.krstyen on 4/21/2017.
  */
 
-public class GetGPOResultReceiver extends BroadcastReceiver {
+public class GetGPIOResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -56,7 +56,7 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
         returnString = new StringBuilder();
 
         try {
-            automatedGPOTest();
+            automatedGPIOTest();
         } catch (Exception e) {
             Log.e(TAG, e.toString());
             finalResult = false;
@@ -74,7 +74,7 @@ public class GetGPOResultReceiver extends BroadcastReceiver {
         }
     }
 
-    private void automatedGPOTest() throws Exception {
+    private void automatedGPIOTest() throws Exception {
 
         Log.i(TAG, "*** GPIO Test Started ***");
 
