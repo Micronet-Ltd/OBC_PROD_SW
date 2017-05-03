@@ -27,6 +27,9 @@ set accelerometer_test=
 set gpio_test=
 set supercap_test=
 
+set deviceChoice=
+set deviceType=
+
 rem connect to device over hotspot
 call adb_CONNECT.bat %1
 
@@ -77,13 +80,13 @@ if %ERRORLEVEL% == 1 (
 
 rem Get the device type
 echo.
-echo Please enter the number for which type of device you are testing (1, 2, or 3):
-echo 				[1] MTR-A001-XXX
-echo 				[2] MTR-A002-XXX
-echo 				[3] MTR-A003-XXX
-echo.
+echo Please enter device type (1,2,3):
+echo    Types:
+echo 		[1] MTR-A001-XXX
+echo 		[2] MTR-A002-XXX
+echo 		[3] MTR-A003-XXX
 :_get_device_type
-set /p deviceChoice=
+set /p deviceChoice=Selection:
 
 if "%deviceChoice%" == "1" GOTO _device_A0001
 
@@ -93,8 +96,7 @@ if "%deviceChoice%" == "3" GOTO _device_A0003
 
 rem User did not enter valid value, try again
 echo. 
-echo Invalid selection. Please enter valid device type (1, 2 , or 3):
-echo.
+echo Invalid selection. Please enter (1,2,3):
 goto _get_device_type
 
 :_device_A0001
@@ -110,6 +112,7 @@ set deviceType=MTR-A003-XXX
 goto _resume_test
 
 :_resume_test
+echo.
 rem Reset variable values
 set mydate=
 set deviceSN=
