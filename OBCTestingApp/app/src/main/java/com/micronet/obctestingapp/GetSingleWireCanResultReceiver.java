@@ -23,6 +23,9 @@ import java.util.concurrent.TimeoutException;
  * Created by scott.krstyen on 4/19/2017.
  */
 
+/**
+ * Runs an automated SWC test and returns the result.
+ */
 public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
@@ -38,8 +41,6 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
     private FileInputStream inputStream;
 
-    private File Dir;
-
     private FileDescriptor mFd;
 
     static {
@@ -49,8 +50,10 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        // Run automated test
         automatedSingleWireCanTest();
 
+        // Depending on test result return result
         if(finalResult){
             Log.i(TAG, "*** SWC Test Passed ***");
             setResultCode(1);
@@ -63,14 +66,17 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
     }
 
-
     private native static FileDescriptor open(String path, int Baudrate);
     private native void close();
 
+    /**
+     * Automated SWC test.
+     */
     public void automatedSingleWireCanTest(){
 
         Log.i(TAG, "*** SWC Test Started ***");
 
+        // Set initial value to true
         finalResult = true;
 
         returnString = new StringBuilder();
@@ -108,10 +114,6 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
         FileOutputStream output = new FileOutputStream(mFd);
 
         output.write("C\r".getBytes());
-        //output.write("mt000007F0u0002\r".getBytes());
-        //output.write("Mt000007E8u0003\r".getBytes());
-        //output.write("mt000007F0u0004\r".getBytes());
-        //output.write("Mt000007E0u0005\r".getBytes());
         output.write("mt00000100\r".getBytes());
         output.write("Mt00000700\r".getBytes());
         output.write("S2\r".getBytes()); // Sets the baud rate to 33.3 (this is what makes it single wire can)
@@ -173,32 +175,14 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
             // Get bytes from string to send
             byte[] bytesToSend = stringToSend.getBytes();
 
-            //
+            // Send bytes
             outputStream.write(bytesToSend);
-
-            /*Thread.sleep(250);
-
-            outputStream.write(bytesToSend);
-
-            Thread.sleep(250);
-
-            outputStream.write(bytesToSend);*/
-
-            //Thread.sleep(250);
-
-            /*Thread.sleep(1000);
-
-            outputStream.write(bytesToSend);*/
 
             // Display information
             Log.i(TAG, "Bytes sent : " + bytesToSend.length + " out of " + fileToSendOutOf.getName() + ". String sent - \"" + stringToSend + "\"");
             Log.i(TAG, Arrays.toString(bytesToSend));
 
-            // Remove \r from stringToSend because at the end when we check if readSB contains sentSB, the canbus will add
-            // a time stamp to the end of the string to the sent string will be there besides the \r.
-            // Example:
-            //      Sent: t700499112231\r
-            //      Read: t700499112231a34d\r
+            // Remove \r from stringToSend.
             sentSB.append(stringToSend);
             sentSB.deleteCharAt(sentSB.length()-1);
             outputStream.close();
@@ -239,7 +223,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
             Future<Integer> future = executor.submit(readTask);
             // Give read two seconds to finish
-            int bytesRead = future.get(4000, TimeUnit.MILLISECONDS);
+            int bytesRead = future.get(2000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
             if(bytesRead > 0){
@@ -280,6 +264,10 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
         }
 
         // Check to make sure that sent string contains t7e880102030405060708.
+        // The test board will return a bytes that include that string above so that is how you know you have received a successful result.
+        // Example:
+        //      Sent: t7E08103456789abcdef0\r
+        //      Read: t7e88010203040506070879EF\r
         if(readSB.toString().toLowerCase().contains("t7e880102030405060708")){
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
             // (used to write to the file here, but don't need to anymore since the app uses a broadcast)

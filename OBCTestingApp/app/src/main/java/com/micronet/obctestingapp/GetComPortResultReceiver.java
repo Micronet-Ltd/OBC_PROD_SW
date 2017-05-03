@@ -25,6 +25,9 @@ import java.util.concurrent.TimeoutException;
  * Created by scott.krstyen on 3/24/2017.
  */
 
+/**
+ * Runs an automated ComPort test and returns the result.
+ */
 public class GetComPortResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
@@ -45,12 +48,13 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
 
     private FileInputStream inputStream;
 
-    private File Dir;
-
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        // Run the automated test
         automatedTest();
 
+        // Returns the result depending on the result from the automated test
         if(finalResult){
             Log.i(TAG, "*** Com Port Test Passed ***");
             setResultCode(1);
@@ -63,7 +67,9 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
 
     }
 
-    // Idea to be used for automated testing
+    /**
+     * Automated ComPort test.
+     */
     private void automatedTest()  {
 
         Log.i(TAG, "*** Com Port Test Started ***");
@@ -243,7 +249,6 @@ public class GetComPortResultReceiver extends BroadcastReceiver {
 
         // Check to make sure that sent string is the same as the read string.
         // Then write to the file to results.
-
         if(readSB.toString().contains(sentSB.toString())){
             resultStringBuilder.append("SUCCESS: Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " correctly.\n");
         }else {

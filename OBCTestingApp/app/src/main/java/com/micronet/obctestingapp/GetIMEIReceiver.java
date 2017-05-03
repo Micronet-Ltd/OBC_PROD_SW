@@ -10,6 +10,9 @@ import android.util.Log;
  * Created by scott.krstyen on 3/20/2017.
  */
 
+/**
+ * Returns the IMEI from the device.
+ */
 public class GetIMEIReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
@@ -19,11 +22,15 @@ public class GetIMEIReceiver extends BroadcastReceiver {
 
         TelephonyManager telephonyManager = ((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
         String  imei;
+
         try {
+            // Try to get IMEI
             imei = telephonyManager.getDeviceId();
+            setResultCode(1);
             Log.i(TAG, "IMEI: " + imei);
         } catch (Exception e) {
             imei = "Error";
+            setResultCode(2);
         }
 
         setResultData(imei);

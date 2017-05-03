@@ -45,6 +45,11 @@
                 <action android:name="com.micronet.obctestingapp.GET_SWC_RESULT"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".GetJ1708ResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_J1708_RESULT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

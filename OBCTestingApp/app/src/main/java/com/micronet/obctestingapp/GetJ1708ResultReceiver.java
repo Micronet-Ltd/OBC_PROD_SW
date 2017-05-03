@@ -23,6 +23,9 @@ import java.util.concurrent.TimeoutException;
  * Created by scott.krstyen on 4/19/2017.
  */
 
+/**
+ * Runs an automated J1708 test and returns the result.
+ */
 public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
@@ -38,8 +41,6 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
     private FileInputStream inputStream;
 
-    private File Dir;
-
     private FileDescriptor mFd;
 
     static {
@@ -49,8 +50,10 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        // Runs an automated J1708 test.
         automatedJ1708Test();
 
+        // Depending on test result returns a result.
         if(finalResult){
             Log.i(TAG, "*** J1708 Test Passed ***");
             setResultCode(1);
@@ -63,10 +66,12 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
     }
 
-
     private native static FileDescriptor open(String path, int Baudrate);
     private native void close();
 
+    /**
+     * Automated J1708 test.
+     */
     public void automatedJ1708Test(){
 
         Log.i(TAG, "*** J1708 Test Started ***");
@@ -78,7 +83,6 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
         // Enable j1708 power
         // adb shell "mctl api 02fc01"
         // adb shell mctl api 0213020001
-
         mFd = open("/dev/ttyACM4", 115200);
         close();
 
@@ -101,13 +105,12 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Used to test sending and receiving a string from the given output com port to the
-     * given input com port. Will write to file with results for each step and also if there
+     * Used to test sending and receiving a string with J1708 (/dev/ttyACM4). Will write to file with results for each step and also if there
      * are any errors.
      * @param fileToSendOutOf
-     *      The string for the file name for the com port which you are sending out of
+     *      The file to send out of
      * @param fileToReceiveIn
-     *      The string for the file name for the com port which you are receiving in
+     *      The file to receive in
      */
     public String writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn) throws FileNotFoundException {
 
@@ -181,7 +184,7 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
             Future<Integer> future = executor.submit(readTask);
             // Give read two seconds to finish
-            int bytesRead = future.get(3000, TimeUnit.MILLISECONDS);
+            int bytesRead = future.get(2000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
             if(bytesRead > 0){
@@ -200,7 +203,7 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
             inputStream.close();
 
         }catch (TimeoutException e){
-            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (3 seconds): Timeout" + e.toString());
+            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
             finalResult = false;
             pass = false;
 
@@ -222,7 +225,6 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
         }
 
         // Check to make sure that sent string contains j1708 characters.
-        // I am sure there is an easier way to do this but this works for now.
         if(readSB.toString().contains("j") && readSB.toString().contains("1") && readSB.toString().contains("7") && readSB.toString().contains("0") && readSB.toString().contains("8")){
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
             // (used to write to the file here, but don't need to anymore since the app uses a broadcast)

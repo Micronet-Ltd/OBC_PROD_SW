@@ -27,6 +27,10 @@ import java.util.concurrent.TimeoutException;
  * Created by scott.krstyen on 4/10/2017.
  */
 
+/**
+ * Runs an automated CanBus test and returns the result. In general all these tests will return a result code of 1 for
+ * a pass and a 2 for a fail.
+ */
 public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
@@ -44,8 +48,6 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     private FileInputStream inputStream;
 
-    private File Dir;
-
     private FileDescriptor mFd;
 
     static {
@@ -55,8 +57,10 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        // Run test
         automatedCanBusTest();
 
+        // Return result depending on test result
         if(finalResult){
             Log.i(TAG, "*** CANBus Test Passed ***");
             setResultCode(1);
@@ -70,7 +74,6 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     }
 
-    public native String stringFromJNI();
     private native static FileDescriptor open(String path, int Baudrate);
     private native void close();
 
@@ -78,10 +81,12 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
         Log.i(TAG,"*** CANBus Test Started ***");
 
+        // Reset initial result value to true
         finalResult = true;
 
         returnString = new StringBuilder();
 
+        // Configure ports
         try{
             configureCan0();
         }catch (Exception e){
@@ -97,6 +102,7 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
         }
 
         try{
+            // First write out of Can0 and read (Can0 is connected to Can1)
             writeReceiveTest(Can0, Can1, "t700499112230\r");
 
             if(pass){
@@ -105,6 +111,7 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
                 returnString.append("F");
             }
 
+            // First write out of Can1 and read (Can1 is connected to Can0)
             writeReceiveTest(Can1, Can0, "t700499112231\r");
 
             if(pass){
@@ -125,6 +132,10 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     }
 
+    /**
+     * Configures Can0 to send and receive messages
+     * @throws Exception
+     */
     private void configureCan0() throws Exception {
 
         // **** Set Up Can0 ****
@@ -149,6 +160,10 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
         close();
     }
 
+    /**
+     * Configures Can1 to send and receive messages
+     * @throws Exception
+     */
     private void configureCan1() throws Exception {
 
         // **** Set Up Can1 ****
@@ -302,7 +317,12 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
             }
         }
 
-        // Check to make sure that sent string is the same as the read string.
+        // Check to make sure that sent string contains the read string.
+        // Send and result data will look something similar to:
+        // A time stamp is added to the end of the read string.
+        // Example:
+        //      Sent: t700499112231\r
+        //      Read: t700499112231a34d\r
         if(readSB.toString().contains(sentSB.toString())){
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
             // (used to write to the file here, but don't need to anymore since the app uses a broadcast)
