@@ -78,6 +78,9 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
         returnString = new StringBuilder();
 
+        /*Port j1708Port = new Port("/dev/ttyACM4");
+        j1708Port.closePort();*/
+
         // Enable j1708 power
         // adb shell "mctl api 02fc01"
         // adb shell mctl api 0213020001

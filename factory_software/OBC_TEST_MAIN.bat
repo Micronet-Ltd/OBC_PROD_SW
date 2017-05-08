@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.12
+set test_script_version=1.2.13
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -247,7 +247,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call GPIO_TEST.bat
+call GPIO_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set gpio_test=fail
 	set OBC_TEST_STATUS=Fail

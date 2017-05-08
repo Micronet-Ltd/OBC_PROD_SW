@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
+ * Runs an automated GPIO test.
+ *
  * Created by scott.krstyen on 4/21/2017.
  */
 
@@ -22,209 +17,307 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
-    private StringBuilder sb;
     private StringBuilder returnString;
 
-    private File export = new File("/sys/class/gpio/export");
-
-    private File GPInput1 = new File("/sys/class/gpio/gpio693/value");
-    private File GPInput2 = new File("/sys/class/gpio/gpio694/value");
-    private File GPInput3 = new File("/sys/class/gpio/gpio695/value");
-    private File GPInput4 = new File("/sys/class/gpio/gpio696/value");
-
-    private File GPOutput0 = new File("/sys/class/gpio/gpio700/value");
-    private File GPOutput1 = new File("/sys/class/gpio/gpio701/value");
-    private File GPOutput2 = new File("/sys/class/gpio/gpio702/value");
-    private File GPOutput3 = new File("/sys/class/gpio/gpio703/value");
-
     private boolean finalResult = true;
-    private boolean pass;
 
-    private byte[] readBuffer;
+    private MControl mControl;
 
-    private FileInputStream inputStream;
+    // Holds whether the given input should be high or low
+    private boolean[] inputsHighOrLowArray;
 
-    private BufferedWriter bw;
-    private BufferedReader br;
+    // An array that holds the input voltages as they are read
+    private int[] inputVoltages;
 
-    private String[] outputValues;
-    private String[] inputValues;
+    // GPIO numbers for the outputs
+    private static final int GP_OUTPUT_0 = 267;
+    private static final int GP_OUTPUT_1 = 272;
+    private static final int GP_OUTPUT_2 = 273;
+    private static final int GP_OUTPUT_3 = 261;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        returnString = new StringBuilder();
+        // Initialize MControl
+        mControl = new MControl();
 
-        try {
-            automatedGPIOTest();
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            finalResult = false;
-            returnString.append("FFFF");
-        }
+        // Start automated GPIO test
+        automatedGPIOTest();
 
+        // Return result depending on finalResult
         if(finalResult){
-            Log.i(TAG, "*** GPIO Test Passed ***");
+            Log.i(TAG, "*** GPOutput Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
-            Log.i(TAG, "*** CANBus Test Failed ***");
+            Log.i(TAG, "*** GPOutput Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
     }
 
-    private void automatedGPIOTest() throws Exception {
+    /**
+     * Automated test for testing GPIO on the OBC5.
+     */
+    private void automatedGPIOTest() {
 
-        Log.i(TAG, "*** GPIO Test Started ***");
+        Log.i(TAG, "*** GPOutput Test Started ***");
 
-        // Set initially to false. If it makes it through the whole test without returning then it is successful
-        finalResult = false;
+        // New return string
+        returnString = new StringBuilder();
 
-        // Arrays to hold values of outputs and inputs
-        outputValues = new String[4];
-        inputValues = new String[4];
-
-        // Export all the gpio values
-        exportGPIO();
-
-        if(!setAndCheckGPIOValues(new String[]{"0","0","0","0"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"1","0","0","0"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"0","1","0","0"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"0","0","1","0"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"0","0","0","1"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"1","1","1","1"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"0","1","1","1"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"1","0","1","1"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"1","1","0","1"})){
-            finalResult = false;
-            return;
-        }
-
-        if(!setAndCheckGPIOValues(new String[]{"1","1","1","0"})){
-            finalResult = false;
-            return;
-        }
-
-        // Return outputs all to zero to end test
-        if(!setAndCheckGPIOValues(new String[]{"0","0","0","0"})){
-            finalResult = false;
-            return;
-        }
-
+        // Set default result to true
         finalResult = true;
-        return;
+
+
+        if(setAndCheckGPIOValues(new int[] {0, 0, 0, 0})){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        if(setAndCheckGPIOValues(new int[] {1, 0, 0, 0})){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        if(setAndCheckGPIOValues(new int[] {0, 1, 0, 0})){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        if(setAndCheckGPIOValues(new int[] {0, 0, 1, 0})){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        if(setAndCheckGPIOValues(new int[] {0, 0, 0, 1})){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
 
     }
 
-    private boolean setAndCheckGPIOValues(String[] testArray) throws Exception {
+    /**
+     * Sets the outputs to high or low depending on the outputArray and then checks that the input voltages
+     * are what they should be.
+     * @param outputArray - Holds whether the given output is high or low.
+     * @return - A boolean that tells whether this individual test passed or not.
+     */
+    private boolean setAndCheckGPIOValues(int[] outputArray){
 
-        // Set all output values array values passed in
-        setGPIOValue(GPOutput0, testArray[0]);
-        setGPIOValue(GPOutput1, testArray[1]);
-        setGPIOValue(GPOutput2, testArray[2]);
-        setGPIOValue(GPOutput3, testArray[3]);
+        try{
+            // Set outputs from outputArray
+            setGPIOValue(GP_OUTPUT_0, outputArray[0]);
+            setGPIOValue(GP_OUTPUT_1, outputArray[1]);
+            setGPIOValue(GP_OUTPUT_2, outputArray[2]);
+            setGPIOValue(GP_OUTPUT_3, outputArray[3]);
 
-        Thread.sleep(500);
+            // Show array for debugging purposes
+            Log.i(TAG, "GPOutputs set to: " + Arrays.toString(outputArray));
 
-        // Get all values to compare them with the array passed in
-        getOutputValues();
-        getInputValues();
+            // Brief pause
+            Thread.sleep(1000);
 
-        // If values aren't correct then set final result to false
-        if(!(Arrays.equals(outputValues, testArray) && Arrays.equals(inputValues, testArray))){
+            // From the outputs decide what whether the inputs should be high or low
+            getExpectedInputsFromOutputs(outputArray);
+
+            // If all voltages were in the correct range then return true, else return false.
+            if(checkInputValues()){
+                return true;
+            }else{
+                return false;
+            }
+
+
+
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
+            finalResult = false;
             return false;
         }
-        else{ // Values are all correct so return true
-            return true;
+    }
+
+    /**
+     * Used to set the inputted GPIO number to the inputted GPIO value.
+     * @param gpioNumber - The desired GPIO number.
+     * @param value - The value to set the GPIO to (should be either 1 or 0).
+     */
+    private void setGPIOValue(int gpioNumber, int value)  {
+
+        // Set the GPIO number to the inputted GPIO value
+        mControl.set_gpio_state_dbg(gpioNumber, value);
+
+    }
+
+    /**
+     * Used to get the expected input values (whether inputs should be high or low) depending on what
+     * the outputs are set to (high or low).
+     * @param outputArray - The array that holds which outputs are set to high and low.
+     */
+    private void getExpectedInputsFromOutputs(int[] outputArray) {
+
+        // array values initialize to false
+        inputsHighOrLowArray = new boolean[7];
+
+        // If output 0 is low then input 1 and 5 should be high
+        if(outputArray[0] == 0){
+            inputsHighOrLowArray[0] = true;
+            inputsHighOrLowArray[4] = true;
         }
+
+        // If output 1 is low then input 2 and 6 should be high
+        if(outputArray[1] == 0){
+            inputsHighOrLowArray[1] = true;
+            inputsHighOrLowArray[5] = true;
+        }
+
+        // If output 2 is low then input 3 and 7 should be high
+        if(outputArray[2] == 0){
+            inputsHighOrLowArray[2] = true;
+            inputsHighOrLowArray[6] = true;
+        }
+
+        // If output 3 is low then input 4 should be high
+        if(outputArray[3] == 0){
+            inputsHighOrLowArray[3] = true;
+        }
+
     }
 
-    private void exportGPIO() throws IOException {
-        bw = new BufferedWriter(new FileWriter(export));
+    /**
+     * Checks the input voltages to make sure they are in the correct range.
+     * @return - A boolean on whether the whole check for all inputs passed or failed.
+     */
+    private boolean checkInputValues() {
 
-        // Export GPInputs 1-4
-        bw.write("693");
-        bw.write("694");
-        bw.write("695");
-        bw.write("696");
+        inputVoltages = new int[7];
 
-        // Export GPOutputs 0-3
-        bw.write("700");
-        bw.write("701");
-        bw.write("702");
-        bw.write("703");
+        // Result default should be true
+        boolean result = true;
 
-        bw.flush();
-        bw.close();
+        // Input 1
+        // If output 0 is low then the voltage for input 1 should be between 9000 and 13000 mv, else the
+        // voltage for input 1 should be between 0 and 500.
+        if(inputsHighOrLowArray[0]){
+            if(!checkGPIOValue(1, 9000, 13000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(1, 0, 500)){
+                result = false;
+            }
+
+        }
+
+        // Input 2
+        // If output 1 is low then the voltage for input 2 should be between 4000 and 5000 mv, else the
+        // voltage for input 2 should be between 0 and 500.
+        if(inputsHighOrLowArray[1]){
+            if(!checkGPIOValue(2, 4000, 5000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(2, 0, 500)){
+                result = false;
+            }
+        }
+
+        // Input 3
+        // If output 2 is low then the voltage for input 3 should be between 9000 and 13000 mv, else the
+        // voltage for input 3 should be between 0 and 500.
+        if(inputsHighOrLowArray[2]){
+            if(!checkGPIOValue(3, 9000, 13000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(3, 0, 500)){
+                result = false;
+            }
+        }
+
+        // Input 4
+        // If output 3 is low then the voltage for input 4 should be between 4000 and 5000 mv, else the
+        // voltage for input 4 should be between 0 and 500.
+        if(inputsHighOrLowArray[3]){
+            if(!checkGPIOValue(4, 4000, 5000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(4, 0, 500)){
+                result = false;
+            }
+        }
+
+        // Input 5
+        // If output 0 is low then the voltage for input 5 should be between 9000 and 13000 mv, else the
+        // voltage for input 5 should be between 0 and 500.
+        if(inputsHighOrLowArray[4]){
+            if(!checkGPIOValue(5, 9000, 13000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(5, 0, 500)){
+                result = false;
+            }
+        }
+
+        // Input 6
+        // If output 1 is low then the voltage for input 6 should be between 4000 and 5000 mv, else the
+        // voltage for input 6 should be between 0 and 500.
+        if(inputsHighOrLowArray[5]){
+            if(!checkGPIOValue(6, 4000, 5000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(6, 0, 500)){
+                result = false;
+            }
+        }
+
+        // Input 7
+        // If output 2 is low then the voltage for input 7 should be between 9000 and 13000 mv, else the
+        // voltage for input 7 should be between 0 and 500.
+        if(inputsHighOrLowArray[6]){
+            if(!checkGPIOValue(7, 9000, 13000)){
+                result = false;
+            }
+        }else{
+            if(!checkGPIOValue(7, 0, 500)){
+                result = false;
+            }
+        }
+
+        Log.i(TAG, "Input voltages are: " + Arrays.toString(inputVoltages));
+
+        // If all passed then result will be true, else result will be false
+        return result;
     }
 
-    private void getInputValues() throws Exception {
-        inputValues[0] = readValueFromFile(GPInput1);
-        inputValues[1] = readValueFromFile(GPInput2);
-        inputValues[2] = readValueFromFile(GPInput3);
-        inputValues[3] = readValueFromFile(GPInput4);
+
+
+    private boolean checkGPIOValue(int gpiNum, int lowerBound, int upperBound) {
+
+        int value = mControl.get_adc_or_gpi_voltage(gpiNum);
+
+        inputVoltages[gpiNum-1] = value;
+
+        if(lowerBound <= value && value <= upperBound){
+            return true;
+        }else{
+            Log.e(TAG, "GPI " + gpiNum + " is " + value + " but should be between " + lowerBound + " and " + upperBound);
+            finalResult = false;
+            return false;
+        }
+
     }
 
-    private void getOutputValues() throws Exception {
-        outputValues[0] = readValueFromFile(GPOutput0);
-        outputValues[1] = readValueFromFile(GPOutput1);
-        outputValues[2] = readValueFromFile(GPOutput2);
-        outputValues[3] = readValueFromFile(GPOutput3);
-    }
 
-    private void setGPIOValue(File file, String s) throws Exception {
 
-        bw = new BufferedWriter(new FileWriter(file));
-
-        bw.write(s);
-
-        bw.flush();
-        bw.close();
-    }
-
-    private String readValueFromFile(File file) throws Exception {
-
-        String value = "";
-        br = new BufferedReader(new FileReader(file));
-
-        value = br.readLine();
-
-        br.close();
-        return value;
-    }
 
 
 }

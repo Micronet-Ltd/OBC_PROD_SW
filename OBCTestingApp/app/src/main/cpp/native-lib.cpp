@@ -71,6 +71,100 @@ static speed_t getBaudrate(jint baudrate)
 
 extern "C"
 JNIEXPORT jobject JNICALL
+Java_com_micronet_obctestingapp_Port_open(JNIEnv *env, jobject thiz, jstring path, jint baudrate) {
+    //const char *path = env->GetStringUTFChars(path_, 0);
+
+    int fd;
+    speed_t speed;
+    jobject mFileDescriptor;
+
+    /* Check arguments */
+
+    speed = getBaudrate(baudrate);
+    if (speed == 0xFFFFFFFF) {
+        /* TODO: throw an exception */
+        LOGE("%s", "Invalid baudrate");
+        return NULL;
+    }
+
+
+    /* Opening device */
+
+    jboolean iscopy;
+    const char *path_utf = env->GetStringUTFChars(path, &iscopy);
+    LOGD("Opening serial port %s", path_utf);
+    /* fd = open(path_utf, O_RDWR | O_DIRECT | O_SYNC); */
+    if( (fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK)) < 0 )
+    {
+        //LOGE("Cannot open port: %s", strerror(errno));
+        env->ReleaseStringUTFChars(path, path_utf);
+        return NULL;
+    }
+    LOGD("open() fd = %d", fd);
+
+
+    /* Configure device */
+    struct termios cfg;
+    LOGD("Configuring serial port");
+    if (tcgetattr(fd, &cfg))
+    {
+        LOGE("%s", "tcgetattr() failed");
+        close(fd);
+        /* TODO: throw an exception */
+        return NULL;
+    }
+
+    cfmakeraw(&cfg);
+    cfsetispeed(&cfg, speed);
+    cfsetospeed(&cfg, speed);
+    cfg.c_cflag =  (B115200 | CS8 | CLOCAL | CREAD) & ~(CRTSCTS | CSTOPB | PARENB);
+    cfg.c_iflag = 0;
+    cfg.c_oflag = 0;
+    cfg.c_lflag = 0;        /* disable ECHO, ICANON, etc... */
+    cfg.c_cc[VTIME] = 10;   /* unit: 1/10 second. */
+    cfg.c_cc[VMIN] = 1;     /* minimal characters for reading */
+
+    if (tcsetattr(fd, TCSANOW, &cfg))
+    {
+        LOGE("%s", "tcsetattr() failed");
+        close(fd);
+        /* TODO: throw an exception */
+        return NULL;
+    }
+
+    tcflush(fd, TCIOFLUSH);
+
+
+    /* Create a corresponding file descriptor */
+    jclass cFileDescriptor = env->FindClass("java/io/FileDescriptor");
+    jmethodID iFileDescriptor = env->GetMethodID(cFileDescriptor, "<init>", "()V");
+    jfieldID descriptorID = env->GetFieldID(cFileDescriptor, "descriptor", "I");
+    mFileDescriptor = env->NewObject(cFileDescriptor, iFileDescriptor);
+    env->SetIntField(mFileDescriptor, descriptorID, (jint)fd);
+
+
+    return mFileDescriptor;
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_com_micronet_obctestingapp_Port_close
+        (JNIEnv *env, jobject thiz)
+{
+    jclass SerialPortClass = env->GetObjectClass(thiz);
+    jclass FileDescriptorClass = env->FindClass("java/io/FileDescriptor");
+
+    jfieldID mFdID = env->GetFieldID(SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
+    jfieldID descriptorID = env->GetFieldID(FileDescriptorClass, "descriptor", "I");
+
+    jobject mFd = env->GetObjectField(thiz, mFdID);
+    jint descriptor = env->GetIntField(mFd, descriptorID);
+
+    LOGD("close(fd = %d)", descriptor);
+    close(descriptor);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
 Java_com_micronet_obctestingapp_GetCanBusResultReceiver_open(JNIEnv *env, jobject thiz, jstring path, jint baudrate) {
     //const char *path = env->GetStringUTFChars(path_, 0);
 

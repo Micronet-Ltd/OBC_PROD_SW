@@ -77,8 +77,6 @@ goto _end_of_file
 
 
 :_end_of_file
-rem Uninstall app
-..\adb uninstall com.micronet.obctestingapp > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

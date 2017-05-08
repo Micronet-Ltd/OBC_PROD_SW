@@ -105,6 +105,21 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
     private void setUpSWC() throws Exception {
 
+        /*Port swcPort = new Port("/dev/ttyACM3");
+
+        swcPort.outputStream.write("C\r".getBytes());
+        swcPort.outputStream.write("mt00000100\r".getBytes());
+        swcPort.outputStream.write("Mt00000700\r".getBytes());
+        swcPort.outputStream.write("S2\r".getBytes());
+        swcPort.outputStream.write("O1\r".getBytes());
+
+        Thread.sleep(1000);
+
+        swcPort.outputStream.flush();
+        swcPort.closePort();
+
+        Log.d(TAG,"SWC Configured (/dev/ttyACM3)");*/
+
         // **** Set Up SWC ****
 
         mFd = open("/dev/ttyACM3", 115200);
