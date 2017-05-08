@@ -247,6 +247,9 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+rem if device doesn't have GP Outputs then skip use old test, else use new test
+if "%deviceType%" == "MTR-A001-XXX" GOTO _old_gpio_test
+
 call GPIO_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set gpio_test=fail
@@ -255,6 +258,21 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
+
+GOTO _super_cap_test
+
+:_old_gpio_test
+call GPIO_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set gpio_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+
+:_super_cap_test
 
 call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 (
