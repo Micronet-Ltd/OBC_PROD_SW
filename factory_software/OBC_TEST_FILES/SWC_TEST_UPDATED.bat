@@ -42,7 +42,7 @@ set /a loop_count=%loop_count%+1
 set Result=
 rem If SWC test has failed multiple times then goto _test_fail
 if %loop_count% GTR 4 goto _test_fail
-echo repeat test, failure count = %loop_count%
+rem echo repeat test, failure count = %loop_count%
 goto _test_loop
 
 :_test_fail

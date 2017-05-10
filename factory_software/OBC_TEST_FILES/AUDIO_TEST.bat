@@ -57,8 +57,8 @@ set choice=
 echo.&set /p choice=Would you like to repeat the test [Y/N] ?
 if /I %choice% == Y goto _retest 
 set ERRORLEVEL=1
-echo ** audio test - failed
-@echo audio  test - failed >> testResults\%result_file_name%.txt
+echo ** Audio test - failed
+@echo Audio test - failed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 
@@ -69,8 +69,8 @@ goto _start_test
 
 
 :_test_pass
-echo ** audio test - passed
-@echo audio test - passed  >> testResults\%result_file_name%.txt
+echo ** Audio test - passed
+@echo Audio test - passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file
 rem turning on both speakers 

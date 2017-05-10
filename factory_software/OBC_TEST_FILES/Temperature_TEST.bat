@@ -22,15 +22,15 @@ rem @echo %temperature%
 rem pause
 if %temperature% LSS 20 goto _temperature_value_error
 if %temperature% GTR 50 goto _temperature_value_error
-echo ** temperature test - passed  
-@echo temperature test - passed  temperature is: %temperature%  >> testResults\%result_file_name%.txt
+echo ** Temperature test - passed  
+@echo Temperature test - passed  temperature is: %temperature%  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_temperature_value_error
 set ERRORLEVEL=1
 rem echo.
-echo ** temperature test - failed Expected temperature 20-50c got %temperature%
-@echo temperature  test - failed Expected temperature 20-50c got %temperature%  >> testResults\%result_file_name%.txt
+echo ** Temperature test - failed Expected temperature 20-50c got %temperature%
+@echo Temperature  test - failed Expected temperature 20-50c got %temperature%  >> testResults\%result_file_name%.txt
 
 
 :_end_of_file

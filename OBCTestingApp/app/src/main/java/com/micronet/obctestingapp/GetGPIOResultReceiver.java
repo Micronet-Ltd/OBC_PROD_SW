@@ -69,32 +69,239 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         // Set default result to true
         finalResult = true;
 
+        // ************ INPUT CHECK ****************
 
-        if(setAndCheckGPIOValues(new int[] {0, 0, 0, 0})){
+        // Check all inputs initially with all outputs set to 0
+        setGPIOValue(GP_OUTPUT_0, 0);
+        setGPIOValue(GP_OUTPUT_1, 0);
+        setGPIOValue(GP_OUTPUT_2, 0);
+        setGPIOValue(GP_OUTPUT_3, 0);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        // Check ignition
+        if(checkInputValue(0, 4000, 13000)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
-        if(setAndCheckGPIOValues(new int[] {1, 0, 0, 0})){
+        // Check Input 1
+        if(checkInputValue(1, 9000, 13000)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
-        if(setAndCheckGPIOValues(new int[] {0, 1, 0, 0})){
+        // Check Input 2
+        if(checkInputValue(2, 4000, 5000)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
-        if(setAndCheckGPIOValues(new int[] {0, 0, 1, 0})){
+        // Check Input 3
+        if(checkInputValue(3, 9000, 13000)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
-        if(setAndCheckGPIOValues(new int[] {0, 0, 0, 1})){
+        // Check Input 4
+        if(checkInputValue(4, 4000, 5000)){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // Check Input 5
+        if(checkInputValue(5, 9000, 13000)){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // Check Input 6
+        if(checkInputValue(6, 4000, 5000)){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // Check Input 7
+        if(checkInputValue(7, 9000, 13000)){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // *********** OUTPUT 0 CHECK ***********
+
+        // Set output 0 to high. Input 1 and 5 should go low.
+        setGPIOValue(GP_OUTPUT_0, 1);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        boolean output0WorkingProperly = true;
+
+        if(!checkGPIOValue(1, 0, 500, 0, "high")){
+            output0WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(5, 0, 500, 0, "high")){
+            output0WorkingProperly = false;
+        }
+
+        // Set output 0 to low. Input 1 and 5 should go high.
+        setGPIOValue(GP_OUTPUT_0, 0);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        if(!checkGPIOValue(1, 9000, 13000, 0, "low")){
+            output0WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(5, 9000, 13000, 0, "low")){
+            output0WorkingProperly = false;
+        }
+
+        if(output0WorkingProperly){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // *********** OUTPUT 1 CHECK ***********
+
+        // Set output 0 to high. Input 2 and 6 should go low.
+        setGPIOValue(GP_OUTPUT_1, 1);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        boolean output1WorkingProperly = true;
+
+        if(!checkGPIOValue(2, 0, 500, 1, "high")){
+            output1WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(6, 0, 500, 1, "high")){
+            output1WorkingProperly = false;
+        }
+
+        // Set output 1 to low. Input 2 and 6 should go high.
+        setGPIOValue(GP_OUTPUT_1, 0);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        if(!checkGPIOValue(2, 4000, 5000, 1, "low")){
+            output1WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(6, 4000, 5000, 1, "low")){
+            output1WorkingProperly = false;
+        }
+
+        if(output1WorkingProperly){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // *********** OUTPUT 2 CHECK ***********
+
+        // Set output 2 to high. Input 3 and 7 should go low.
+        setGPIOValue(GP_OUTPUT_2, 1);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        boolean output2WorkingProperly = true;
+
+        if(!checkGPIOValue(3, 0, 500, 2, "high")){
+            output2WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(7, 0, 500, 2, "high")){
+            output2WorkingProperly = false;
+        }
+
+        // Set output 0 to low. Input 3 and 7 should go high.
+        setGPIOValue(GP_OUTPUT_2, 0);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        if(!checkGPIOValue(3, 9000, 13000, 2, "low")){
+            output2WorkingProperly = false;
+        }
+
+        if(!checkGPIOValue(7, 9000, 13000, 2, "low")){
+            output2WorkingProperly = false;
+        }
+
+        if(output2WorkingProperly){
+            returnString.append("P");
+        }else{
+            returnString.append("F");
+        }
+
+        // *********** OUTPUT 3 CHECK ***********
+
+        // Set output 3 to high. Input 4 should go low.
+        setGPIOValue(GP_OUTPUT_3, 1);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        boolean output3WorkingProperly = true;
+
+        if(!checkGPIOValue(4, 0, 500, 3, "high")){
+            output3WorkingProperly = false;
+        }
+
+        // Set output 1 to low. Input 2 and 6 should go high.
+        setGPIOValue(GP_OUTPUT_3, 0);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG,e.toString());
+        }
+
+        if(!checkGPIOValue(4, 4000, 5000, 3, "low")){
+            output3WorkingProperly = false;
+        }
+
+        if(output3WorkingProperly){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -103,11 +310,54 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
     }
 
     /**
+     * Used to set the inputted GPIO number to the inputted GPIO value.
+     * @param gpioNumber - The desired GPIO number.
+     * @param value - The value to set the GPIO to (should be either 1 or 0).
+     */
+    private void setGPIOValue(int gpioNumber, int value)  {
+
+        // Set the GPIO number to the inputted GPIO value
+        mControl.set_gpio_state_dbg(gpioNumber, value);
+
+    }
+
+    private boolean checkGPIOValue(int gpiNum, int lowerBound, int upperBound, int output, String state) {
+
+        int value = mControl.get_adc_or_gpi_voltage(gpiNum);
+
+        if(lowerBound <= value && value <= upperBound){
+            Log.i(TAG, "Output " + output + " is " + state + ": Input " + gpiNum + "'s voltage is " + value);
+            return true;
+        }else{
+            Log.e(TAG, "Input " + gpiNum + " is " + value + " but should be between " + lowerBound + " and " + upperBound + " while Output " + output + " is " + state);
+            finalResult = false;
+            return false;
+        }
+
+    }
+
+    private boolean checkInputValue(int gpiNum, int lowerBound, int upperBound) {
+
+        int value = mControl.get_adc_or_gpi_voltage(gpiNum);
+
+        if(lowerBound <= value && value <= upperBound){
+            Log.i(TAG, "Input " + gpiNum + "'s voltage is " + value);
+            return true;
+        }else{
+            Log.e(TAG, "Input " + gpiNum + " is " + value + " but should be between " + lowerBound + " and " + upperBound);
+            finalResult = false;
+            return false;
+        }
+
+    }
+
+/*
+    *//**
      * Sets the outputs to high or low depending on the outputArray and then checks that the input voltages
      * are what they should be.
      * @param outputArray - Holds whether the given output is high or low.
      * @return - A boolean that tells whether this individual test passed or not.
-     */
+     *//*
     private boolean setAndCheckGPIOValues(int[] outputArray){
 
         try{
@@ -140,25 +390,15 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
             finalResult = false;
             return false;
         }
-    }
+    }*/
 
-    /**
-     * Used to set the inputted GPIO number to the inputted GPIO value.
-     * @param gpioNumber - The desired GPIO number.
-     * @param value - The value to set the GPIO to (should be either 1 or 0).
-     */
-    private void setGPIOValue(int gpioNumber, int value)  {
 
-        // Set the GPIO number to the inputted GPIO value
-        mControl.set_gpio_state_dbg(gpioNumber, value);
-
-    }
-
-    /**
+/*
+    *//**
      * Used to get the expected input values (whether inputs should be high or low) depending on what
      * the outputs are set to (high or low).
      * @param outputArray - The array that holds which outputs are set to high and low.
-     */
+     *//*
     private void getExpectedInputsFromOutputs(int[] outputArray) {
 
         // array values initialize to false
@@ -189,10 +429,10 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
     }
 
-    /**
+    *//**
      * Checks the input voltages to make sure they are in the correct range.
      * @return - A boolean on whether the whole check for all inputs passed or failed.
-     */
+     *//*
     private boolean checkInputValues() {
 
         inputVoltages = new int[7];
@@ -296,25 +536,11 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
         // If all passed then result will be true, else result will be false
         return result;
-    }
+    }*/
 
 
 
-    private boolean checkGPIOValue(int gpiNum, int lowerBound, int upperBound) {
 
-        int value = mControl.get_adc_or_gpi_voltage(gpiNum);
-
-        inputVoltages[gpiNum-1] = value;
-
-        if(lowerBound <= value && value <= upperBound){
-            return true;
-        }else{
-            Log.e(TAG, "GPI " + gpiNum + " is " + value + " but should be between " + lowerBound + " and " + upperBound);
-            finalResult = false;
-            return false;
-        }
-
-    }
 
 
 

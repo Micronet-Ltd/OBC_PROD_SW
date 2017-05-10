@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.13
+set test_script_version=1.2.14
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -97,7 +97,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call sd-card_test.bat
+call sd-card_test_updated.bat
 if %ERRORLEVEL% == 1 (
 	set sd_card_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -142,7 +142,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call NFC_TEST.bat
+call NFC_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set nfc_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -151,7 +151,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call HELP_KEY_TEST.bat
+call HELP_KEY_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set help_key_test=fail
 	set OBC_TEST_STATUS=Fail

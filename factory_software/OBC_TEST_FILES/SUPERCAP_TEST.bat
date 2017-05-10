@@ -11,8 +11,8 @@ rem --------- check supercap charging  ----------------
 rem line structure is: GPI 9, approx voltage = VALUE mV, ret = -3
 rem need to read only the VALUE and compare to expected range
 ..\adb shell mctl api 020409>%sc_voltage_file_name%
-set /p sc_voltage=<%sc_voltage_file_name%
-set /a sc_voltage=%sc_voltage:~24,5%
+set /p sc_voltage=<%sc_voltage_file_name% > nul 2>&1
+set /a sc_voltage=%sc_voltage:~24,5% > nul 2>&1
 rem echo supercap voltage =  %sc_voltage%
 
 rem verify supercap is charged but not over charged
@@ -20,10 +20,10 @@ if %sc_voltage% LSS 3000 goto _SC_LEVEL_ERROR
 if %sc_voltage% GTR 5500 goto _SC_LEVEL_ERROR
 
 rem Change the default of wi-fi off during power loss
-..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"
-..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay"
+..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"  
+..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay" 
 
-rem --------- end check supercap charging  _-----------
+rem --------- end check supercap charging  -----------
 
 rem --------- check deivces is off ---------------------
 :_read_input_voltage_level
@@ -37,8 +37,8 @@ pause > nul
 ..\adb shell mctl api 020408>%sc_voltage_file_name%
 rem line structure is: GPI 8, approx voltage = VALUE mV, ret = -3
 rem need to read only the VALUE and compare to expected range
-set /p power_in_voltage=<%sc_voltage_file_name%
-set /a power_in_voltage=%power_in_voltage:~24,5%
+set /p power_in_voltage=<%sc_voltage_file_name% > nul 2>&1
+set /a power_in_voltage=%power_in_voltage:~24,5% > nul 2>&1
 rem echo power in voltage : %power_in_voltage%
 
 rem verify input voltage is off
@@ -49,12 +49,12 @@ rem --------- end check deivces is off --------------------
 set /a loop_cnt = 0
 :_SC_LOOP
 rem echo | set /p=.
-set /a loop_cnt = %loop_cnt% + 1
+set /a loop_cnt = %loop_cnt% + 1 > nul 2>&1
 ..\adb shell mctl api 020409 > %sc_voltage_file_name%
-set /p sc_voltage_off=<%sc_voltage_file_name%
-set /a sc_voltage_off=%sc_voltage_off:~24,5%
+set /p sc_voltage_off=<%sc_voltage_file_name% > nul 2>&1
+set /a sc_voltage_off=%sc_voltage_off:~24,5% > nul 2>&1
 ..\adb shell cat /sys/class/gpio/gpio991/value > %tmp_file_name%
-set /p power_loss=<%tmp_file_name%
+set /p power_loss=<%tmp_file_name% > nul 2>&1
 rem echo supercap discharging %sc_voltage_off%
 rem echo %power_loss%
 

@@ -30,7 +30,7 @@ goto _end_of_test
 
 :_test_pass
 
-echo ** RTC test - Passed
+echo ** RTC test - passed
 @echo RTC test - passed, date is: %MCUdate% >> testResults\%result_file_name%.txt
 
 :_end_of_test

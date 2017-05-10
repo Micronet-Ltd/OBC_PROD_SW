@@ -13,7 +13,7 @@ rem echo ------------------------------------
 echo.
 
 rem Prompt user to scan in serial number
-set /p read_in_serial=Scan Serial Number:
+set /p read_in_serial=Scan Serial Number: 
 
 :_test
 rem Send broadcast to receive serial number

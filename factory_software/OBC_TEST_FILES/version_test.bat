@@ -59,47 +59,47 @@ if %ERRORLEVEL% == 1 goto _end_of_test
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** version test - Passed 
+echo ** Version test - passed 
 goto _end_of_test
 
 :_test_error_no_mcu_version
 set ERRORLEVEL=1
-echo MCU version - failed 
-@echo MCU version - fail : expected  %mcu_version%  got %version% >> testResults\%result_file_name%.txt
+echo ** MCU version test - fail : Error, no MCU version string in the input folder. Contact MICRONET for the MCU string
+@echo MCU version - fail : There is no MCU version string in the input folder. Contact MICRONET for the MCU string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_error_no_fpga_version
 set ERRORLEVEL=1
-echo ** FPGA version test - failed 
-@echo FPGA version - fail : expected  %fpga_version%  got %version%>> testResults\%result_file_name%.txt
+echo ** FPGA version test - fail : Error no FPGA version string in the input folder. Contact MICRONET for the FPGA string
+@echo FPGA version - fail : There is no FPGA version string in the input folder. Contact MICRONET for the FPGA string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_error_no_os_version
 set ERRORLEVEL=1
-echo ** OS version test - failed 
-@echo OS version - failed : expected  %os_version%  got %version%>> testResults\%result_file_name%.txt
+echo ** OS version test - fail : Error, no OS version string in the input folder. Contact MICRONET for the OS string 
+@echo OS version - failed : There is no OS version string in the input folder. Contact MICRONET for the OS string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_error_wrong_mcu_version
 set ERRORLEVEL=1
-echo MCU version test - failed
-@echo MCU version - fail : expected  %mcu_version%  got %version% >> testResults\%result_file_name%.txt
+echo MCU version test - failed : expected %mcu_version% got %version%. Burn correct MCU version.
+@echo MCU version - fail : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto _check_FPGA_version
 
 :_test_error_wrong_fpga_version
 set ERRORLEVEL=1
-echo ** FPGA  version test - failed
-@echo FPGA version - fail : expected  %fpga_version%  got %version%>> testResults\%result_file_name%.txt
+echo ** FPGA  version test - failed : expected %fpga_version% got %version%. Burn correct FPGA version.
+@echo FPGA version - fail : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto _check_OS_version
 
 :_test_error_wrong_os_version
 set ERRORLEVEL=1
-echo ** OS version test - failed
-@echo OS version - failed : expected  %os_version%  got %version%>> testResults\%result_file_name%.txt
+echo ** OS version test - failed : expected %os_version% got %version%. Burn correct OS version.
+@echo OS version - failed : expected  %os_version%  got %version%. Burn correct OS version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto _end_of_test
