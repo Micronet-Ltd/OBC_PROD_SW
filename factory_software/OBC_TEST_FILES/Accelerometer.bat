@@ -19,7 +19,9 @@ rem echo all return %accelerometer%
 set accelerometer=%accelerometer:~30,7%
 rem echo only size %accelerometer%
 
-..\adb shell  rm /sdcard/acceleromete.txt
+rem Make sure you are killing the background process testframe so you don't end up with multiple
+..\adb shell "busybox pkill testframe" > nul
+..\adb shell rm /sdcard/acceleromete.txt
 
 rem check the file size 
 if %accelerometer% LSS 500 goto _accelerometer_size_error 
