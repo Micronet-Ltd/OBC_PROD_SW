@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.14
+set test_script_version=1.2.15
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -188,7 +188,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
-call Accelerometer.bat
+call Accelerometer_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set accelerometer_test=fail
 	set OBC_TEST_STATUS=Fail

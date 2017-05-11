@@ -46,11 +46,11 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
         // Return result depending on finalResult
         if(finalResult){
-            Log.i(TAG, "*** GPOutput Test Passed ***");
+            Log.i(TAG, "*** GPIO Test Passed ***");
             setResultCode(1);
             setResultData(returnString.toString());
         }else{
-            Log.i(TAG, "*** GPOutput Test Failed ***");
+            Log.i(TAG, "*** GPIO Test Failed ***");
             setResultCode(2);
             setResultData(returnString.toString());
         }
@@ -61,7 +61,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
      */
     private void automatedGPIOTest() {
 
-        Log.i(TAG, "*** GPOutput Test Started ***");
+        Log.i(TAG, "*** GPIO Test Started ***");
 
         // New return string
         returnString = new StringBuilder();
@@ -145,7 +145,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_0, 1);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -164,7 +164,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_0, 0);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -189,7 +189,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_1, 1);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -208,7 +208,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_1, 0);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -233,7 +233,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_2, 1);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -252,7 +252,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_2, 0);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -277,7 +277,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_3, 1);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }
@@ -292,7 +292,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         setGPIOValue(GP_OUTPUT_3, 0);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(750);
         } catch (InterruptedException e) {
             Log.e(TAG,e.toString());
         }

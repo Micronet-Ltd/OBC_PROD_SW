@@ -55,6 +55,11 @@
                 <action android:name="com.micronet.obctestingapp.GET_GPIO_RESULT"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".GetAccelerometerResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_ACCEL_RESULT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
