@@ -53,6 +53,7 @@ set loop_count=0
 :_get_root
 ..\adb root > nul 2>&1
 ..\adb connect 192.168.43.1 > nul 2>&1
+timeout /T 1 /NOBREAK > nul
 ..\adb shell id> %temp_result%
 set /p root_result=<%temp_result%
 
