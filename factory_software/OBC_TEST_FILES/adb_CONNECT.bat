@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 set ERRORLEVEL=0
 
@@ -13,6 +13,7 @@ set OBC_TESTER_WLAN_HOTSPOT=%OBC_TESTER_WLAN_HOTSPOT_HEADER%%OBC_TESTER_WLAN_HOT
 
 set loop_count=0
 set temp_result=tmp.txt
+set state=
 set root_result=
 set root_string=uid=0(root)
 if exist %temp_result% del %temp_result%
@@ -57,7 +58,7 @@ if %root_result:~0,1% == a goto _check_if_root
 set /a loop_count=%loop_count%+1
 set root_result=
 
-if %loop_count% GTR 4 goto _WLAN_test_fail
+if %loop_count% GTR 8 goto _WLAN_test_fail
 
 timeout /T 1 /NOBREAK > nul
 
@@ -66,16 +67,28 @@ goto _get_root
 :_check_if_root
 if exist %temp_result% del %temp_result%
 set root_result=
+
+rem check adb state. Had problem where connection passed but device was offline
+..\adb get-state > %temp_result%
+set /p state=<%temp_result%
+rem echo %state%
+set correct_state=device
+if not "%state%" == "%correct_state%" goto _retry
+
+if exist %temp_result% del %temp_result%
 ..\adb shell id > %temp_result%
 set /p root_result=<%temp_result%
 rem echo %root_result%
+
 rem check id to make sure adb is root
 if "%root_result:~0,11%" == "%root_string%" goto _WLAN_test_pass
+
+:_retry
 
 set /a loop_count=%loop_count%+1
 set root_result=
 
-if %loop_count% GTR 4 goto _WLAN_test_fail
+if %loop_count% GTR 8 goto _WLAN_test_fail_state
 
 timeout /T 1 /NOBREAK > nul
 
@@ -85,6 +98,11 @@ rem   ############## TEST STATUS ############
 :_WLAN_test_fail
 set ERRORLEVEL=1
 echo ** adb Connect failed %OBC_TESTER_WLAN_CON%
+goto _end_of_test
+
+:_WLAN_test_fail_state
+set ERRORLEVEL=1
+echo ** adb Connect failed - error with root or state. device state: %state%
 goto _end_of_test
 
 :_WLAN_test_pass
@@ -103,3 +121,4 @@ set loop_count=
 set root_result=
 set root_string=
 set temp_result=
+set state=
