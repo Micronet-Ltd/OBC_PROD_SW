@@ -51,8 +51,8 @@ rem Need to make sure it is actually getting root because sometimes it is failin
 set loop_count=0
 
 :_get_root
-..\adb root > nul
-..\adb connect 192.168.43.1> nul
+..\adb root > nul 2>&1
+..\adb connect 192.168.43.1 > nul 2>&1
 ..\adb shell id> %temp_result%
 set /p root_result=<%temp_result%
 
