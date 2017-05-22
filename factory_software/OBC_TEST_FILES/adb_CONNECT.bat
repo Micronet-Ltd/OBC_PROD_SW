@@ -76,6 +76,7 @@ set correct_state=device
 if not "%state%" == "%correct_state%" goto _retry
 
 if exist %temp_result% del %temp_result%
+timeout /T 2 /NOBREAK > nul
 ..\adb shell id > %temp_result%
 set /p root_result=<%temp_result%
 rem echo %root_result%
