@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.15
+set test_script_version=1.2.16
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -34,12 +34,12 @@ rem create a status file
 set result_file_name=tmp.txt
 ..\adb shell getprop ro.serialno > %result_file_name%
 set /p deviceSN=<%result_file_name%
-set mydate=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%
+set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
 
 rem start writing to individual device file
 @echo. >> testResults\%result_file_name%.txt
-@echo Test Run : %DATE% %TIME% >> testResults\%result_file_name%.txt
+@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
 @echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
 @echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 
