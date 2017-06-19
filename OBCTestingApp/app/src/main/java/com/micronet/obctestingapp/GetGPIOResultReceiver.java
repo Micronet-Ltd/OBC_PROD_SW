@@ -98,7 +98,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         }
 
         // Check Input 2
-        if(checkInputValue(2, 4000, 5000)){
+        if(checkInputValue(2, 4000, 5500)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -112,7 +112,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         }
 
         // Check Input 4
-        if(checkInputValue(4, 4000, 5000)){
+        if(checkInputValue(4, 4000, 5500)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -126,7 +126,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
         }
 
         // Check Input 6
-        if(checkInputValue(6, 4000, 5000)){
+        if(checkInputValue(6, 4000, 5500)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -297,7 +297,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
             Log.e(TAG,e.toString());
         }
 
-        if(!checkGPIOValue(4, 4000, 5000, 3, "low")){
+        if(!checkGPIOValue(4, 4000, 5500, 3, "low")){
             output3WorkingProperly = false;
         }
 
@@ -325,6 +325,23 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
         int value = mControl.get_adc_or_gpi_voltage(gpiNum);
 
+        int count = 0;
+
+        do {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace(); // TODO: do something about this
+            }
+            value = mControl.get_adc_or_gpi_voltage(gpiNum);
+            count++;
+            Log.d(TAG, "Input " + gpiNum + "'s voltage is " + value + " on read #" + count);
+        } while(value > 500000 && count < 50);
+
+        if(count == 50) {
+            Log.e(TAG, "Input " + gpiNum + " retried " + count + " times.");
+        }
+
         if(lowerBound <= value && value <= upperBound){
             Log.i(TAG, "Output " + output + " is " + state + ": Input " + gpiNum + "'s voltage is " + value);
             return true;
@@ -338,12 +355,28 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
     private boolean checkInputValue(int gpiNum, int lowerBound, int upperBound) {
 
-        int value = mControl.get_adc_or_gpi_voltage(gpiNum);
+        int value;
+        int count = 0;
+
+        do {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace(); // TODO: do something about this
+            }
+            value = mControl.get_adc_or_gpi_voltage(gpiNum);
+            count++;
+            Log.d(TAG, "Input " + gpiNum + "'s voltage is " + value + " on read #" + count);
+        } while(value > 500000 && count < 50);
+
+        if(count == 50) {
+            Log.e(TAG, "Input " + gpiNum + " retried " + count + " times.");
+        }
 
         if(lowerBound <= value && value <= upperBound){
             Log.i(TAG, "Input " + gpiNum + "'s voltage is " + value);
             return true;
-        }else{
+        } else {
             Log.e(TAG, "Input " + gpiNum + " is " + value + " but should be between " + lowerBound + " and " + upperBound);
             finalResult = false;
             return false;
