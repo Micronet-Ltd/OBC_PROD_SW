@@ -11,13 +11,13 @@ import android.util.Log;
  *
  * Created by scott.krstyen on 3/20/2017.
  */
-public class GetIMEIReceiver extends BroadcastReceiver {
+public class GetIMEIReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         TelephonyManager telephonyManager = ((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
         String  imei;
 

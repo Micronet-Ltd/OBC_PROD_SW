@@ -16,17 +16,17 @@ import java.io.InputStreamReader;
  *
  * Created by scott.krstyen on 3/20/2017.
  */
-public class GetSerialReceiver extends BroadcastReceiver {
+public class GetSerialReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
         setResultData(getSerialNumber());
     }
 
     private String getSerialNumber() {
-
         String line;
         String serialNumber;
         try {

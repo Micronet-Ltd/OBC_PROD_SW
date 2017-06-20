@@ -13,7 +13,7 @@ import java.util.Arrays;
  * Created by scott.krstyen on 4/21/2017.
  */
 
-public class GetGPIOResultReceiver extends BroadcastReceiver {
+public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -37,7 +37,7 @@ public class GetGPIOResultReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         // Initialize MControl
         mControl = new MControl();
 

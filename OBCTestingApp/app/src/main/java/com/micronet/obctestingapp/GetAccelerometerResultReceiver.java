@@ -11,7 +11,7 @@ import java.util.Arrays;
  * Created by scott.krstyen on 5/11/2017.
  */
 
-public class GetAccelerometerResultReceiver extends BroadcastReceiver {
+public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -24,7 +24,7 @@ public class GetAccelerometerResultReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         automatedAccelerometerTest();
 
         if(finalResult){

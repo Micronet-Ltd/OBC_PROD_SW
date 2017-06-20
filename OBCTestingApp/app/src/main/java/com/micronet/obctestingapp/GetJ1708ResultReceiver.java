@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
  *
  * Created by scott.krstyen on 4/19/2017.
  */
-public class GetJ1708ResultReceiver extends BroadcastReceiver {
+public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -47,7 +47,7 @@ public class GetJ1708ResultReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         // Runs an automated J1708 test.
         automatedJ1708Test();
 

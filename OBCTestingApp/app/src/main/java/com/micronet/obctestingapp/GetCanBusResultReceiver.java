@@ -29,7 +29,7 @@ import java.util.concurrent.TimeoutException;
  *
  * Created by scott.krstyen on 4/10/2017.
  */
-public class GetCanBusResultReceiver extends BroadcastReceiver {
+public class GetCanBusResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -54,7 +54,7 @@ public class GetCanBusResultReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         // Run test
         automatedCanBusTest();
 

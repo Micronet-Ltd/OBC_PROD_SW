@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
  *
  * Created by scott.krstyen on 4/19/2017.
  */
-public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
+public class GetSingleWireCanResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
@@ -47,7 +47,7 @@ public class GetSingleWireCanResultReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        super.onReceive(context, intent);
         // Run automated test
         automatedSingleWireCanTest();
 
