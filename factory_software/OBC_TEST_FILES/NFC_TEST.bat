@@ -12,14 +12,11 @@ rem echo ------------------------------------
 rem   ############## display message to the tester ############
 
 echo. 
-rem echo ***************************************
 echo NFC test - Get ready with NFC card
-pause
 echo Touch the device with NFC tag
 set /a loop_cnt = 0
 
 :_test
-rem echo | set /p=.
 set /a loop_cnt = %loop_cnt% + 1
 
 ..\adb shell ls -l ./sdcard/nfc.txt > %file_name%
@@ -51,7 +48,6 @@ if %ERRORLEVEL% == 1 goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-rem echo.
 echo ** NFC test - passed
 @echo NFC test - passed  >> testResults\%result_file_name%.txt
 goto _end_of_file

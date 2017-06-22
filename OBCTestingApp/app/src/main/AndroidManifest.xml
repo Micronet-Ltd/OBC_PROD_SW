@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -58,6 +59,11 @@
         <receiver android:name=".GetAccelerometerResultReceiver">
             <intent-filter>
                 <action android:name="com.micronet.obctestingapp.GET_ACCEL_RESULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetAudioResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_AUDIO_RESULT"/>
             </intent-filter>
         </receiver>
     </application>

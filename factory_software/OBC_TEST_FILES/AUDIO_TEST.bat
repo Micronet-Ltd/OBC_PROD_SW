@@ -8,54 +8,48 @@ rem echo ------------------------------------
 rem echo                AUDIO TEST            
 rem echo ------------------------------------
 
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
-timeout /T 1 /NOBREAK > nul 
-..\adb shell input keyevent 20
-
 :_start_test
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-rem ..\adb shell input keyevent 20
-
-
-
-rem turning off both speakers 
-rem ..\adb shell mctl api 0213000600 > nul
-rem ..\adb shell mctl api 0213001C00 > nul 
-rem ..\adb shell input keyevent 86  
+rem These turn off both speakers.
+..\adb shell mctl api 0213000600 > nul
+..\adb shell mctl api 0213001C00 > nul 
 
 :_right_speaker
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell input keyevent 66
-rem Turning off the left  speaker 
-..\adb shell mctl api 0213001C00 > nul
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 2
+..\adb shell mctl api 0213000601 > nul rem This turns the right speaker on.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+:_right_speaker_validation
 set choice=
 echo.&set /p choice=Do you hear the right speaker [Y/N] ?
-if /I %choice% NEQ Y goto _test_fail
+if /I %choice% == Y goto _left_speaker
+if /I %choice% == N goto _test_fail
+echo Invalid option
+goto _right_speaker_validation
 
 :_left_speaker
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell input keyevent 66
-rem Turning off the right speaker 
-..\adb shell mctl api 0213000600 > nul 
-rem Turning on the left speaker 
-..\adb shell mctl api 0213001C01 > nul
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 1
+..\adb shell mctl api 0213001C01 > nul rem This turns the left speaker on.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+:_left_speaker_validation
 set choice=
 echo.&set /p choice=Do you hear the left speaker [Y/N] ?
 if /I %choice% == Y goto _test_pass
-
+if /I %choice% == N goto _test_fail
+echo Invalid option
+goto _left_speaker_validation
 
 rem   ############## TEST STATUS ############
 :_test_fail
-rem mute the music with back command
-..\adb shell input keyevent 4
+rem These turn off both speakers.
+..\adb shell mctl api 0213000600 > nul
+..\adb shell mctl api 0213001C00 > nul 
 set choice=
 echo.&set /p choice=Would you like to repeat the test [Y/N] ?
-if /I %choice% == Y goto _retest 
+if /I %choice% == Y goto _right_speaker
+if /I %choice% == N goto _prepare_for_fail
+echo Invalid option
+goto _test_fail
+
+:_prepare_for_fail
 set ERRORLEVEL=1
 echo ** Audio test - failed
 @echo Audio test - failed >> testResults\%result_file_name%.txt
@@ -73,11 +67,9 @@ echo ** Audio test - passed
 @echo Audio test - passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file
-rem turning on both speakers 
+rem These turn off both speakers.
 ..\adb shell mctl api 0213000600 > nul
-..\adb shell mctl api 0213001C00 > nul 
-rem mute the music with back command
-..\adb shell input keyevent 4
+..\adb shell mctl api 0213001C00 > nul
 
 
 if exist %file_name% del %file_name%

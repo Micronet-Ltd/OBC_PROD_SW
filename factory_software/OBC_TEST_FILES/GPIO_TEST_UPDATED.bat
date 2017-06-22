@@ -17,7 +17,6 @@ set output0_fail=
 set output1_fail=
 set output2_fail=
 set output3_fail=
-set loop_count=0
 if exist %temp_result% del %temp_result%
 
 rem echo ------------------------------------
@@ -43,13 +42,10 @@ rem Data should be twelve letters total
 set data=%Result:~37,12%
 
 if "%Result:~28,1%" == "%success%" goto _test_pass
+goto _ask_if_retry
 
-set /a loop_count=%loop_count%+1
 set Result=
-rem If GPIO test has failed multiple times then goto _test_fail
-if %loop_count% GTR 2 goto _test_fail
 rem Don't show while it is repeating
-rem echo repeat test, failure count = %loop_count%
 goto _test_loop
 
 :_test_fail
@@ -101,6 +97,13 @@ echo ** GPIO test - passed
 @echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
+:_ask_if_retry
+set /p option=GPIO test failed. Would you like to retry? [Y/N]: 
+if /I "%option%"=="y" goto _test_loop
+if /I "%option%"=="n" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
+
 
 :_end_of_file
 rem Uninstall app
@@ -115,4 +118,3 @@ set gpo0_fail=
 set gpo1_fail=
 set gpo2_fail=
 set gpo3_fail=
-set loop_count=

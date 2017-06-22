@@ -1,11 +1,8 @@
 package com.micronet.obctestingapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import java.util.Arrays;
 
 /**
  * Runs an automated GPIO test.
@@ -34,6 +31,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
     private static final int GP_OUTPUT_1 = 272;
     private static final int GP_OUTPUT_2 = 273;
     private static final int GP_OUTPUT_3 = 261;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -328,14 +326,17 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         int count = 0;
 
         do {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace(); // TODO: do something about this
-            }
+
             value = mControl.get_adc_or_gpi_voltage(gpiNum);
             count++;
             Log.d(TAG, "Input " + gpiNum + "'s voltage is " + value + " on read #" + count);
+            if(value > 500000) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace(); // TODO: do something about this
+                }
+            }
         } while(value > 500000 && count < 50);
 
         if(count == 50) {
@@ -359,14 +360,16 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         int count = 0;
 
         do {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace(); // TODO: do something about this
-            }
             value = mControl.get_adc_or_gpi_voltage(gpiNum);
             count++;
             Log.d(TAG, "Input " + gpiNum + "'s voltage is " + value + " on read #" + count);
+            if(value > 500000) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace(); // TODO: do something about this
+                }
+            }
         } while(value > 500000 && count < 50);
 
         if(count == 50) {

@@ -23,11 +23,14 @@ if not "%Result:~0,14%" == "opendir failed" goto :_Copy_file
 set choice=
 echo SD card error: can't find the SD card
 rem Increment loop count
-set /a loop_count=%loop_count%+1
+rem set /a loop_count=%loop_count%+1
 rem If SD Card test has failed multiple times then goto _test_fail_no_sd_card
-if %loop_count% GTR 2 goto _test_fail_no_sd_card
+rem if %loop_count% GTR 2 goto _test_fail_no_sd_card
 echo.&set /p choice=Would you like to repeat the test [Y/N] ?
 if /I %choice% == Y goto _test_start
+if /I %choice% == N goto _test_fail_no_sd_card
+echo Invalid option
+goto _no_sd_card
 
 :_test_fail_no_sdcard
 set ERRORLEVEL=1
@@ -45,15 +48,18 @@ set /p Result=<%file_name%
 if %Result:~35,2% == 18 goto _Delete_File
 
 rem Increment loop count
-set /a loop_count=%loop_count%+1
+rem set /a loop_count=%loop_count%+1
 echo SD card error: can't find SD card or error writing to it
 rem If SD Card test has failed multiple times then goto _test_fail_unexpected_size
-if %loop_count% GTR 2 goto _test_fail_unexpected_size
+rem if %loop_count% GTR 2 goto _test_fail_unexpected_size
 rem Ask user if they want to repeat the test.
+:_unexpected_size_prompt
 set choice=
 echo.&set /p choice=Would you like to repeat the test [Y/N] ?
 if /I %choice% == Y goto _test_start
-rem Any other answer then Y/y then go to fail
+if /I %choice% == N goto _test_fail_unexpected_size
+echo Invalid option
+goto _unexpected_size_prompt
 
 :_test_fail_unexpected_size
 set ERRORLEVEL=1

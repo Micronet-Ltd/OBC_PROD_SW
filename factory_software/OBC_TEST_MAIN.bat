@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.16
+set test_script_version=1.2.17
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -56,7 +56,7 @@ call install_files_test.bat
 rem ---------- Test Start ----------
 rem check that imei on barcode is the same as imei of the device
 rem this batch file also writes to SerialIMEI.csv
-call IMEI_TEST.bat 
+call IMEI_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set imei_test=fail
 	set OBC_TEST_STATUS=Fail

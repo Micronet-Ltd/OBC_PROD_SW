@@ -16,7 +16,6 @@ rem   ############## display message to the tester ############
 echo. 
 rem echo ***************************************
 echo NFC test - Touch the device with the NFC card
-pause
 
 rem This loop count is used to wait a certain amount of time for user input
 set /a loop_cnt = 0
@@ -32,15 +31,20 @@ set /p Result=<%file_name%
 if %Result:~35,2% == 8 goto _Delete_File
 if %Result:~35,2% == 14 goto _Delete_File
 if %Result:~35,2% == 16 goto _Delete_File
-if %loop_cnt% LSS 300 goto _test
+if %loop_cnt% LSS 80 goto _test
+goto _ask_if_retry
 
-rem If the code reaches here that means that the text file was never generated before the timeout. 
+rem If the code reaches here that means that the text file was never generated before the timeout.
 rem Increment loop.
-set /a total_loop_cnt=%total_loop_cnt%+1
 
-if %total_loop_cnt% GTR 2 goto _test_fail
-echo No NFC card detected. Try Again:
 goto _full_test
+
+:_ask_if_retry
+set /p option=Test failed. Would you like to retry? [Y/N]: 
+if /I "%option%"=="Y" goto _full_test
+if /I "%option%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
@@ -49,6 +53,7 @@ echo  ** NFC test - failed
 rem Try to delete file just in case
 ..\adb shell rm ./sdcard/nfc.txt > nul 2>&1
 goto _uninstall_apk 
+
 
 :_Delete_File
 set Result=
