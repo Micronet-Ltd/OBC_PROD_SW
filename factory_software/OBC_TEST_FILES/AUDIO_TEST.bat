@@ -14,7 +14,7 @@ rem These turn off both speakers.
 ..\adb shell mctl api 0213001C00 > nul 
 
 :_right_speaker
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 2
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 2 > nul
 ..\adb shell mctl api 0213000601 > nul rem This turns the right speaker on.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 :_right_speaker_validation
@@ -26,7 +26,7 @@ echo Invalid option
 goto _right_speaker_validation
 
 :_left_speaker
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 1
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 1 > nul
 ..\adb shell mctl api 0213001C01 > nul rem This turns the left speaker on.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 :_left_speaker_validation
