@@ -27,17 +27,19 @@ set data=%Result:~37,1%
 
 if "%Result:~28,1%" == "%success%" goto _test_pass
 
-set /a loop_count=%loop_count%+1
-rem If Accelerometer test has failed multiple times then goto _test_fail
-if %loop_count% GTR 7 goto _test_fail
-rem echo repeat test, failure count = %loop_count%
 set Result=
+goto _test_fail
 
-goto _test_loop
+:_ask_if_retry
+set /p option=Accelerometer test failed. Would you like to retry? [Y/N]: 
+if /I "%option%"=="Y" goto _test_loop
+if /I "%option%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** Accelerometer test - failed 
+echo ** Accelerometer test - failed 
 rem If Accelerometer test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set accel_fail="Invalid accelerometer %Result:~31%",

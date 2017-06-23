@@ -40,7 +40,7 @@ set /a power_in_voltage_on=%power_in_voltage_on:~24,5% >nul 2>&1
 rem echo power in voltage ON state: %power_in_voltage_on%
 
 rem measure Input voltage - verify power is OFF
-echo
+echo.
 echo Turn Device OFF - press any key when power is removed ...
 pause > nul
 

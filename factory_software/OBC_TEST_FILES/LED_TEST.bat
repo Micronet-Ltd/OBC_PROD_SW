@@ -10,13 +10,16 @@ rem echo ------------------------------------
 ..\adb shell mctl api 0206020FFFFFFF>nul
 
 set choice=
+:_ask_if_on
 echo.&set /p choice=Do you see the 3 LEDs in white and same brightness ?[Y/N] ?
-if /I %choice% == Y goto _test_pass
+if /I "%choice%"=="Y" goto _test_pass
+if /I "%choice%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_on
 
 rem   ############## TEST STATUS ############
 :_test_fail
 set ERRORLEVEL=1
-echo ****** ERROR: Expected to get Y/y - got %choice% ******
 echo ** LED test - failed
 @echo LED test - failed  >> testResults\%result_file_name%.txt
 goto _end_of_file

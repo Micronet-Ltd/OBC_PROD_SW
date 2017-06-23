@@ -82,14 +82,14 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check ignition
-        if(checkInputValue(0, 4000, 13000)){
+        if(checkInputValue(0, 4000, 14000)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 1
-        if(checkInputValue(1, 9000, 13000)){
+        if(checkInputValue(1, 9000, 14000)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -103,7 +103,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 3
-        if(checkInputValue(3, 9000, 13000)){
+        if(checkInputValue(3, 9000, 14000)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -117,7 +117,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 5
-        if(checkInputValue(5, 9000, 13000)){
+        if(checkInputValue(5, 9000, 14000)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -131,7 +131,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 7
-        if(checkInputValue(7, 9000, 13000)){
+        if(checkInputValue(7, 9000, 14000)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -159,7 +159,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Set output 0 to low. Input 1 and 5 should go high.
-        setGPIOValue(GP_OUTPUT_0, 0);
+        setGPIOValue(GP_OUTPUT_0, 0);git
 
         try {
             Thread.sleep(750);

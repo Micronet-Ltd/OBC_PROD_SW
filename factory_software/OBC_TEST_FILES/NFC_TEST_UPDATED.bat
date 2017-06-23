@@ -40,7 +40,7 @@ rem Increment loop.
 goto _full_test
 
 :_ask_if_retry
-set /p option=Test failed. Would you like to retry? [Y/N]: 
+echo.&set /p option=Test failed. Would you like to retry? [Y/N]: 
 if /I "%option%"=="Y" goto _full_test
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option

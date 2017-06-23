@@ -53,28 +53,28 @@ set ERRORLEVEL=1
 echo  ** GPIO test - failed 
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
-	set ignition_fail="Ignition voltage was not in the range of 4000 to 13000 mv",
+	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
 )
 if "%data:~1,1%" == "F" (
-	set input1_fail="Input 1 voltage was not in the range of 9000 to 13000 mv",
+	set input1_fail="Input 1 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~2,1%" == "F" (
 	set input2_fail="Input 2 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~3,1%" == "F" (
-	set input3_fail="Input 3 voltage was not in the range of 9000 to 13000 mv",
+	set input3_fail="Input 3 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~4,1%" == "F" (
 	set input4_fail="Input 4 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~5,1%" == "F" (
-	set input5_fail="Input 5 voltage was not in the range of 9000 to 13000 mv",
+	set input5_fail="Input 5 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~6,1%" == "F" (
 	set input6_fail="Input 6 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~7,1%" == "F" (
-	set input7_fail="Input 7 voltage was not in the range of 9000 to 13000 mv",
+	set input7_fail="Input 7 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~8,1%" == "F" (
 	set output0_fail="Input 1 and 5 voltages not in correct range when when Output 0 set high and/or low",
@@ -98,7 +98,7 @@ echo ** GPIO test - passed
 goto _end_of_file
 
 :_ask_if_retry
-set /p option=GPIO test failed. Would you like to retry? [Y/N]: 
+echo.&set /p option=GPIO test failed. Would you like to retry? [Y/N]: 
 if /I "%option%"=="y" goto _test_loop
 if /I "%option%"=="n" goto _test_fail
 echo Invalid option

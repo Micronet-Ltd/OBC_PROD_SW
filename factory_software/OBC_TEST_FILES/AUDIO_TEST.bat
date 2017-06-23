@@ -9,6 +9,9 @@ rem echo                AUDIO TEST
 rem echo ------------------------------------
 
 :_start_test
+set HASFAILED=0
+set LEFTFAIL=0
+set RIGHTFAIL=0
 rem These turn off both speakers.
 ..\adb shell mctl api 0213000600 > nul
 ..\adb shell mctl api 0213001C00 > nul 
@@ -21,9 +24,15 @@ rem These turn off both speakers.
 set choice=
 echo.&set /p choice=Do you hear the right speaker [Y/N] ?
 if /I %choice% == Y goto _left_speaker
-if /I %choice% == N goto _test_fail
+if /I %choice% == N goto _right_test_fail
 echo Invalid option
 goto _right_speaker_validation
+
+:_right_test_fail
+set HASFAILED=1
+set RIGHTFAIL=1
+@echo Audio right speaker test - failed >> testResults\%result_file_name%.txt
+goto :_left_speaker
 
 :_left_speaker
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 1 > nul
@@ -32,10 +41,27 @@ goto _right_speaker_validation
 :_left_speaker_validation
 set choice=
 echo.&set /p choice=Do you hear the left speaker [Y/N] ?
-if /I %choice% == Y goto _test_pass
-if /I %choice% == N goto _test_fail
+if /I %choice% == Y goto _evaluate
+if /I %choice% == N goto _left_test_fail
 echo Invalid option
 goto _left_speaker_validation
+
+:_left_test_fail
+set HASFAILED=1
+set LEFTFAIL=1
+@echo Audio left speaker test - failed >> testResults\%result_file_name%.txt
+goto _evaluate
+
+:_evaluate
+if %HASFAILED% EQU 1 goto _ask_if_retry
+goto _test_pass
+
+:_ask_if_retry
+echo.&set /p option=Audio test failed. Would you like to retry? [Y/N]: 
+if /I "%option%"=="Y" goto _start_test
+if /I "%option%"=="N" goto _prepare_for_fail
+echo Invalid option
+goto _ask_if_retry
 
 rem   ############## TEST STATUS ############
 :_test_fail
@@ -53,8 +79,8 @@ goto _test_fail
 set ERRORLEVEL=1
 echo ** Audio test - failed
 @echo Audio test - failed >> testResults\%result_file_name%.txt
-goto _end_of_file
 
+goto _end_of_file
 
 :_retest
 ..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul

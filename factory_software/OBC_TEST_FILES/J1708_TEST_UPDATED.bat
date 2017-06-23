@@ -42,12 +42,15 @@ set data=%Result:~37,1%
 
 if "%Result:~28,1%" == "%success%" goto _test_pass
 
-set /a loop_count=%loop_count%+1
 set Result=
-rem If SWC test has failed multiple times then goto _test_fail
-if %loop_count% GTR 5 goto _test_fail
-rem echo repeat test, failure count = %loop_count%
-goto _test_loop
+goto _ask_if_retry
+
+:_ask_if_retry
+echo.&set /p option=J1708 test failed. Would you like to retry? [Y/N]: 
+if /I "%option%"=="Y" goto _test_loop
+if /I "%option%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
