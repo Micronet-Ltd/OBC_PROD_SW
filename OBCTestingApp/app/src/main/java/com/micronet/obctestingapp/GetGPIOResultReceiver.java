@@ -159,7 +159,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Set output 0 to low. Input 1 and 5 should go high.
-        setGPIOValue(GP_OUTPUT_0, 0);git
+        setGPIOValue(GP_OUTPUT_0, 0);
 
         try {
             Thread.sleep(750);
