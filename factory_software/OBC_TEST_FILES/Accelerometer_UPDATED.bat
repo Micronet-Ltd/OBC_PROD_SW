@@ -28,7 +28,7 @@ set data=%Result:~37,1%
 if "%Result:~28,1%" == "%success%" goto _test_pass
 
 set Result=
-goto _test_fail
+goto _ask_if_retry
 
 :_ask_if_retry
 set /p option=Accelerometer test failed. Would you like to retry? [Y/N]: 
@@ -55,7 +55,7 @@ goto _end_of_file
 
 
 :_end_of_file
-if exist %temp_result% del %temp_result%
+rem if exist %temp_result% del %temp_result%
 set Result= 
 set success= 
 set temp_result=

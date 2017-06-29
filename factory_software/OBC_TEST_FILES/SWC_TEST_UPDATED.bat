@@ -40,6 +40,7 @@ if "%Result:~28,1%" == "%success%" goto _test_pass
 
 set /a loop_count=%loop_count%+1
 set Result=
+if loop_count LSS 8 goto _test_loop
 goto _ask_if_retry
 
 :_ask_if_retry

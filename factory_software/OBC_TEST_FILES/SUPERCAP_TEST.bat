@@ -8,7 +8,7 @@ set sc_voltage_file_name=sc_test.txt
 set tmp_file_name=tmp.txt
 
 rem Change the default of wi-fi off during power loss
-..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"  
+..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"
 ..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay" 
 
 rem --------- check supercap charging  ----------------
@@ -50,6 +50,7 @@ timeout /T 2 /NOBREAK > nul
 
 rem Read input power voltage after power is removed (running on supercap)
 ..\adb shell mctl api 020408>%sc_voltage_file_name%
+ECHO <%sc_voltage_file_name% | FINDSTR /C:"error" >nul & IF ERRORLEVEL 1 (goto _No_supercap_error)
 rem line structure is: GPI 8, approx voltage = VALUE mV, ret = 4
 rem need to read only the VALUE and compare to expected range
 set /p power_in_voltage_off=<%sc_voltage_file_name% >nul 2>&1
@@ -86,27 +87,31 @@ rem goto _test_pass
 rem   ############## TEST STATUS ############
 :_SC_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed initial SuperCap voltage not in range - _SC_LEVEL_ERROR
+echo  ** Supercap test - failed initial SuperCap voltage not in range - _SC_LEVEL_ERROR
 @echo Supercap test - failed initial SuperCap voltage not in range (SC voltage = %sc_voltage%) - _SC_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_input_voltage_level
 
 :_VIN_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
+echo  ** Supercap test - failed Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
 @echo Supercap test - failed Input voltage too high in supercap mode (Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _VIN_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_supercap_discharge
 
 :_DisCharge_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed Supercap did not discharge - _DisCharge_ERROR
+echo  ** Supercap test - failed Supercap did not discharge - _DisCharge_ERROR
 @echo Supercap test - failed Supercap did not discharge (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _DisCharge_ERROR >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_Power_loss_error
 set ERRORLEVEL=1
 
-echo ** Supercap test - failed didn't get power loss notification - _Power_loss_error
+echo  ** Supercap test - failed didn't get power loss notification - _Power_loss_error
 @echo Supercap test - failed didn't get power loss notification (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state= %power_in_voltage_off%) - _Power_loss_error >> testResults\%result_file_name%.txt
+goto _end_of_test
+
+:_No_supercap_error
+echo  ** Supercap test - failed No supercap
 goto _end_of_test
 
 :_test_pass
