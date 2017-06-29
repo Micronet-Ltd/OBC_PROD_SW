@@ -20,6 +20,10 @@ public class Accelerometer {
 
     Time timestamp;
 
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     public Accelerometer() throws FileNotFoundException {
         this.accelData[0] = 0.0f;
         this.accelData[1] = 0.0f;
@@ -37,6 +41,7 @@ public class Accelerometer {
     public void getAccel() throws IOException {
         readAccelData();
     }
+
     private void readAccelData() throws FileNotFoundException {
         short accel_temp;
         InputStream inputStream = new FileInputStream("/dev/vaccel");
@@ -48,42 +53,25 @@ public class Accelerometer {
             while ((len = inputStream.read(accel_data)) != -1) {
                 break;
             }
-//            len = readInputStreamWithTimeout(inputStream, accel_data, 5000);
-//            if (len == 0){
-//                this.accelData[0] = 0;
-//                this.accelData[1] = 0;
-//                this.accelData[2] = 0;
-//                return;
-//            }
 
-            accel_temp = (short)(((accel_data[9]<<8) | accel_data[8]));
+            if(accel_data[14] != 0 && accel_data[15] != 0) {
+                Log.e("OBCTestingApp", "accel_data doesn't end in zeroes");
+            }
+
+            accel_temp = (short)(((short)accel_data[9]<<8 | ((short)accel_data[8] & 0x00ff)));
             this.accelData[0] = get_g_val(accel_temp);
 
-            accel_temp = (short)(((accel_data[11]<<8) | accel_data[10]));
+            accel_temp = (short)(((short)accel_data[11]<<8) | ((short)accel_data[10] & 0x00ff));
             this.accelData[1] = get_g_val(accel_temp);
 
-            accel_temp = (short)(((accel_data[13]<<8) | accel_data[12]));
+            accel_temp = (short)(((short)accel_data[13]<<8) | ((short)accel_data[12] & 0x00ff));
             this.accelData[2] = get_g_val(accel_temp);
 
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             Log.e("mctl accel", " File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("mctl accel", " Cannot read file: " + e.toString());
         }
-    }
-
-    public static int readInputStreamWithTimeout(InputStream is, byte[] b, int timeoutMillis)
-            throws IOException {
-        int bufferOffset = 0;
-        long maxTimeMillis = System.currentTimeMillis() + timeoutMillis;
-        while (System.currentTimeMillis() < maxTimeMillis && bufferOffset < b.length) {
-            int readLength = java.lang.Math.min(is.available(),b.length-bufferOffset);
-            // can alternatively use bufferedReader, guarded by isReady():
-            int readResult = is.read(b, bufferOffset, readLength);
-            //if (readResult == -1) break;
-            bufferOffset += readResult;
-        }
-        return bufferOffset;
     }
 
     private final int FRAC_2d1 = 5000;

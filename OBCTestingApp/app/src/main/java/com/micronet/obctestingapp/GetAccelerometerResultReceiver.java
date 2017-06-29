@@ -86,11 +86,6 @@ public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
             finalResult = false;
             returnString.append("F");
         }
-
-
-
-
-
     }
 
 }
