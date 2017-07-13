@@ -16,7 +16,7 @@ rem   ############## display message to the tester ############
 echo. 
 rem echo ***************************************
 set "xprvar="
-for /F "skip=16 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=16 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 
 rem This loop count is used to wait a certain amount of time for user input
@@ -43,7 +43,7 @@ goto _full_test
 
 :_ask_if_retry
 set "xprvar="
-for /F "skip=17 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=17 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p option=%xprvar% 
 if /I "%option%"=="Y" goto _full_test
 if /I "%option%"=="N" goto _test_fail
@@ -53,7 +53,7 @@ goto _ask_if_retry
 :_test_fail
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=18 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=18 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 @echo NFC test - failed >> testResults\%result_file_name%.txt
 rem Try to delete file just in case
@@ -90,7 +90,7 @@ rem   ############## TEST STATUS ############
 :_test_pass
 rem echo.
 set "xprvar="
-for /F "skip=19 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=19 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 @echo NFC test - passed  >> testResults\%result_file_name%.txt
 goto _end_of_file

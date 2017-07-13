@@ -20,7 +20,7 @@ rem echo ------------------------------------
 
 echo.
 set "xprvar="
-for /F "delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 set /p imei=%xprvar%
 
 :_test
@@ -37,10 +37,10 @@ set /p Result=<%file_name%
 set trueIMEI=%Result:~37,15%
 
 rem If IMEI scanned in is same as IMEI on device then goto pass
-if "%Result:~37,15%" == "%imei%" goto _tag_check
+if "%Result:~37,15%" == "%imei%" goto _tac_check
 set matching_imei=-1
 
-:_tag_check
+:_tac_check
 if "%Result:~37,8%" == "%tac%" if %matching_imei% EQU 1 goto _test_pass
 if "%Result:~37,8%" == "%tac%" goto _test_fail_matching
 if %matching_imei% EQU 1 goto _test_fail_tac
@@ -50,7 +50,7 @@ goto _test_fail
 set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo IMEI %xprvar% matching device but tac is not correct, should be "%tac%"
 setlocal DisableDelayedExpansion
 rem Write result to individual device file
@@ -64,7 +64,7 @@ goto :_write_serial_imei
 set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
-for /F "skip=1 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 setlocal DisableDelayedExpansion
 rem Write result to individual device file
@@ -78,7 +78,7 @@ goto :_write_serial_imei
 set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
-for /F "skip=1 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%, also tac is incorrect, should be "%tac%"
 setlocal DisableDelayedExpansion
 rem Write result to individual device file
@@ -92,7 +92,7 @@ rem   ############## TEST STATUS ############
 :_test_pass
 setlocal EnableDelayedExpansion
 set "xprvar="
-for /F "skip=2 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=2 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 setlocal DisableDelayedExpansion
 rem Write result to individual device file

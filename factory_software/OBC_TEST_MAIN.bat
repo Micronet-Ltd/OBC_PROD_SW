@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.21
+set test_script_version=1.2.22
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -8,6 +8,34 @@ echo ---------------------------------------------------
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
 
+:_language_selection
+set language_choice_file=
+set language_choice=
+set language_file=
+
+set language_choice_file=input/language.dat
+
+set /p language_choice=<%language_choice_file%
+set language_choice=%language_choice%
+
+if "%language_choice%" == "English" goto _english
+if "%language_choice%" == "Chinese" goto _chinese
+echo.
+echo Error: input/language.dat file contains invalid value. 
+echo Should either be "English" or "Chinese"
+echo Defaulting to English
+echo.
+goto _english
+
+:_english
+set language_file=input/English.txt
+goto _continue_test
+
+:_chinese
+set language_file=input/Chinese.txt
+goto _continue_test
+
+:_continue_test
 rem Variables to list which tests failed at the end
 set imei_test=
 set serial_test=
@@ -226,7 +254,7 @@ if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
 color 20
 echo.
 set "xprvar="
-for /F "skip=30 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=30 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
 echo ***** Entire OBC %xprvar% !!! *****
 echo **************************************
@@ -238,7 +266,7 @@ goto _end_of_tests
 :_test_failed
 echo.
 set "xprvar="
-for /F "skip=31 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
 echo ********  OBC %xprvar% !!! ********
 echo **************************************
@@ -249,10 +277,10 @@ color 47
 
 echo.
 set "xprvar="
-for /F "skip=32 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 rem Check which tests failed and print which ones did fail
 if "%imei_test%" == "fail" (
 	echo ** IMEI %xprvar%
@@ -309,6 +337,9 @@ if "%supercap_test%" == "fail" (
 :_end_of_tests
 set test_script_version=
 set OBC_TEST_STATUS=
+set language_choice_file=
+set language_choice=
+set language_file=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_00%1>nul
 cd ..

@@ -24,7 +24,7 @@ rem These turn off both speakers.
 :_right_speaker_validation
 set choice=
 set "xprvar="
-for /F "skip=23 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=23 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p choice=%xprvar%
 if /I %choice% == Y goto _left_speaker
 if /I %choice% == N goto _right_test_fail
@@ -45,7 +45,7 @@ goto :_left_speaker
 :_left_speaker_validation
 set choice=
 set "xprvar="
-for /F "skip=24 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=24 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p choice=%xprvar%
 if /I %choice% == Y goto _evaluate
 if /I %choice% == N goto _left_test_fail
@@ -64,7 +64,7 @@ goto _test_pass
 
 :_ask_if_retry
 set "xprvar="
-for /F "skip=25 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=25 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _start_test
 if /I "%option%"=="N" goto _prepare_for_fail
@@ -74,7 +74,7 @@ goto _ask_if_retry
 :_prepare_for_fail
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** Audio %xprvar%
 @echo Audio test - failed >> testResults\%result_file_name%.txt
 
@@ -88,7 +88,7 @@ goto _start_test
 
 :_test_pass
 set "xprvar="
-for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** Audio %xprvar%
 @echo Audio test - passed  >> testResults\%result_file_name%.txt
 

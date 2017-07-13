@@ -51,7 +51,7 @@ goto _test_loop
 :_test_fail
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo  ** GPIO %xprvar% 
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
@@ -96,14 +96,14 @@ goto :_end_of_file
 rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
-for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** GPIO %xprvar%
 @echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_ask_if_retry
 set "xprvar="
-for /F "skip=28 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=28 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p option=%xprvar%
 if /I "%option%"=="y" goto _test_loop
 if /I "%option%"=="n" goto _test_fail

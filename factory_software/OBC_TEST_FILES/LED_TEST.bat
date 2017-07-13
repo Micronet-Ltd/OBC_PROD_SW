@@ -12,7 +12,7 @@ rem echo ------------------------------------
 :_ask_if_on
 set choice=
 set "xprvar="
-for /F "skip=6 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=6 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p choice=%xprvar%
 if /I "%choice%"=="Y" goto _test_pass
 if /I "%choice%"=="N" goto _test_fail
@@ -23,14 +23,14 @@ rem   ############## TEST STATUS ############
 :_test_fail
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=7 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=7 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 @echo LED test - failed  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_test_pass
 set "xprvar="
-for /F "skip=8 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=8 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 @echo LED test- passed  >> testResults\%result_file_name%.txt
 

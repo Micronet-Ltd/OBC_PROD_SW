@@ -28,7 +28,7 @@ if not %key_test%==1 goto _initial_value_test_failed
 if exist %file_name% del %file_name%
 rem   ############## VALUE 0 TEST ############
 set "xprvar="
-for /F "skip=20 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=20 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo | set /p=%xprvar%
 
 rem Loop counter used for timeout on each test attempt
@@ -89,7 +89,7 @@ rem   ############## TEST STATUS ############
 :_test_pass
 echo.
 set "xprvar="
-for /F "skip=21 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=21 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 @echo Help Key test - passed  >> testResults\%result_file_name%.txt
 goto _end_of_file
@@ -97,7 +97,7 @@ goto _end_of_file
 :_initial_value_test_failed
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=22 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=22 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar% : Initial Help Key state incorrect
 @echo Help Key test - failed : Initial Help Key state incorrect >> testResults\%result_file_name%.txt
 goto _end_of_file
@@ -106,7 +106,7 @@ goto _end_of_file
 set ERRORLEVEL=1
 echo.
 set "xprvar="
-for /F "skip=22 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=22 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar% : After Help Key press state not changed back to unpressed
 @echo Help Key test - failed : After Help Key press state not changed back to unpressed >> testResults\%result_file_name%.txt
 goto _end_of_file
@@ -115,7 +115,7 @@ goto _end_of_file
 set ERRORLEVEL=1
 echo.
 set "xprvar="
-for /F "skip=22 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=22 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar% : Help Key press never detected
 @echo Help Key test - failed : Help Key press never detected  >> testResults\%result_file_name%.txt
 

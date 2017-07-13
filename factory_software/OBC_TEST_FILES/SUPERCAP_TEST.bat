@@ -42,7 +42,7 @@ rem echo power in voltage ON state: %power_in_voltage_on%
 rem measure Input voltage - verify power is OFF
 echo.
 set "xprvar="
-for /F "skip=29 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=29 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
 pause > nul
 
@@ -89,7 +89,7 @@ rem   ############## TEST STATUS ############
 :_SC_LEVEL_ERROR
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo  ** Supercap %xprvar% initial SuperCap voltage not in range - _SC_LEVEL_ERROR
 @echo Supercap test - failed initial SuperCap voltage not in range (SC voltage = %sc_voltage%) - _SC_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_input_voltage_level
@@ -97,7 +97,7 @@ goto _read_input_voltage_level
 :_VIN_LEVEL_ERROR
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo  ** Supercap %xprvar% Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
 @echo Supercap test - failed Input voltage too high in supercap mode (Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _VIN_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_supercap_discharge
@@ -105,7 +105,7 @@ goto _read_supercap_discharge
 :_DisCharge_ERROR
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo  ** Supercap %xprvar% Supercap did not discharge - _DisCharge_ERROR
 @echo Supercap test - failed Supercap did not discharge (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _DisCharge_ERROR >> testResults\%result_file_name%.txt
 goto _end_of_test
@@ -113,14 +113,14 @@ goto _end_of_test
 :_Power_loss_error
 set ERRORLEVEL=1
 set "xprvar="
-for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo  ** Supercap %xprvar% didn't get power loss notification - _Power_loss_error
 @echo Supercap test - failed didn't get power loss notification (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state= %power_in_voltage_off%) - _Power_loss_error >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_pass
 set "xprvar="
-for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** Supercap %xprvar%
 @echo Supercap test - passed supercap voltage : %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state: %power_in_voltage_off% >> testResults\%result_file_name%.txt
 
