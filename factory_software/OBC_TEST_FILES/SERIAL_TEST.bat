@@ -13,7 +13,9 @@ rem echo ------------------------------------
 echo.
 
 rem Prompt user to scan in serial number
-set /p read_in_serial=Scan Serial Number: 
+set "xprvar="
+for /F "skip=3 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+set /p read_in_serial=%xprvar%
 
 :_test
 rem Send broadcast to receive serial number
@@ -35,13 +37,21 @@ if "%pm_serial%" == "%read_in_serial%" goto _test_pass
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** Serial test - failed expected %pm_serial% got %read_in_serial%
+setlocal EnableDelayedExpansion
+set "xprvar="
+for /F "skip=4 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
+setlocal DisableDelayedExpansion
 @echo Serial test - failed expected %pm_serial% got %read_in_serial% >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** Serial test - passed %pm_serial%
+setlocal EnableDelayedExpansion
+set "xprvar="
+for /F "skip=5 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
+setlocal DisableDelayedExpansion
 @echo Serial test - passed %pm_serial% >> testResults\%result_file_name%.txt
 
 :_end_of_file

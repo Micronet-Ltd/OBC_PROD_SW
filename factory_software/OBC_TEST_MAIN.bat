@@ -1,5 +1,5 @@
 @echo off
-set test_script_version=1.2.18
+set test_script_version=1.2.21
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -225,8 +225,10 @@ if "%OBC_TEST_STATUS%" == "Fail" (
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
 color 20
 echo.
+set "xprvar="
+for /F "skip=30 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
-echo ***** Entire OBC test passed !!! *****
+echo ***** Entire OBC %xprvar% !!! *****
 echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
@@ -235,8 +237,10 @@ goto _end_of_tests
 
 :_test_failed
 echo.
+set "xprvar="
+for /F "skip=31 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
-echo ********  OBC test failed !!! ********
+echo ********  OBC %xprvar% !!! ********
 echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
@@ -244,58 +248,62 @@ echo **************************************
 color 47
 
 echo.
-echo Failed Tests (Check individual file results to see how they failed):
+set "xprvar="
+for /F "skip=32 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
+set "xprvar="
+for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
 rem Check which tests failed and print which ones did fail
 if "%imei_test%" == "fail" (
-	echo ** IMEI test - failed
+	echo ** IMEI %xprvar%
 )
 if "%serial_test%" == "fail" (
-	echo ** Serial test - failed
+	echo ** Serial %xprvar%
 )
 if "%version_test%" == "fail" (
-	echo ** Version test - failed
+	echo ** Version %xprvar%
 )
 if "%led_test%" == "fail" (
-	echo ** LED test - failed
+	echo ** LED %xprvar%
 )
 if "%sd_card_test%" == "fail" (
-	echo ** SD Card test - failed
+	echo ** SD Card %xprvar%
 )
 if "%canbus_test%" == "fail" (
-	echo ** CANBus test - failed
+	echo ** CANBus %xprvar%
 )
 if "%swc_test%" == "fail" (
-	echo ** SWC test - failed
+	echo ** SWC %xprvar%
 )
 if "%j1708_test%" == "fail" (
-	echo ** J1708 test - failed
+	echo ** J1708 %xprvar%
 )
 if "%com_test%" == "fail" (
-	echo ** Com Port test - failed
+	echo ** Com Port %xprvar%
 )
 if "%nfc_test%" == "fail" (
-	echo ** NFC test - failed
+	echo ** NFC %xprvar%
 )
 if "%help_key_test%" == "fail" (
-	echo ** Help Key test - failed
+	echo ** Help Key %xprvar%
 )
 if "%audio_test%" == "fail" (
-	echo ** Audio test - failed
+	echo ** Audio %xprvar%
 )
 if "%temperature_test%" == "fail" (
-	echo ** Temperature test - failed
+	echo ** Temperature %xprvar%
 )
 if "%read_rtc_test%" == "fail" (
-	echo ** Read RTC test - failed
+	echo ** Read RTC %xprvar%
 )
 if "%accelerometer_test%" == "fail" (
-	echo ** Accelerometer test - failed
+	echo ** Accelerometer %xprvar%
 )
 if "%gpio_test%" == "fail" (
-	echo ** GPIO test - failed
+	echo ** GPIO %xprvar%
 )
 if "%supercap_test%" == "fail" (
-	echo ** Supercap test - failed
+	echo ** Supercap %xprvar%
 )
 
 :_end_of_tests

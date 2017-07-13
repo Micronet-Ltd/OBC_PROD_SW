@@ -48,7 +48,9 @@ set Result=
 goto _ask_if_retry
 
 :_ask_if_retry
-echo.&set /p option=COM port test failed. Would you like to retry? [Y/N]: 
+set "xprvar="
+for /F "skip=15 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _test_loop
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option
@@ -56,7 +58,9 @@ goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** Com Port test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo  ** Com Port %xprvar%
 rem If one of the Com Ports failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set com1_fail="Com 1 tx --> Com 2 rx failed",
@@ -75,7 +79,9 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** Com Port test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo ** Com Port %xprvar% 
 @echo Com Port test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

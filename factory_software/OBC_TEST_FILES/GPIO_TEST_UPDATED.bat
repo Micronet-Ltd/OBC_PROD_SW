@@ -50,7 +50,9 @@ goto _test_loop
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** GPIO test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo  ** GPIO %xprvar% 
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
@@ -93,12 +95,16 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** GPIO test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo ** GPIO %xprvar%
 @echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_ask_if_retry
-echo.&set /p option=GPIO test failed. Would you like to retry? [Y/N]: 
+set "xprvar="
+for /F "skip=28 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
 if /I "%option%"=="y" goto _test_loop
 if /I "%option%"=="n" goto _test_fail
 echo Invalid option

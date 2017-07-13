@@ -31,7 +31,9 @@ set Result=
 goto _ask_if_retry
 
 :_ask_if_retry
-set /p option=Accelerometer test failed. Would you like to retry? [Y/N]: 
+set "xprvar="
+for /F "skip=27 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+set /p option=%xprvar%
 if /I "%option%"=="Y" goto _test_loop
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option
@@ -39,7 +41,9 @@ goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo ** Accelerometer test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo ** Accelerometer %xprvar%
 rem If Accelerometer test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set accel_fail="Invalid accelerometer %Result:~31%",
@@ -49,7 +53,9 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** Accelerometer test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo ** Accelerometer %xprvar%
 @echo Accelerometer test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

@@ -44,7 +44,9 @@ if loop_count LSS 8 goto _test_loop
 goto _ask_if_retry
 
 :_ask_if_retry
-echo.&set /p option=SWC test failed. Would you like to retry? [Y/N]: 
+set "xprvar="
+for /F "skip=13 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _test_loop
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option
@@ -52,7 +54,9 @@ goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** SWC test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo  ** SWC %xprvar%
 rem If SWC test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set swc_fail="SWC failed: tx out of Can1 did not rx a succesful response in Can1",
@@ -62,7 +66,9 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** SWC test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo ** SWC %xprvar%
 @echo SWC test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

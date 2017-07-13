@@ -9,9 +9,11 @@ rem echo ------------------------------------
 ..\adb shell mctl api 0206010FFFFFFF>nul
 ..\adb shell mctl api 0206020FFFFFFF>nul
 
-set choice=
 :_ask_if_on
-echo.&set /p choice=Do you see the 3 LEDs in white and same brightness ?[Y/N] ?
+set choice=
+set "xprvar="
+for /F "skip=6 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p choice=%xprvar%
 if /I "%choice%"=="Y" goto _test_pass
 if /I "%choice%"=="N" goto _test_fail
 echo Invalid option
@@ -20,12 +22,16 @@ goto _ask_if_on
 rem   ############## TEST STATUS ############
 :_test_fail
 set ERRORLEVEL=1
-echo ** LED test - failed
+set "xprvar="
+for /F "skip=7 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
 @echo LED test - failed  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_test_pass
-echo ** LED test- passed
+set "xprvar="
+for /F "skip=8 delims=" %%i in (input/LANGUAGE.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
 @echo LED test- passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file
