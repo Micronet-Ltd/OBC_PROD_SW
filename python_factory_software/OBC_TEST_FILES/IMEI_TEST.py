@@ -3,7 +3,6 @@ import sys
 import string
 import os
 import subprocess
-import OBC_TEST_FILES.TestUtil
 
 #**********************
 #      IMEI Test
@@ -26,10 +25,9 @@ def getIMEI():
 #     Main Script
 #**********************
 
-def Main(dict, session=None, index=None):
+def Main(dict, update=True):
 
-
-	print('\n')
+	print()
 
 	# Prompt user to scan IMEI
 	scannedIMEI = input(dict['ScanIMEI'])
@@ -44,8 +42,11 @@ def Main(dict, session=None, index=None):
 	if deviceIMEI[0:8] == '35483308':
 		correctTac = True
 		
+	resultBool = False
+		
 	if matchingDevice and scannedIMEI:
 		print(dict['IMEIPass'].format(deviceIMEI))
+		resultBool = True
 	elif matchingDevice:
 		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': matching device but IMEI should start with \'35483308\'')
 	elif correctTac:
@@ -53,11 +54,26 @@ def Main(dict, session=None, index=None):
 	else:
 		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': incorrect label and IMEI should start with \'35483308\'')
 	
+	if update:
+		testResult = DBUtil.getLastInserted()
+		testResult.imei = deviceIMEI
+		if resultBool:
+			testResult.imeiTest = True
+		else:
+			testResult.imeiTest = False
+		
+		print('Object has been updated from IMEI_TEST')
+		DBUtil.commitSession()
 	
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
 	print("IMEI Test is being called directly")
-	langDict = TestUtil.getLanguageDict()
-	Main(langDict)
+	import DBUtil
+	import TestUtil
+	langDict = TestUtil.getLanguageDictSoloTest()
+	Main(langDict, False)
+else:
+	import OBC_TEST_FILES.TestUtil as TestUtil
+	import OBC_TEST_FILES.DBUtil as DBUtil
 
 

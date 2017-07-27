@@ -21,11 +21,38 @@ class TestResult(Base):
 	test_type = Column(String(30))
 	serial = Column(String(15))
 	imei = Column(String(20))
+	os_ver = Column(String(30))
+	mcu_ver = Column(String(20))
+	fpga_ver = Column(String(20))
+	serialTest = Column(Boolean)
+	imeiTest = Column(Boolean)
+	versionTest = Column(Boolean)
+	ledTest = Column(Boolean)
+	sdCardTest = Column(Boolean)
+	canbusTest = Column(Boolean)
+	swcTest = Column(Boolean)
+	j1708Test = Column(Boolean)
+	comTest = Column(Boolean)
+	nfcTest = Column(Boolean)
+	helpKeyTest = Column(Boolean)
+	audioTest = Column(Boolean)
+	temperatureTest = Column(Boolean)
+	readRTCTest = Column(Boolean)
+	accelerometerTest = Column(Boolean)
+	gpioTest = Column(Boolean)
+	gpInputsOnlyTest = Column(Boolean)
+	wiggleTest = Column(Boolean)
+	supercapTest = Column(Boolean)
+	allPassed = Column(Boolean)
+	
+	
+	
+	
 
 def startSession():
 	global session
 	
-	engine = create_engine('sqlite:///sqlalchemy.db')
+	engine = create_engine('sqlite:///OBC5Database.db')
 	
 	Base.metadata.create_all(engine)
 	

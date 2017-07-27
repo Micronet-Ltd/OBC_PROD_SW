@@ -10,11 +10,11 @@ import subprocess
 
 def setupLEDS():
 	# Change LEDs to all white
-	cmd = '..\adb shell mctl api 0206000FFFFFFF'
+	cmd = '../adb shell mctl api 0206000FFFFFFF'
 	s = subprocess.check_output(cmd.split())
-	cmd = '..\adb shell mctl api 0206010FFFFFFF'
+	cmd = '../adb shell mctl api 0206010FFFFFFF'
 	s = subprocess.check_output(cmd.split())
-	cmd = '..\adb shell mctl api 0206020FFFFFFF'
+	cmd = '../adb shell mctl api 0206020FFFFFFF'
 	s = subprocess.check_output(cmd.split())
 	
 
@@ -33,18 +33,18 @@ def ledPrompt(dict):
 
 def reconfigureLEDS():
 	# Change LEDs back to default
-	cmd = '..\adb shell mctl api 02060000FF0000'
+	cmd = '../adb shell mctl api 02060000FF0000'
 	s = subprocess.check_output(cmd.split())
-	cmd = '..\adb shell mctl api 02060100FF0000'
+	cmd = '../adb shell mctl api 02060100FF0000'
 	s = subprocess.check_output(cmd.split())
-	cmd = '..\adb shell mctl api 0206020F00FF00'
+	cmd = '../adb shell mctl api 0206020F00FF00'
 	s = subprocess.check_output(cmd.split())
 
 #**********************
 #     Main Script
 #**********************
 
-def Main(dict):
+def Main(dict, update=True):
 
 	print('\n')
 	
@@ -56,12 +56,33 @@ def Main(dict):
 	
 	if choice == True:
 		print(dict['LEDPass'])
+		resultBool = True
 	else:
 		print(dict['LEDFail'])
+		resultBool = False
 	
 	# Change LEDs back to default
 	reconfigureLEDS()
-
 	
+	if update:
+		testResult = DBUtil.getLastInserted()
+		if resultBool:
+			testResult.ledTest = True
+		else:
+			testResult.ledTest = False
+		
+		print('Object has been updated from LED_TEST')
+		DBUtil.commitSession()
+
+# If this script is called directly then run the main function	
+if __name__ == "__main__":
+	print("LED Test is being called directly")
+	import DBUtil
+	import TestUtil
+	langDict = TestUtil.getLanguageDictSoloTest()
+	Main(langDict, False)
+else:
+	import OBC_TEST_FILES.TestUtil as TestUtil
+	import OBC_TEST_FILES.DBUtil as DBUtil
 	
 	

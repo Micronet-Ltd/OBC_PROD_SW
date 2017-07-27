@@ -21,11 +21,39 @@ def getConfigurationsDict():
 		returnDict[child.tag] = child.text
 				
 	return returnDict
+	
+def getConfigurationsDictSoloTest():
+
+	#Get prompt
+	tree = ET.parse('input\CONFIGURATION.xml')
+	root = tree.getroot()
+	returnDict = {}
+	
+	for child in root:
+		returnDict[child.tag] = child.text
+				
+	return returnDict
 
 def readInLanguageFile(language = 'English'):
 
 	#Get prompt
 	tree = ET.parse('obc_test_files\input\LANGUAGE.xml')
+	root = tree.getroot()
+	returnDict = {}
+	
+	
+	for child in root:
+		# If type contains what language is set to
+		if language == child.get('type'):
+			for string in child.iter('text'):
+				returnDict[string.get('description')] = string.text
+				
+	return returnDict
+	
+def readInLanguageFileSoloTest(language = 'English'):
+
+	#Get prompt
+	tree = ET.parse('input\LANGUAGE.xml')
 	root = tree.getroot()
 	returnDict = {}
 	
@@ -79,6 +107,23 @@ def getLanguageDict():
 		language = 'English'
 	
 	returnDict = readInLanguageFile(language)
+	
+	return returnDict
+	
+def getLanguageDictSoloTest():
+	configDict = getConfigurationsDictSoloTest()
+	
+	language_choice = configDict['language'].strip().lower()
+
+	if language_choice == 'chinese':
+		language = 'Chinese'
+	elif language_choice == 'english':
+		language = 'English'
+	else:
+		print('Invalid choice in CONFIGURATION.XML file. Should either be \'English\' or \'Chinese\'. Defaulting to English')
+		language = 'English'
+	
+	returnDict = readInLanguageFileSoloTest(language)
 	
 	return returnDict
 

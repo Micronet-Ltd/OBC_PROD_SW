@@ -34,8 +34,8 @@
 		<text description="TestPass">test passed</text>
 		<text description="TestFail">test failed</text>
 		<text description="FailedTestsPrompt">Failed Tests (Check individual file results to see how they failed):</text>
-		<text description="TestPassDash">test - failed</text>
-		<text description="TestFailDash">test - passed</text>
+		<text description="TestPassDash">test - passed</text>
+		<text description="TestFailDash">test - failed</text>
 	</language>
 	<language type="Chinese">
 		<text description="ScanIMEI">请扫描IMEI号： </text>

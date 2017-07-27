@@ -14,8 +14,6 @@ def accelTest():
 	s = subprocess.check_output(cmd.split())
 	returnString = s.decode("ascii")
 	
-	print(returnString)
-	
 	# Find index of return code and return data
 	index = returnString.find('result=') + 7
 	resultCode = returnString[index:index + 1]
@@ -46,9 +44,9 @@ def retryPrompt(dict):
 #     Main Script
 #**********************
 
-def Main(dict):
+def Main(dict, update=True):
 
-	print('\n')
+	print()
 
 	continueTesting = True
 	
@@ -60,14 +58,35 @@ def Main(dict):
 			continueTesting = False
 			break
 		else:
-			continuteTesting = retryPrompt(dict)
+			continueTesting = retryPrompt(dict)
 
 	
 	if data[0] == '1':
-		print('Accelerometer ', dict['TestPassDash'], ' ', data[1])
+		print('Accelerometer', dict['TestPassDash'], data[1])
+		resultBool = True
 	else:
-		print('Accelerometer ', dict['TestFailDash'], ' ', data[1])
+		print('Accelerometer', dict['TestFailDash'], data[1])
+		resultBool = False
+		
+	if update:
+		testResult = DBUtil.getLastInserted()
+		if resultBool:
+			testResult.accelerometerTest = True
+		else:
+			testResult.accelerometerTest = False
+		
+		print('Object has been updated from ACCEL_TEST')
+		DBUtil.commitSession()
 
-
+# If this script is called directly then run the main function	
+if __name__ == "__main__":
+	print("ACCEL Test is being called directly")
+	import DBUtil
+	import TestUtil
+	langDict = TestUtil.getLanguageDictSoloTest()
+	Main(langDict, False)
+else:
+	import OBC_TEST_FILES.TestUtil as TestUtil
+	import OBC_TEST_FILES.DBUtil as DBUtil	
 
 

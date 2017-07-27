@@ -4,7 +4,6 @@ import string
 import os
 import subprocess
 from OBC_TEST_FILES import *
-import DBUtil
 
 # Main Script starts here
 def Main():
@@ -32,8 +31,6 @@ def Main():
 	DBUtil.startSession()
 	DBUtil.insertTestResult(testResult)
 	
-	SERIAL_TEST.Main(langDict)
-	
 	# Connect over ADB hotspot
 	if 'adbHotspot' in testDict:
 		# Run Test and use result
@@ -45,6 +42,7 @@ def Main():
 	# Install Test Files
 	if 'installTestFiles' in testDict:
 		# Run Test and use result
+		#INSTALL_FILES_TEST.Main()
 		pass
 	else:
 		# Write N/A to file
@@ -53,7 +51,7 @@ def Main():
 	# Run Serial Test
 	if 'SerialTest' in testDict:
 		# Run Test and use result
-		pass
+		SERIAL_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -61,7 +59,7 @@ def Main():
 	# Run IMEI Test
 	if 'IMEITest' in testDict:
 		# Run Test and use result
-		pass
+		IMEI_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -69,7 +67,7 @@ def Main():
 	# Run Version Test
 	if 'VersionTest' in testDict:
 		# Run Test and use result
-		pass
+		VERSION_TEST.Main(langDict, configDict)
 	else:
 		# Write N/A to file
 		pass
@@ -77,7 +75,7 @@ def Main():
 	# Run LED Test
 	if 'LEDTest' in testDict:
 		# Run Test and use result
-		pass
+		LED_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -93,7 +91,7 @@ def Main():
 	# Run CANBus Test
 	if 'CANBusTest' in testDict:
 		# Run Test and use result
-		pass
+		CANBUS_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -101,7 +99,7 @@ def Main():
 	# Run SWC Test
 	if 'SWCTest' in testDict:
 		# Run Test and use result
-		pass
+		SWC_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -109,7 +107,7 @@ def Main():
 	# Run J1708 Test
 	if 'J1708Test' in testDict:
 		# Run Test and use result
-		pass
+		J1708_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -117,7 +115,7 @@ def Main():
 	# Run COM Test
 	if 'COMTest' in testDict:
 		# Run Test and use result
-		pass
+		COM_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -149,7 +147,7 @@ def Main():
 	# Run Temperature Test
 	if 'TemperatureTest' in testDict:
 		# Run Test and use result
-		pass
+		TEMPERATURE_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -157,7 +155,7 @@ def Main():
 	# Run ReadRTC Test
 	if 'ReadRTC' in testDict:
 		# Run Test and use result
-		pass
+		ReadRTC_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -165,7 +163,7 @@ def Main():
 	# Run Accelerometer Test
 	if 'AccelerometerTest' in testDict:
 		# Run Test and use result
-		pass
+		ACCELEROMETER_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -173,7 +171,7 @@ def Main():
 	# Run GPIO Test
 	if 'GPIOTest' in testDict:
 		# Run Test and use result
-		pass
+		GPIO_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -189,7 +187,7 @@ def Main():
 	# Run Wiggle Test
 	if 'WiggleTest' in testDict:
 		# Run Test and use result
-		pass
+		WIGGLE_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass

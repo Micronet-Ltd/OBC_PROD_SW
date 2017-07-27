@@ -3,9 +3,7 @@ import sys
 import string
 import os
 import subprocess
-import OBC_TEST_FILES.TestUtil
 from sqlalchemy.orm import sessionmaker
-import DBUtil
 
 #**********************
 #     Serial Test
@@ -30,7 +28,7 @@ def getSerialNumber():
 
 def Main(dict, update=True):
 
-	print('\n')
+	print()
 
 	# Prompt user to scan serial number
 	scannedSerial = input(dict['ScanSN'])
@@ -46,7 +44,12 @@ def Main(dict, update=True):
 
 	if update == True:
 		testResult = DBUtil.getLastInserted()
-		testResult.serial = deviceSerialNumber
+		testResult.serial = deviceSerialNumber[2:]
+		if resultBool:
+			testResult.serialTest = True
+		else:
+			testResult.serialTest = False
+		
 		print('Object has been updated from SERIAL_TEST')
 		DBUtil.commitSession()
 		
@@ -55,5 +58,11 @@ def Main(dict, update=True):
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
 	print("Serial Test is being called directly")
-	langDict = TestUtil.getLanguageDict()
+	import DBUtil
+	import TestUtil
+	langDict = TestUtil.getLanguageDictSoloTest()
 	Main(langDict, False)
+else:
+	import OBC_TEST_FILES.TestUtil as TestUtil
+	import OBC_TEST_FILES.DBUtil as DBUtil
+	

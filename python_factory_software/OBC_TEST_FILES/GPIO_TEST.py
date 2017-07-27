@@ -5,12 +5,12 @@ import os
 import subprocess
 
 #**********************
-#       J1708 Test
+#      GPIO Test
 #**********************
 
-def j1708Test():
+def gpioTest():
 	
-	cmd = '../adb.exe shell am broadcast -a com.micronet.obctestingapp.GET_J1708_RESULT'
+	cmd = '../adb.exe shell am broadcast -a com.micronet.obctestingapp.GET_GPIO_RESULT'
 	s = subprocess.check_output(cmd.split())
 	returnString = s.decode("ascii")
 	
@@ -24,11 +24,12 @@ def j1708Test():
 	result = (resultCode, resultData)
 	
 	return result
-
+	
+	
 def retryPrompt(dict):
 
 	while True:
-		choice = input(dict['J1708RetryPrompt'])
+		choice = input(dict['GPIORetryPrompt'])
 	
 		if choice.lower() == 'y':
 			return True
@@ -46,42 +47,42 @@ def Main(dict, update=True):
 
 	print()
 	continueTesting = True
-	data = ()
 
-	while continueTesting == True:
-		data = j1708Test()
+	while continueTesting:
+		data = gpioTest()
 		if data[0] == '1':
 			continueTesting = False
 			break
 		else:
 			continueTesting = retryPrompt(dict)
+
 	
 	if data[0] == '1':
-		print('J1708', dict['TestPassDash'], data[1])
+		print('GPIO', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('J1708', dict['TestFailDash'], data[1])
+		print('GPIO', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
 		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.j1708Test = True
+			testResult.gpioTest = True
 		else:
-			testResult.j1708Test = False
+			testResult.gpioTest = False
 		
-		print('Object has been updated from J1708_TEST')
+		print('Object has been updated from GPIO_TEST')
 		DBUtil.commitSession()
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("J1708 Test is being called directly")
+	print("GPIO Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()
 	Main(langDict, False)
 else:
 	import OBC_TEST_FILES.TestUtil as TestUtil
-	import OBC_TEST_FILES.DBUtil as DBUtil		
-	
-	
+	import OBC_TEST_FILES.DBUtil as DBUtil	
+
+
