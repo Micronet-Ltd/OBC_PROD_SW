@@ -10,21 +10,19 @@ import time
 #**********************
 
 def Main():
-	cmd = '../adb install -r INSTALL_FILES/obc_testing_app.apk'
-	s = subprocess.check_output(cmd.split())
-	returnString = s.decode("ascii")
+	with open(os.devnull, 'w') as nul:
+		cmd = '../adb install -r INSTALL_FILES/obc_testing_app.apk'
+		s = subprocess.check_output(cmd.split(), stderr=nul)
 	
 	cmd = '../adb shell am start -n com.micronet.obctestingapp/com.micronet.obctestingapp.MainActivity'
 	s = subprocess.check_output(cmd.split())
-	returnString = s.decode("ascii")
 	
-	cmd = '../adb install -r INSTALL_FILES/nfc_test.apk'
-	s = subprocess.check_output(cmd.split())
-	returnString = s.decode("ascii")
+	with open(os.devnull, 'w') as nul:
+		cmd = '../adb install -r INSTALL_FILES/nfc_test.apk'
+		s = subprocess.check_output(cmd.split(), stderr=nul)
 	
 	cmd = '../adb shell am start -n \'me.davidvassallo.nfc/me.davidvassallo.nfc.MainActivity\' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER'
 	s = subprocess.check_output(cmd.split())
-	returnString = s.decode("ascii")
 	
 	time.sleep(3)
 	

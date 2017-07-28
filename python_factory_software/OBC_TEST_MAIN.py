@@ -8,7 +8,7 @@ from OBC_TEST_FILES import *
 # Main Script starts here
 def Main():
 
-	test_script_version = '1.2.24'
+	test_script_version = '1.2.25'
 
 	print('---------------------------------------------------')
 	print('starting test, test script version is : ', test_script_version)
@@ -34,16 +34,20 @@ def Main():
 	# Connect over ADB hotspot
 	if 'adbHotspot' in testDict:
 		# Run Test and use result
-		pass
+		connectedBool = ADB_CONNECT.Main()
 	else:
 		# Write N/A to file
 		pass
 	
+	if not connectedBool:
+		print('Test ERROR: No device connected.')
+		print('Please make sure device is set up correctly and restart test.')
+		sys.exit()
+	
 	# Install Test Files
 	if 'installTestFiles' in testDict:
 		# Run Test and use result
-		#INSTALL_FILES_TEST.Main()
-		pass
+		INSTALL_FILES_TEST.Main()
 	else:
 		# Write N/A to file
 		pass
@@ -83,7 +87,7 @@ def Main():
 	# Run SD Card Test
 	if 'SDCardTest' in testDict:
 		# Run Test and use result
-		pass
+		SD_CARD_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -123,7 +127,7 @@ def Main():
 	# Run NFC Test
 	if 'NFCTest' in testDict:
 		# Run Test and use result
-		pass
+		NFC_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -131,7 +135,7 @@ def Main():
 	# Run Help Key Test
 	if 'HelpKeyTest' in testDict:
 		# Run Test and use result
-		pass
+		HELP_KEY_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -139,7 +143,7 @@ def Main():
 	# Run Audio Test
 	if 'AudioTest' in testDict:
 		# Run Test and use result
-		pass
+		AUDIO_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass
@@ -179,7 +183,7 @@ def Main():
 	# Run GPIO Inputs Only Test
 	if 'GPInputsOnlyTest' in testDict:
 		# Run Test and use result
-		pass
+		GPIO_INPUTS_TEST.Main(langDict)
 	else:
 		# Write N/A to file
 		pass

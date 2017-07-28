@@ -40,7 +40,7 @@ class TestResult(Base):
 	readRTCTest = Column(Boolean)
 	accelerometerTest = Column(Boolean)
 	gpioTest = Column(Boolean)
-	gpInputsOnlyTest = Column(Boolean)
+	gpioInputsTest = Column(Boolean)
 	wiggleTest = Column(Boolean)
 	supercapTest = Column(Boolean)
 	allPassed = Column(Boolean)
