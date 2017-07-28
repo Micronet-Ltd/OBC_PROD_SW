@@ -19,7 +19,7 @@ def swcTest():
 	resultCode = returnString[index:index + 1]
 	
 	index = returnString.find('"')
-	resultData = returnString[index:]
+	resultData = returnString[index:].strip()
 	
 	result = (resultCode, resultData)
 	
@@ -58,21 +58,17 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('SWC', dict['TestPassDash'], data[1])
+		print('** SWC', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('SWC', dict['TestFailDash'], data[1])
+		print(' ** SWC', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.swcTest = True
+			DBUtil.updateLastTestResult('swcTest', True)
 		else:
-			testResult.swcTest = False
-		
-		print('Object has been updated from SWC_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('swcTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

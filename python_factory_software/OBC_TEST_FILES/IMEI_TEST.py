@@ -55,16 +55,12 @@ def Main(dict, update=True):
 		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': incorrect label and IMEI should start with \'35483308\'')
 	
 	if update:
-		testResult = DBUtil.getLastInserted()
-		testResult.imei = deviceIMEI
+		DBUtil.updateLastTestResult('imei', deviceIMEI)
 		if resultBool:
-			testResult.imeiTest = True
+			DBUtil.updateLastTestResult('imeiTest', True)
 		else:
-			testResult.imeiTest = False
-		
-		print('Object has been updated from IMEI_TEST')
-		DBUtil.commitSession()
-	
+			DBUtil.updateLastTestResult('imeiTest', False)
+			
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
 	print("IMEI Test is being called directly")

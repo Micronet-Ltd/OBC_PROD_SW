@@ -140,14 +140,10 @@ def Main(dict, update=True):
 		print('                    Input off voltage :', data[1][2])
 	
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.supercapTest = True
+			DBUtil.updateLastTestResult('supercapTest', True)
 		else:
-			testResult.supercapTest = False
-		
-		print('Object has been updated from SUPERCAP_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('supercapTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

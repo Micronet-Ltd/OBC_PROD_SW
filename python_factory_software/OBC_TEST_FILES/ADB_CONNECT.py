@@ -93,7 +93,7 @@ def adbConnect():
 #     Main Script
 #**********************
 
-def Main(dict, update=True):
+def Main():
 	
 	resultBool = adbConnect()
 	

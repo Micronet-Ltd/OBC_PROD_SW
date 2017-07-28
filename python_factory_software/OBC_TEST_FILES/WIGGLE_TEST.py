@@ -75,22 +75,18 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if data[0] == '1':
-		print('Wiggle', dict['TestPassDash'], 'count =', data[1])
+		print('** Wiggle', dict['TestPassDash'], 'count =', data[1])
 		resultBool = True
 	else:
-		print('Wiggle', dict['TestFailDash'], 'count =', data[1])
+		print(' ** Wiggle', dict['TestFailDash'], 'count =', data[1])
 		resultBool = False
 	
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.wiggleTest = True
+			DBUtil.updateLastTestResult('wiggleTest', True)
 		else:
-			testResult.wiggleTest = False
-		
-		print('Object has been updated from WIGGLE_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('wiggleTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

@@ -58,21 +58,17 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('Com Port', dict['TestPassDash'], data[1])
+		print('** Com Port', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('Com Port', dict['TestFailDash'], data[1])
+		print(' ** Com Port', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.comTest = True
+			DBUtil.updateLastTestResult('comTest', True)
 		else:
-			testResult.comTest = False
-		
-		print('Object has been updated from COM_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('comTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

@@ -114,14 +114,10 @@ def Main(dict, update=True):
 	
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.audioTest = True
+			DBUtil.updateLastTestResult('audioTest', True)
 		else:
-			testResult.audioTest = False
-		
-		print('Object has been updated from AUDIO_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('audioTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

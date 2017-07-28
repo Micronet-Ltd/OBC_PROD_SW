@@ -29,21 +29,17 @@ def Main(dict, update=True):
 	
 	temp = tempTest()
 	if temp >= 20 and temp <= 50:
-		print('Temperature' , dict['TestPassDash'], '==', temp)
+		print('** Temperature' , dict['TestPassDash'], '==', temp)
 		resultBool = True
 	else:
-		print('Temperature' , dict['TestFailDash'], 'Expected temperature 20-50c, got', temp)
+		print(' ** Temperature' , dict['TestFailDash'], 'Expected temperature 20-50c, got', temp)
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.temperatureTest = True
+			DBUtil.updateLastTestResult('temperatureTest', True)
 		else:
-			testResult.temperatureTest = False
-		
-		print('Object has been updated from TEMP_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('temperatureTest', False)
 
 
 # If this script is called directly then run the main function	

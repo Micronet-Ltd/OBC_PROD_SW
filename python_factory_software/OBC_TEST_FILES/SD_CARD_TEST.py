@@ -83,14 +83,10 @@ def Main(dict, update=True):
 		
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.sdCardTest = True
+			DBUtil.updateLastTestResult('sdCardTest', True)
 		else:
-			testResult.sdCardTest = False
-		
-		print('Object has been updated from SD_CARD_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('sdCardTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

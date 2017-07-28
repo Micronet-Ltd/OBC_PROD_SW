@@ -94,18 +94,14 @@ def Main(dict, configDict, update=True):
 	#### TODO: Handle empty version strings in failures.
 	####	
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if osExistBoolean and osBoolean and mcuExistBoolean and mcuBoolean and fpgaExistBoolean and fpgaBoolean:
-			testResult.versionTest = True
+			DBUtil.updateLastTestResult('versionTest', True)
 		else:
-			testResult.versionTest = False
+			DBUtil.updateLastTestResult('versionTest', False)
 		
-		testResult.os_ver = deviceOSVer
-		testResult.mcu_ver = deviceMCUVer
-		testResult.fpga_ver = deviceFPGAVer
-		
-		print('Object has been updated from Version_TEST')
-		DBUtil.commitSession()
+		DBUtil.updateLastTestResult('os_ver', deviceOSVer)
+		DBUtil.updateLastTestResult('mcu_ver', deviceMCUVer)
+		DBUtil.updateLastTestResult('fpga_ver', deviceFPGAVer)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ def j1708Test():
 	resultCode = returnString[index:index + 1]
 	
 	index = returnString.find('"')
-	resultData = returnString[index:]
+	resultData = returnString[index:].strip()
 	
 	result = (resultCode, resultData)
 	
@@ -57,21 +57,17 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if data[0] == '1':
-		print('J1708', dict['TestPassDash'], data[1])
+		print('** J1708', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('J1708', dict['TestFailDash'], data[1])
+		print(' ** J1708', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.j1708Test = True
+			DBUtil.updateLastTestResult('j1708Test', True)
 		else:
-			testResult.j1708Test = False
-		
-		print('Object has been updated from J1708_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('j1708Test', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

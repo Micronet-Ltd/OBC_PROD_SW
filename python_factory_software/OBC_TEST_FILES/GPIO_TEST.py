@@ -19,7 +19,7 @@ def gpioTest():
 	resultCode = returnString[index:index + 1]
 	
 	index = returnString.find('"')
-	resultData = returnString[index:]
+	resultData = returnString[index:].split()
 	
 	result = (resultCode, resultData)
 	
@@ -58,21 +58,17 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('GPIO', dict['TestPassDash'], data[1])
+		print('** GPIO', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('GPIO', dict['TestFailDash'], data[1])
+		print(' ** GPIO', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.gpioTest = True
+			DBUtil.updateLastTestResult('gpioTest', True)
 		else:
-			testResult.gpioTest = False
-		
-		print('Object has been updated from GPIO_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('gpioTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
 	<A001>
-		<test retry="1">adbHotspot</test>
-		<test retry="1">installTestFiles</test>
 		<test retry="1">IMEITest</test>
 		<test retry="1">SerialTest</test>
 		<test retry="1">VersionTest</test>
@@ -15,15 +13,13 @@
 		<test retry="1">HelpKeyTest</test>
 		<test retry="1">AudioTest</test>
 		<test retry="1">TemperatureTest</test>
-		<test retry="1">ReadRTC</test>
+		<test retry="1">ReadRTCTest</test>
 		<test retry="1">AccelerometerTest</test>
-		<test retry="1">GPInputsOnlyTest</test>
+		<test retry="1">GPIOInputsTest</test>
 		<test retry="1">WiggleTest</test>
 		<test retry="1">SupercapTest</test>
 	</A001>
 	<A002>
-		<test retry="1">adbHotspot</test>
-		<test retry="1">installTestFiles</test>
 		<test retry="1">IMEITest</test>
 		<test retry="1">SerialTest</test>
 		<test retry="1">VersionTest</test>
@@ -37,15 +33,13 @@
 		<test retry="1">HelpKeyTest</test>
 		<test retry="1">AudioTest</test>
 		<test retry="1">TemperatureTest</test>
-		<test retry="1">ReadRTC</test>
+		<test retry="1">ReadRTCTest</test>
 		<test retry="1">AccelerometerTest</test>
 		<test retry="1">GPIOTest</test>
 		<test retry="1">WiggleTest</test>
 		<test retry="1">SupercapTest</test>
 	</A002>
 	<board>
-		<test retry="1">adbHotspot</test>
-		<test retry="1">installTestFiles</test>
 		<test retry="1">VersionTest</test>
 		<test retry="1">LEDTest</test>
 		<test retry="1">SDCardTest</test>
@@ -56,9 +50,9 @@
 		<test retry="1">HelpKeyTest</test>
 		<test retry="1">AudioTest</test>
 		<test retry="1">TemperatureTest</test>
-		<test retry="1">ReadRTC</test>
+		<test retry="1">ReadRTCTest</test>
 		<test retry="1">AccelerometerTest</test>
-		<test retry="1">GPInputsOnlyTest</test>
+		<test retry="1">GPIOInputsTest</test>
 		<test retry="1">WiggleTest</test>
 		<test retry="1">SupercapTest</test>
 	</board>

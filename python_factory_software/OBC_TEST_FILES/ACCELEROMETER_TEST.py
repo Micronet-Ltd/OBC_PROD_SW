@@ -62,21 +62,17 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('Accelerometer', dict['TestPassDash'], data[1])
+		print('** Accelerometer', dict['TestPassDash'], data[1])
 		resultBool = True
 	else:
-		print('Accelerometer', dict['TestFailDash'], data[1])
+		print(' ** Accelerometer', dict['TestFailDash'], data[1])
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.accelerometerTest = True
+			DBUtil.updateLastTestResult('accelerometerTest', True)
 		else:
-			testResult.accelerometerTest = False
-		
-		print('Object has been updated from ACCEL_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('accelerometerTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

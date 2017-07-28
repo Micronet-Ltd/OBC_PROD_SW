@@ -43,15 +43,11 @@ def Main(dict, update=True):
 		resultBool = False
 
 	if update == True:
-		testResult = DBUtil.getLastInserted()
-		testResult.serial = deviceSerialNumber[2:]
+		DBUtil.updateLastTestResult('serial', deviceSerialNumber[2:]) 
 		if resultBool:
-			testResult.serialTest = True
+			DBUtil.updateLastTestResult('serialTest', True)
 		else:
-			testResult.serialTest = False
-		
-		print('Object has been updated from SERIAL_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('serialTest', False)
 		
 		
 	

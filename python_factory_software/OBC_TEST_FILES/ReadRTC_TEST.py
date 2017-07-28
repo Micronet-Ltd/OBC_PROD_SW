@@ -31,21 +31,17 @@ def Main(dict, update=True):
 	returnString = readRTCTest()
 	
 	if returnString == '8':
-		print('ReadRTC', dict['TestPassDash'])
+		print('** ReadRTC', dict['TestPassDash'])
 		resultBool = True
 	else:
-		print('ReadRTC', dict['TestFailDash'], 'return code should be 8, but was', returnString)
+		print(' ** ReadRTC', dict['TestFailDash'], 'return code should be 8, but was', returnString)
 		resultBool = False
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.readRTCTest = True
+			DBUtil.updateLastTestResult('readRTCTest', True)
 		else:
-			testResult.readRTCTest = False
-		
-		print('Object has been updated from READRTC_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('readRTCTest', False)
 
 
 # If this script is called directly then run the main function	

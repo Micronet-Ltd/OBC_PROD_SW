@@ -94,14 +94,10 @@ def Main(dict, update=True):
 		
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.nfcTest = True
+			DBUtil.updateLastTestResult('nfcTest', True)
 		else:
-			testResult.nfcTest = False
-		
-		print('Object has been updated from NFC_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('nfcTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

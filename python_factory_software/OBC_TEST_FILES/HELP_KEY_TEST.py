@@ -97,14 +97,10 @@ def Main(dict, update=True):
 		
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.helpKeyTest = True
+			DBUtil.updateLastTestResult('helpKeyTest', True)
 		else:
-			testResult.helpKeyTest = False
-		
-		print('Object has been updated from HELP_KEY_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('helpKeyTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

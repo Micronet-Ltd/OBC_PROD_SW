@@ -46,7 +46,7 @@ def reconfigureLEDS():
 
 def Main(dict, update=True):
 
-	print('\n')
+	print()
 	
 	# Change color of LEDS to all white
 	setupLEDS()
@@ -65,14 +65,10 @@ def Main(dict, update=True):
 	reconfigureLEDS()
 	
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.ledTest = True
+			DBUtil.updateLastTestResult('ledTest', True)
 		else:
-			testResult.ledTest = False
-		
-		print('Object has been updated from LED_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('ledTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":

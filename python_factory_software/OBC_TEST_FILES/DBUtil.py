@@ -45,29 +45,43 @@ class TestResult(Base):
 	supercapTest = Column(Boolean)
 	allPassed = Column(Boolean)
 	
-	
-	
-	
+	def getTestResultDict(self):
+		returnDict = {}
+		returnDict['SerialTest'] = self.serialTest
+		returnDict['IMEITest'] = self.imeiTest
+		returnDict['VersionTest'] = self.versionTest
+		returnDict['LEDTest'] = self.ledTest
+		returnDict['SDCardTest'] = self.sdCardTest
+		returnDict['CANBusTest'] = self.canbusTest
+		returnDict['SWCTest'] = self.swcTest
+		returnDict['J1708Test'] = self.j1708Test
+		returnDict['COMTest'] = self.comTest
+		returnDict['NFCTest'] = self.nfcTest
+		returnDict['HelpKeyTest'] = self.helpKeyTest
+		returnDict['AudioTest'] = self.audioTest
+		returnDict['TemperatureTest'] = self.temperatureTest
+		returnDict['ReadRTCTest'] = self.readRTCTest
+		returnDict['AccelerometerTest'] = self.accelerometerTest
+		returnDict['GPIOTest'] = self.gpioTest
+		returnDict['GPIOInputsTest'] = self.gpioInputsTest
+		returnDict['WiggleTest'] = self.wiggleTest
+		returnDict['SupercapTest'] = self.supercapTest
+		returnDict['AllPassed'] = self.allPassed
+		return returnDict
 
 def startSession():
 	global session
-	
 	engine = create_engine('sqlite:///OBC5Database.db')
-	
 	Base.metadata.create_all(engine)
-	
 	Base.metadata.bind = engine
-	
 	DBSession = sessionmaker(bind=engine)
-	
 	session = DBSession()
-	
-	print('Session started')
+	#print('Session started')
 	
 def insertTestResult(testResult):
 	session.add(testResult)
 	session.commit()
-	print('Test Result Inserted')
+	#print('Test Result Inserted')
 	
 def getLastInserted():
 	lastObject = session.query(TestResult).order_by(TestResult.index.desc()).first()
@@ -75,6 +89,98 @@ def getLastInserted():
 	
 def commitSession():
 	session.commit()
-	print('Session has been commited')
+	#print('Session has been commited')
+
+def returnListOfFailures(testDict):
+	testResult = getLastInserted()
+	testResultDict = testResult.getTestResultDict()
+	listOfFailures = []
+	
+	print()
+	
+	# This helps sort out tests if they weren't used in our current test_type
+	for key in testDict:
+		if testResultDict[key] != True:
+			print(key, testResultDict[key])
+			listOfFailures.append(key)
+	
+	print()
+	
+	return listOfFailures
+
+def updateLastTestResult(column, value):
+	testResult = getLastInserted()
+	
+	# Python doesn't have switch statements?
+	if column == 'test_ver':
+		testResult.test_ver = value
+	elif column == 'test_type':
+		testResult.test_type = value
+	elif column == 'serial':
+		testResult.serial = value
+	elif column == 'imei':
+		testResult.imei = value
+	elif column == 'os_ver':
+		testResult.os_ver = value
+	elif column == 'mcu_ver':
+		testResult.mcu_ver = value
+	elif column == 'fpga_ver':
+		testResult.fpga_ver = value
+	elif column == 'serialTest':
+		testResult.serialTest = value
+	elif column == 'imeiTest':
+		testResult.imeiTest = value
+	elif column == 'versionTest':
+		testResult.versionTest = value
+	elif column == 'ledTest':
+		testResult.ledTest = value
+	elif column == 'sdCardTest':
+		testResult.sdCardTest = value
+	elif column == 'canbusTest':
+		testResult.canbusTest = value
+	elif column == 'swcTest':
+		testResult.swcTest = value
+	elif column == 'j1708Test':
+		testResult.j1708Test = value
+	elif column == 'comTest':
+		testResult.comTest = value
+	elif column == 'nfcTest':
+		testResult.nfcTest = value
+	elif column == 'helpKeyTest':
+		testResult.helpKeyTest = value
+	elif column == 'audioTest':
+		testResult.audioTest = value
+	elif column == 'temperatureTest':
+		testResult.temperatureTest = value
+	elif column == 'readRTCTest':
+		testResult.readRTCTest = value
+	elif column == 'accelerometerTest':
+		testResult.accelerometerTest = value
+	elif column == 'gpioTest':
+		testResult.gpioTest = value
+	elif column == 'gpioInputsTest':
+		testResult.gpioInputsTest = value
+	elif column == 'wiggleTest':
+		testResult.wiggleTest = value
+	elif column == 'supercapTest':
+		testResult.supercapTest = value
+	elif column == 'allPassed':
+		testResult.allPassed = value
+	else:
+		print('Invalid column selection')
+		return
+	
+	commitSession()
+	print('Updated Test Result:', column, '=', value)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	

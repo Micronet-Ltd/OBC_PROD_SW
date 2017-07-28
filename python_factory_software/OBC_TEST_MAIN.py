@@ -3,7 +3,102 @@ import sys
 import string
 import os
 import subprocess
+import time
 from OBC_TEST_FILES import *
+
+def runIndividualTests(langDict, configDict, testDict, test_script_version):
+	# Connect over ADB hotspot
+	connectedBool = ADB_CONNECT.Main()
+	
+	if not connectedBool:
+		print('Test ERROR: No device connected.')
+		print('Please make sure device is set up correctly and restart test.')
+		sys.exit()
+	
+	# If test is able to connect to device then right to the database
+	testResult = DBUtil.TestResult(test_ver = test_script_version, test_type = configDict['test_type'])
+	DBUtil.startSession()
+	DBUtil.insertTestResult(testResult)
+	
+	# Install Test Files
+	INSTALL_FILES_TEST.Main()
+		
+	# Run Serial Test
+	if 'SerialTest' in testDict:
+		SERIAL_TEST.Main(langDict)
+	
+	# Run IMEI Test
+	if 'IMEITest' in testDict:
+		IMEI_TEST.Main(langDict)
+	
+	# Run Version Test
+	if 'VersionTest' in testDict:
+		VERSION_TEST.Main(langDict, configDict)
+	
+	# Run LED Test
+	if 'LEDTest' in testDict:
+		LED_TEST.Main(langDict)
+	
+	# Run SD Card Test
+	if 'SDCardTest' in testDict:
+		SD_CARD_TEST.Main(langDict)
+	
+	# Run CANBus Test
+	if 'CANBusTest' in testDict:
+		CANBUS_TEST.Main(langDict)
+	
+	# Run SWC Test
+	if 'SWCTest' in testDict:
+		SWC_TEST.Main(langDict)
+	
+	# Run J1708 Test
+	if 'J1708Test' in testDict:
+		J1708_TEST.Main(langDict)
+	
+	# Run COM Test
+	if 'COMTest' in testDict:
+		COM_TEST.Main(langDict)
+	
+	# Run NFC Test
+	if 'NFCTest' in testDict:
+		NFC_TEST.Main(langDict)
+	
+	# Run Help Key Test
+	if 'HelpKeyTest' in testDict:
+		HELP_KEY_TEST.Main(langDict)
+	
+	# Run Audio Test
+	if 'AudioTest' in testDict:
+		AUDIO_TEST.Main(langDict)
+	
+	# Run Temperature Test
+	if 'TemperatureTest' in testDict:
+		TEMPERATURE_TEST.Main(langDict)
+	
+	# Run ReadRTC Test
+	if 'ReadRTCTest' in testDict:
+		ReadRTC_TEST.Main(langDict)
+	
+	# Run Accelerometer Test
+	if 'AccelerometerTest' in testDict:
+		ACCELEROMETER_TEST.Main(langDict)
+	
+	# Run GPIO Test
+	if 'GPIOTest' in testDict:
+		GPIO_TEST.Main(langDict)
+		
+	# Run GPIO Inputs Only Test
+	if 'GPIOInputsTest' in testDict:
+		GPIO_INPUTS_TEST.Main(langDict)
+	
+	# Run Wiggle Test
+	if 'WiggleTest' in testDict:
+		WIGGLE_TEST.Main(langDict)
+		
+	# Run Supercap Test
+	if 'SupercapTest' in testDict:
+		#SUPERCAP_TEST.Main(langDict)
+		pass
 
 # Main Script starts here
 def Main():
@@ -16,194 +111,48 @@ def Main():
 
 	# Get dictionary with configurations
 	configDict = TestUtil.getConfigurationsDict()
-	
 	# Get language dictionary
 	langDict = TestUtil.getLanguageDict()
-	
 	# Get test dicitonary
 	testDict = TestUtil.getTestDict()
 	
 	# It's important to change directories for adb cmd strings to work properly
 	os.chdir('OBC_TEST_FILES')
 	
-	testResult = DBUtil.TestResult(test_ver = test_script_version, test_type = configDict['test_type'])
+	# ----- RUN INDIVIDUAL TESTS -----
+	runIndividualTests(langDict, configDict, testDict, test_script_version)
 	
-	DBUtil.startSession()
-	DBUtil.insertTestResult(testResult)
 	
-	# Connect over ADB hotspot
-	if 'adbHotspot' in testDict:
-		# Run Test and use result
-		connectedBool = ADB_CONNECT.Main()
+	# ----- CHECK TEST RESULTS -----
+	failures = DBUtil.returnListOfFailures(testDict)
+	
+	print()
+	
+	if len(failures) == 0:
+		os.system('color 20')
+		print('**************************************')
+		print('***** Entire OBC', langDict['TestPass'],'!!! *****')
+		print('**************************************')
+		DBUtil.updateLastTestResult('allPassed', True)
 	else:
-		# Write N/A to file
-		pass
-	
-	if not connectedBool:
-		print('Test ERROR: No device connected.')
-		print('Please make sure device is set up correctly and restart test.')
-		sys.exit()
-	
-	# Install Test Files
-	if 'installTestFiles' in testDict:
-		# Run Test and use result
-		INSTALL_FILES_TEST.Main()
-	else:
-		# Write N/A to file
-		pass
+		os.system('color 47')
+		print('**************************************')
+		print('********  OBC', langDict['TestFail'],'!!! ********')
+		print('**************************************')
+		DBUtil.updateLastTestResult('allPassed', False)
 		
-	# Run Serial Test
-	if 'SerialTest' in testDict:
-		# Run Test and use result
-		SERIAL_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run IMEI Test
-	if 'IMEITest' in testDict:
-		# Run Test and use result
-		IMEI_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run Version Test
-	if 'VersionTest' in testDict:
-		# Run Test and use result
-		VERSION_TEST.Main(langDict, configDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run LED Test
-	if 'LEDTest' in testDict:
-		# Run Test and use result
-		LED_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run SD Card Test
-	if 'SDCardTest' in testDict:
-		# Run Test and use result
-		SD_CARD_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run CANBus Test
-	if 'CANBusTest' in testDict:
-		# Run Test and use result
-		CANBUS_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run SWC Test
-	if 'SWCTest' in testDict:
-		# Run Test and use result
-		SWC_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run J1708 Test
-	if 'J1708Test' in testDict:
-		# Run Test and use result
-		J1708_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run COM Test
-	if 'COMTest' in testDict:
-		# Run Test and use result
-		COM_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run NFC Test
-	if 'NFCTest' in testDict:
-		# Run Test and use result
-		NFC_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run Help Key Test
-	if 'HelpKeyTest' in testDict:
-		# Run Test and use result
-		HELP_KEY_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run Audio Test
-	if 'AudioTest' in testDict:
-		# Run Test and use result
-		AUDIO_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run Temperature Test
-	if 'TemperatureTest' in testDict:
-		# Run Test and use result
-		TEMPERATURE_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run ReadRTC Test
-	if 'ReadRTC' in testDict:
-		# Run Test and use result
-		ReadRTC_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run Accelerometer Test
-	if 'AccelerometerTest' in testDict:
-		# Run Test and use result
-		ACCELEROMETER_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
-	
-	# Run GPIO Test
-	if 'GPIOTest' in testDict:
-		# Run Test and use result
-		GPIO_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
+		print(langDict['FailedTestsPrompt'])
 		
-	# Run GPIO Inputs Only Test
-	if 'GPInputsOnlyTest' in testDict:
-		# Run Test and use result
-		GPIO_INPUTS_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
+		for x in failures:
+			print(' **', x, ':',langDict['TestFail'])
 	
-	# Run Wiggle Test
-	if 'WiggleTest' in testDict:
-		# Run Test and use result
-		WIGGLE_TEST.Main(langDict)
-	else:
-		# Write N/A to file
-		pass
+	cmd = '../adb.exe disconnect'
+	s = subprocess.check_output(cmd.split())
+	time.sleep(2)
 	
-	# Run Supercap Test
-	if 'SupercapTest' in testDict:
-		# Run Test and use result
-		pass
-	else:
-		# Write N/A to file
-		pass
-
+	os.system('color 07')
+	
+	
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
 	print("OBC_TEST_MAIN is being called directly")
