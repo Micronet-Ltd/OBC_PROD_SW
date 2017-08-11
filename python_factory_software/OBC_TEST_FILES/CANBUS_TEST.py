@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #       CANBUS Test
@@ -58,10 +59,10 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('** CanBus', dict['TestPassDash'], data[1])
+		print(Fore.GREEN + '** CanBus', dict['TestPassDash'], data[1] + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** CanBus', dict['TestFailDash'], data[1])
+		print(Fore.RED + ' ** CanBus', dict['TestFailDash'], data[1] + Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -72,7 +73,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("CANBus Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #     Audio Test
@@ -108,9 +109,9 @@ def Main(dict, update=True):
 	turnOffSpeakers()
 	
 	if resultBool:
-		print('** Audio', dict['TestPassDash'])
+		print(Fore.GREEN + '** Audio', dict['TestPassDash'] + Style.RESET_ALL)
 	else:
-		print(' ** Audio', dict['TestFailDash'])
+		print(Fore.RED + ' ** Audio', dict['TestFailDash'] + Style.RESET_ALL)
 	
 		
 	if update:
@@ -121,7 +122,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Audio Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

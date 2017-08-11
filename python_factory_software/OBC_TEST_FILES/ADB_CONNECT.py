@@ -4,6 +4,7 @@ import string
 import os
 import subprocess
 import time
+from colorama import Fore, Back, Style
 
 #**********************
 #     ADB Connect
@@ -33,10 +34,11 @@ def adbConnect():
 	if not hotspotConnected:
 		return False
 	
-	rootHotspotConnected = False
-	
 	# Make ADB root and connect again
 	for i in range(8):
+		rootHotspotConnected = False
+		rootString = ''
+	
 		try:
 			with open(os.devnull, 'w') as nul:
 				cmd = '../adb.exe root'
@@ -49,40 +51,35 @@ def adbConnect():
 		except subprocess.CalledProcessError:
 			rootString='Error'
 		
-		
-		
 		if rootString == 'c' or rootString == 'a':
 			# Connected to hotspot
 			rootHotspotConnected = True
-			break
 			
 		time.sleep(1)
 		
-	if not rootHotspotConnected:
-		return False
-	
-	rootADB = False
-	
-	for i in range(8):	
-		# Check device state
-		with open(os.devnull, 'w') as nul:
-			cmd = '../adb.exe get-state'
-			s = subprocess.check_output(cmd.split(), stderr=nul)
-			state = s.decode("ascii")
+		rootADB = False
 		
-		if state.strip() == 'device':
-			time.sleep(2)
-			# Check that ADB is actually root
+		if rootHotspotConnected:
+		
+			# Check device state
 			with open(os.devnull, 'w') as nul:
-				cmd = '../adb.exe shell id'
+				cmd = '../adb.exe get-state'
 				s = subprocess.check_output(cmd.split(), stderr=nul)
-				root = s.decode("ascii")
+				state = s.decode("ascii")
 			
-			root = root[:11]
-			
-			if root == 'uid=0(root)':
-				rootADB = True
-				break
+			if state.strip() == 'device':
+				time.sleep(2)
+				# Check that ADB is actually root
+				with open(os.devnull, 'w') as nul:
+					cmd = '../adb.exe shell id'
+					s = subprocess.check_output(cmd.split(), stderr=nul)
+					root = s.decode("ascii")
+				
+				root = root[:11]
+				
+				if root == 'uid=0(root)':
+					rootADB = True
+					break
 			
 	if rootADB:
 		return True
@@ -100,21 +97,20 @@ def Main():
 	print('', end='\r', flush=True)
 	
 	if resultBool:
-		print('** adb Connected passed')
+		print(Fore.GREEN + '** adb Connected passed' + Style.RESET_ALL)
 		return True
 	else:
-		print(' ** adb Connected failed')
+		print(Fore.RED + ' ** adb Connected failed' + Style.RESET_ALL)
 		return False
 		
 	
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("ADB Connect is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()
-	Main(langDict, False)
+	Main()
 else:
 	import OBC_TEST_FILES.TestUtil as TestUtil
 	import OBC_TEST_FILES.DBUtil as DBUtil	

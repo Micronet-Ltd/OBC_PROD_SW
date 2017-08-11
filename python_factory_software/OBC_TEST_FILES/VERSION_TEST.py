@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #     Version Test
@@ -14,7 +15,7 @@ def getOSVersion():
 	s = subprocess.check_output(cmd.split())
 	returnString = s.decode("ascii")
 	
-	return returnString
+	return returnString.strip()
 
 def getMCUVersion():
 	
@@ -51,13 +52,13 @@ def Main(dict, configDict, update=True):
 	
 	# Check to make sure the configurations exist in the dictionary
 	if not 'os_ver' in configDict:
-		print('** OS version', dict['TestFailDash'], ': Error, no OS version string in the configuration file. Contact MICRONET for the OS string')
+		print(Fore.RED + '** OS version', dict['TestFailDash'], ': Error, no OS version string in the configuration file. Contact MICRONET for the OS string' + Style.RESET_ALL)
 		osExistBoolean = False
 	if not 'mcu_ver' in configDict:
-		print('** MCU version', dict['TestFailDash'], ': Error, no MCU version string in the configuration file. Contact MICRONET for the MCU string')
+		print(Fore.RED + '** MCU version', dict['TestFailDash'], ': Error, no MCU version string in the configuration file. Contact MICRONET for the MCU string' + Style.RESET_ALL)
 		mcuExistBoolean = False
 	if not 'fpga_ver' in configDict:
-		print('** FPGA version', dict['TestFailDash'], ': Error, no FPGA version string in the configuration file. Contact MICRONET for the FPGA string')
+		print(Fore.RED + '** FPGA version', dict['TestFailDash'], ': Error, no FPGA version string in the configuration file. Contact MICRONET for the FPGA string' + Style.RESET_ALL)
 		fpgaExistBoolean = False
 		
 	deviceOSVer = getOSVersion()
@@ -68,27 +69,27 @@ def Main(dict, configDict, update=True):
 		if deviceOSVer.strip().lower() == configDict['os_ver'].strip().lower():
 			osBoolean = True
 		else:
-			print(' ** OS version', dict['TestFailDash'], ': expected', configDict['os_ver'], 'got', deviceOSVer, '. Burn correct OS version.')
+			print(Fore.RED + ' ** OS version', dict['TestFailDash'], ': expected', configDict['os_ver'], 'got', deviceOSVer, '. Burn correct OS version.' + Style.RESET_ALL)
 			osBoolean = False
 	
 	if mcuExistBoolean:
 		if deviceMCUVer.strip().lower() == configDict['mcu_ver'].strip().lower():
 			mcuBoolean = True
 		else:
-			print(' ** MCU version', dict['TestFailDash'], ': expected', configDict['mcu_ver'], 'got', deviceMCUVer, '. Burn correct MCU version.')
+			print(Fore.RED + ' ** MCU version', dict['TestFailDash'], ': expected', configDict['mcu_ver'], 'got', deviceMCUVer, '. Burn correct MCU version.' + Style.RESET_ALL)
 			mcuBoolean = False
 	
 	if fpgaExistBoolean:	
 		if deviceFPGAVer.strip().lower() == configDict['fpga_ver'].strip().lower():
 			fpgaBoolean = True
 		else:
-			print(' ** FPGA version', dict['TestFailDash'], ': expected', configDict['fpga_ver'], 'got', deviceFPGAVer, '. Burn correct FPGA version.')
+			print(Fore.RED + ' ** FPGA version', dict['TestFailDash'], ': expected', configDict['fpga_ver'], 'got', deviceFPGAVer, '. Burn correct FPGA version.' + Style.RESET_ALL)
 			fpgaBoolean = False
 		
 	if osExistBoolean and osBoolean and mcuExistBoolean and mcuBoolean and fpgaExistBoolean and fpgaBoolean:
-		print('** Version', dict['TestPassDash'])
+		print(Fore.GREEN + '** Version', dict['TestPassDash'] + Style.RESET_ALL)
 	else:
-		print('** Version', dict['TestFailDash'])
+		print(Fore.RED + '** Version', dict['TestFailDash'] + Style.RESET_ALL)
 		
 	####
 	#### TODO: Handle empty version strings in failures.
@@ -105,7 +106,6 @@ def Main(dict, configDict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Version Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

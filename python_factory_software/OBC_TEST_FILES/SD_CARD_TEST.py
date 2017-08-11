@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #     SD Card Test
@@ -77,9 +78,9 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if resultBool:
-		print('** SD Card', dict['TestPassDash'])
+		print(Fore.GREEN + '** SD Card', dict['TestPassDash'] + Style.RESET_ALL)
 	else:
-		print(' ** SD Card', dict['TestFailDash'])
+		print(Fore.RED + ' ** SD Card', dict['TestFailDash'] + Style.RESET_ALL)
 		
 		
 	if update:
@@ -90,7 +91,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("SD Card Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #       LED Test
@@ -55,10 +56,10 @@ def Main(dict, update=True):
 	choice = ledPrompt(dict)
 	
 	if choice == True:
-		print(dict['LEDPass'])
+		print(Fore.GREEN + dict['LEDPass'] + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(dict['LEDFail'])
+		print(Fore.RED + dict['LEDFail'] + Style.RESET_ALL)
 		resultBool = False
 	
 	# Change LEDs back to default
@@ -72,7 +73,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("LED Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

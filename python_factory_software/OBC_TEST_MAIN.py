@@ -4,6 +4,9 @@ import string
 import os
 import subprocess
 import time
+import colorama
+import zipfile
+from colorama import Fore, Back, Style
 from OBC_TEST_FILES import *
 
 def runIndividualTests(langDict, configDict, testDict, test_script_version):
@@ -103,11 +106,20 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 # Main Script starts here
 def Main():
 
-	test_script_version = '1.2.25'
+	# Clear Screen
+	os.system('cls')
+	
+	# Initialize Colorama
+	colorama.init()
+	
+	print(Style.RESET_ALL, end="")
+
+	test_script_version = '1.2.26'
 
 	print('---------------------------------------------------')
-	print('starting test, test script version is : ', test_script_version)
+	print(Fore.CYAN + '  starting test, test script version is : ' + test_script_version + Style.RESET_ALL)
 	print('---------------------------------------------------')
+	
 
 	# Get dictionary with configurations
 	configDict = TestUtil.getConfigurationsDict()
@@ -122,38 +134,59 @@ def Main():
 	# ----- RUN INDIVIDUAL TESTS -----
 	runIndividualTests(langDict, configDict, testDict, test_script_version)
 	
-	
 	# ----- CHECK TEST RESULTS -----
 	failures = DBUtil.returnListOfFailures(testDict)
 	
 	print()
 	
 	if len(failures) == 0:
-		os.system('color 20')
-		print('**************************************')
+		print(Fore.GREEN +'**************************************')
 		print('***** Entire OBC', langDict['TestPass'],'!!! *****')
-		print('**************************************')
+		print('**************************************' + Style.RESET_ALL)
 		DBUtil.updateLastTestResult('allPassed', True)
 	else:
-		os.system('color 47')
-		print('**************************************')
+		print(Fore.RED + '**************************************')
 		print('********  OBC', langDict['TestFail'],'!!! ********')
 		print('**************************************')
 		DBUtil.updateLastTestResult('allPassed', False)
+		
+		print()
 		
 		print(langDict['FailedTestsPrompt'])
 		
 		for x in failures:
 			print(' **', x, ':',langDict['TestFail'])
+			
+		print(Style.RESET_ALL, end="")
 	
+	# Zip up logcat of results
+	result = DBUtil.getLastInserted()
+	serialNum = result.serial
+	
+	with open('testResults\{}.txt'.format(serialNum), 'w') as f:
+		subprocess.call(['adb','logcat', '-d'], stdout=f)
+	
+	file = zipfile.ZipFile('testResults\{}.zip'.format(serialNum), 'w')
+	file.write('testResults\{}.txt'.format(serialNum))
+	file.close()
+	
+	print('Zipped up logging files')
+	
+	os.remove('testResults\{}.txt'.format(serialNum))
+	
+	# Disconnect ADB from device
 	cmd = '../adb.exe disconnect'
 	s = subprocess.check_output(cmd.split())
 	time.sleep(2)
 	
-	os.system('color 07')
 	
 	
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("OBC_TEST_MAIN is being called directly")
-	Main()
+	try:
+		Main()
+	except KeyboardInterrupt:
+		print()
+		print(Fore.CYAN + 'Shutdown requested... exiting' + Style.RESET_ALL)
+		cmd = '../adb.exe disconnect'
+		s = subprocess.check_output(cmd.split())

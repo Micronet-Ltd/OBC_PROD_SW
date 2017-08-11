@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #   GPIO Inputs Test
@@ -122,24 +123,19 @@ def Main(dict, update=True):
 	rList = data[1]
 	
 	if resultBool:
-		print('** GPIO Inputs', dict['TestPassDash'], 'input1={} input2={} input3={} input4={} input5={} input6={} input7={} ignition={}'.format(rList[0], rList[1], rList[2], rList[3], rList[4], rList[5], rList[6], rList[7]))
+		print(Fore.GREEN + '** GPIO Inputs', dict['TestPassDash'], 'input1={} input2={} input3={} input4={} input5={} input6={} input7={} ignition={}'.format(rList[0], rList[1], rList[2], rList[3], rList[4], rList[5], rList[6], rList[7]) + Style.RESET_ALL)
 	else:
-		print(' ** GPIO Inputs', dict['TestFailDash'], 'input1={} input2={} input3={} input4={} input5={} input6={} input7={} ignition={}'.format(rList[0], rList[1], rList[2], rList[3], rList[4], rList[5], rList[6], rList[7]))
+		print(Fore.RED + ' ** GPIO Inputs', dict['TestFailDash'], 'input1={} input2={} input3={} input4={} input5={} input6={} input7={} ignition={}'.format(rList[0], rList[1], rList[2], rList[3], rList[4], rList[5], rList[6], rList[7]) + Style.RESET_ALL)
 		
 		
 	if update:
-		testResult = DBUtil.getLastInserted()
 		if resultBool:
-			testResult.gpioInputsTest = True
+			DBUtil.updateLastTestResult('gpioInputsTest', True)
 		else:
-			testResult.gpioInputsTest = False
-		
-		print('Object has been updated from GPIO_INPUTS_TEST')
-		DBUtil.commitSession()
+			DBUtil.updateLastTestResult('gpioInputsTest', False)
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("GPIO Inputs Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

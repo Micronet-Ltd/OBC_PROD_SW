@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #     Help Key Test
@@ -91,9 +92,9 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if resultBool:
-		print(dict['HKPass'])
+		print(Fore.GREEN + dict['HKPass'] + Style.RESET_ALL)
 	else:
-		print(dict['HKFail'])
+		print(Fore.RED + dict['HKFail'] + Style.RESET_ALL)
 		
 		
 	if update:
@@ -104,7 +105,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Help Key Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

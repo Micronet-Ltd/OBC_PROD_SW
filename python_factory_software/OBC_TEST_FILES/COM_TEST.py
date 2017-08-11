@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #       Com Test
@@ -19,7 +20,7 @@ def comTest():
 	resultCode = returnString[index:index + 1]
 	
 	index = returnString.find('"')
-	resultData = returnString[index:]
+	resultData = returnString[index:].strip()
 	
 	result = (resultCode, resultData)
 	
@@ -58,10 +59,10 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('** Com Port', dict['TestPassDash'], data[1])
+		print(Fore.GREEN + '** Com Port', dict['TestPassDash'], data[1] + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** Com Port', dict['TestFailDash'], data[1])
+		print(Fore.RED + ' ** Com Port', dict['TestFailDash'], data[1] + Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -72,7 +73,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("COM Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

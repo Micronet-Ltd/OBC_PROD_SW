@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #      IMEI Test
@@ -45,14 +46,14 @@ def Main(dict, update=True):
 	resultBool = False
 		
 	if matchingDevice and scannedIMEI:
-		print(dict['IMEIPass'].format(deviceIMEI))
+		print(Fore.GREEN + dict['IMEIPass'].format(deviceIMEI) + Style.RESET_ALL)
 		resultBool = True
 	elif matchingDevice:
-		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': matching device but IMEI should start with \'35483308\'')
+		print(Fore.RED + dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': matching device but IMEI should start with \'35483308\'' + Style.RESET_ALL)
 	elif correctTac:
-		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI))
+		print(Fore.RED + dict['IMEIFail'].format(deviceIMEI, scannedIMEI) + Style.RESET_ALL)
 	else:
-		print(dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': incorrect label and IMEI should start with \'35483308\'')
+		print(Fore.RED + dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': incorrect label and IMEI should start with \'35483308\'' + Style.RESET_ALL)
 	
 	if update:
 		DBUtil.updateLastTestResult('imei', deviceIMEI)
@@ -63,7 +64,6 @@ def Main(dict, update=True):
 			
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("IMEI Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

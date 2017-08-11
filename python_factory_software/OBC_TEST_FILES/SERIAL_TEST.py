@@ -3,7 +3,7 @@ import sys
 import string
 import os
 import subprocess
-from sqlalchemy.orm import sessionmaker
+from colorama import Fore, Back, Style
 
 #**********************
 #     Serial Test
@@ -36,10 +36,10 @@ def Main(dict, update=True):
 	deviceSerialNumber = getSerialNumber()
 
 	if scannedSerial == deviceSerialNumber:
-		print(dict['SNPass'].format(deviceSerialNumber))
+		print(Fore.GREEN + dict['SNPass'].format(deviceSerialNumber) + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(dict['SNFail'].format(deviceSerialNumber, scannedSerial))
+		print(Fore.RED + dict['SNFail'].format(deviceSerialNumber, scannedSerial) + Style.RESET_ALL)
 		resultBool = False
 
 	if update == True:
@@ -53,7 +53,6 @@ def Main(dict, update=True):
 	
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Serial Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

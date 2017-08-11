@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #      GPIO Test
@@ -19,7 +20,7 @@ def gpioTest():
 	resultCode = returnString[index:index + 1]
 	
 	index = returnString.find('"')
-	resultData = returnString[index:].split()
+	resultData = returnString[index:].strip()
 	
 	result = (resultCode, resultData)
 	
@@ -58,10 +59,10 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('** GPIO', dict['TestPassDash'], data[1])
+		print(Fore.GREEN + '** GPIO', dict['TestPassDash'], data[1], Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** GPIO', dict['TestFailDash'], data[1])
+		print(Fore.RED + ' ** GPIO', dict['TestFailDash'], data[1], Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -72,7 +73,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("GPIO Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

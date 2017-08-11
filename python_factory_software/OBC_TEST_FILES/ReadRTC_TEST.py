@@ -4,6 +4,7 @@ import string
 import os
 import subprocess
 import datetime
+from colorama import Fore, Back, Style
 
 #**********************
 #     ReadRTC Test
@@ -31,10 +32,10 @@ def Main(dict, update=True):
 	returnString = readRTCTest()
 	
 	if returnString == '8':
-		print('** ReadRTC', dict['TestPassDash'])
+		print(Fore.GREEN + '** ReadRTC', dict['TestPassDash'] +Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** ReadRTC', dict['TestFailDash'], 'return code should be 8, but was', returnString)
+		print(Fore.RED + ' ** ReadRTC', dict['TestFailDash'], 'return code should be 8, but was', returnString + Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -46,7 +47,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("ReadRTC Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

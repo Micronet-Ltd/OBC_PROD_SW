@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #   Temperature Test
@@ -29,10 +30,10 @@ def Main(dict, update=True):
 	
 	temp = tempTest()
 	if temp >= 20 and temp <= 50:
-		print('** Temperature' , dict['TestPassDash'], '==', temp)
+		print(Fore.GREEN + '** Temperature' , dict['TestPassDash'], '==', temp, Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** Temperature' , dict['TestFailDash'], 'Expected temperature 20-50c, got', temp)
+		print(Fore.RED + ' ** Temperature' , dict['TestFailDash'], 'Expected temperature 20-50c, got', temp, Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -44,7 +45,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Temperature Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

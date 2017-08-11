@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #       NFC Test
@@ -36,8 +37,6 @@ def nfcTest(dict):
 	cmd = '../adb.exe shell rm ./sdcard/nfc.txt'
 	s = subprocess.check_output(cmd.split())
 	returnString = s.decode("ascii")
-	
-	print(returnString)
 	
 	# Nothing should be returned from the deletion if it deletes successfully
 	if not returnString == '':
@@ -82,9 +81,9 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if resultBool:
-		print(dict['NFCPass'])
+		print(Fore.GREEN + dict['NFCPass'] + Style.RESET_ALL)
 	else:
-		print(dict['NFCFail'])
+		print(Fore.RED + dict['NFCFail'] + Style.RESET_ALL)
 	
 	if not resultBool:
 		uninstallAPK()
@@ -101,7 +100,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("NFC Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

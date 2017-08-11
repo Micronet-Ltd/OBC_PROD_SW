@@ -5,6 +5,7 @@ import os
 import subprocess
 import time
 import msvcrt
+from colorama import Fore, Back, Style
 
 #**********************
 #    Supercap Test
@@ -117,16 +118,16 @@ def Main(dict, update=True):
 	data = supercapTest(dict)
 	
 	if data[0] == 1:
-		print('Supercap', dict['TestPassDash'])
+		print(Fore.GREEN + 'Supercap', dict['TestPassDash'] + Style.RESET_ALL)
 		resultBool = True
 	elif data[0] == -1:
-		print('Supercap', dict['TestFailDash'], 'initial SuperCap voltage not in range - SC_LEVEL_ERROR')
+		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'initial SuperCap voltage not in range - SC_LEVEL_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	elif data[0] == -2:
-		print('Supercap', dict['TestFailDash'], 'input voltage too high in supercap mode - VIN_LEVEL_ERROR')
+		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'input voltage too high in supercap mode - VIN_LEVEL_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	elif data[0] == -3:
-		print('Supercap', dict['TestFailDash'], 'didn\'t get power loss notification - POWER_LOSS_ERROR')
+		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'didn\'t get power loss notification - POWER_LOSS_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	
 	length = len(data[1])
@@ -147,7 +148,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Supercap Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

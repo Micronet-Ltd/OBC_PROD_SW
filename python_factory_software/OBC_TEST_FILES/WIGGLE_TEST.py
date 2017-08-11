@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #     Wiggle Test
@@ -75,10 +76,10 @@ def Main(dict, update=True):
 			continueTesting = retryPrompt(dict)
 	
 	if data[0] == '1':
-		print('** Wiggle', dict['TestPassDash'], 'count =', data[1])
+		print(Fore.GREEN + '** Wiggle', dict['TestPassDash'], 'count =', data[1], Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** Wiggle', dict['TestFailDash'], 'count =', data[1])
+		print(Fore.RED + ' ** Wiggle', dict['TestFailDash'], 'count =', data[1], Style.RESET_ALL)
 		resultBool = False
 	
 		
@@ -90,7 +91,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Wiggle Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

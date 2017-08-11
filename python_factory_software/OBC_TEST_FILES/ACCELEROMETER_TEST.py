@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #      ACCEL Test
@@ -62,10 +63,10 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('** Accelerometer', dict['TestPassDash'], data[1])
+		print(Fore.GREEN + '** Accelerometer', dict['TestPassDash'], data[1] + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** Accelerometer', dict['TestFailDash'], data[1])
+		print(Fore.RED + ' ** Accelerometer', dict['TestFailDash'], data[1] + Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -76,7 +77,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("ACCEL Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()

@@ -96,15 +96,11 @@ def returnListOfFailures(testDict):
 	testResultDict = testResult.getTestResultDict()
 	listOfFailures = []
 	
-	print()
-	
 	# This helps sort out tests if they weren't used in our current test_type
 	for key in testDict:
 		if testResultDict[key] != True:
-			print(key, testResultDict[key])
+			#print(key, testResultDict[key])
 			listOfFailures.append(key)
-	
-	print()
 	
 	return listOfFailures
 
@@ -171,7 +167,7 @@ def updateLastTestResult(column, value):
 		return
 	
 	commitSession()
-	print('Updated Test Result:', column, '=', value)
+	#print('Updated Test Result:', column, '=', value)
 	
 	
 	

@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import subprocess
+from colorama import Fore, Back, Style
 
 #**********************
 #       SWC Test
@@ -58,10 +59,10 @@ def Main(dict, update=True):
 
 	
 	if data[0] == '1':
-		print('** SWC', dict['TestPassDash'], data[1])
+		print(Fore.GREEN + '** SWC', dict['TestPassDash'], data[1] + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(' ** SWC', dict['TestFailDash'], data[1])
+		print(Fore.RED + ' ** SWC', dict['TestFailDash'], data[1] + Style.RESET_ALL)
 		resultBool = False
 		
 	if update:
@@ -72,7 +73,6 @@ def Main(dict, update=True):
 
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("SWC Test is being called directly")
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()
