@@ -134,6 +134,15 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+call Cellular.bat
+if %ERRORLEVEL% == 1 (
+	set cellular_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
 call CANBus_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set canbus_test=fail
