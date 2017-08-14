@@ -6,6 +6,9 @@ set serial_name=serial_tmp.txt
 set list_name=SerialIMEI
 if exist %serial_name% del %serial_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                SERIAL test            
 rem echo ------------------------------------

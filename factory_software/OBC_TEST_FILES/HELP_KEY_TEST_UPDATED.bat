@@ -8,6 +8,9 @@ if exist %file_name% del %file_name%
 set key_test=
 set total_loop_count=0
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                HELP KEY            
 rem echo ------------------------------------

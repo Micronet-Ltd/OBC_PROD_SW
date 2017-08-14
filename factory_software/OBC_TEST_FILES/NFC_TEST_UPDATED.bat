@@ -6,6 +6,9 @@ set file_name=tmp.txt
 set total_loop_cnt=0
 if exist %file_name% del %file_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                NFC test            
 rem echo ------------------------------------

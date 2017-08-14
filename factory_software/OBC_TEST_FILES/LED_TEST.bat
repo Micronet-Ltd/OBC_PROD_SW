@@ -2,6 +2,9 @@
 
 set ERRORLEVEL=0
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                LED TEST            
 rem echo ------------------------------------
