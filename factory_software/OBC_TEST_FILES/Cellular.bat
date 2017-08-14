@@ -40,11 +40,11 @@ if %asuValue% EQU 99 (
 )
 set /A signalRSSI=(%asuValue%*2)-113
 if %lowerBound% GTR %asuValue% (
- set cell_fail=Value (%asuValue%) is greater than %upperBound%
+ set cell_fail=Value %asuValue% is greater than %upperBound%
  goto _ask_if_retry
 )
 if %upperBound% LSS %asuValue% (
- set cell_fail=Value (%asuValue%) is less than than %lowerBound%
+ set cell_fail=Value %asuValue% is less than than %lowerBound%
  goto _ask_if_retry
 )
 goto _test_pass
