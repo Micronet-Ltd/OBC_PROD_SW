@@ -38,7 +38,7 @@ public class GetSignalStrengthResultReceiver extends BroadcastReceiver {
         int signalStrengthUpperBound = intent.getIntExtra("SigUpper", 1000);
         int rssiLowerBound = intent.getIntExtra("RSSILower", 1000);
 
-        Log.d(TAG, " Signal Strength Lower: " + signalStrengthLowerBound + " Signal Strength Upper: " + signalStrengthUpperBound + " RSSI Lower Bound: " + rssiLowerBound);
+        Log.d(TAG, "Signal Strength Lower: " + signalStrengthLowerBound + " Signal Strength Upper: " + signalStrengthUpperBound + " RSSI Lower Bound: " + rssiLowerBound);
 
         List<CellInfo> cellInfoList = telephonyManager.getAllCellInfo();
         for (CellInfo cellInfo : cellInfoList)
@@ -95,11 +95,11 @@ public class GetSignalStrengthResultReceiver extends BroadcastReceiver {
 
                 Log.i(TAG, "********* Signal Test Passed *********");
                 setResultCode(1);
-                setResultData(asuLevel + "," + dbmLevel);
+                setResultData(asuLevel + "," + dbmLevel + ",");
             }else{
                 Log.i(TAG, "********* Signal Test Failed *********");
                 setResultCode(2);
-                setResultData(asuLevel + "," + dbmLevel);
+                setResultData(asuLevel + "," + dbmLevel + ",");
             }
         }
     }

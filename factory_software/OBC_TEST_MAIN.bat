@@ -202,7 +202,6 @@ if %ERRORLEVEL% == 1 (
 	set temperature_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> testResults\summary.csv
-	<nul set /p ".=fail," >> testResults\summary.csv
 ) else (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
