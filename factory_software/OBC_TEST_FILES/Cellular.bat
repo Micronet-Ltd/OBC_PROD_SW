@@ -41,15 +41,15 @@ for /F "tokens=2" %%G in (%temp_result%) do set /A asuValue=%%G
 rem echo ASU = %asuValue%
 
 if %asuValue% EQU 99 (
- set cell_fail="Value is 99."
+ set cell_fail=ASU value is 99
  goto _ask_if_retry
 )
 if %lowerBound% GTR %asuValue% (
- set cell_fail=Value %asuValue% is greater than %upperBound%
+ set cell_fail=ASU value %asuValue% is greater than %upperBound%
  goto _ask_if_retry
 )
 if %upperBound% LSS %asuValue% (
- set cell_fail=Value %asuValue% is less than than %lowerBound%
+ set cell_fail=ASU value %asuValue% is less than than %lowerBound%
  goto _ask_if_retry
 )
 goto _test_pass
@@ -68,7 +68,7 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Cellular %xprvar%
+echo ** Cellular %xprvar% %cell_fail%
 @echo Cellular test - failed %cell_fail% >> testResults\%result_file_name%.txt
 <nul set /p ".=%asuValue%," >> testResults\summary.csv
 goto :_end_of_file
@@ -77,7 +77,7 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Cellular %xprvar%
+echo ** Cellular %xprvar% ASU = %asuValue%
 @echo Cellular test - passed >> testResults\%result_file_name%.txt
 <nul set /p ".=%asuValue%," >> testResults\summary.csv
 goto _end_of_file
