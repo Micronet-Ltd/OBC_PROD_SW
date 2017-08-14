@@ -14,16 +14,16 @@ set cell_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 
-set /p line1= <input\cell_input.txt
+set /p line1= <input\cell_input.dat
 for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
- if %%i EQU low set lowerBound=%%j
- if %%i EQU high set upperBound=%%j
+ if %%i EQU lowAsu set lowerBound=%%j
+ if %%i EQU highAsu set upperBound=%%j
 )
 
-for /F "skip=1 delims=" %%i in (input\cell_input.txt) do set "line2=%%i"
+for /F "skip=1 delims=" %%i in (input\cell_input.dat) do set "line2=%%i"
 for /f "tokens=1,2 delims=:" %%i in ("%line2%") do (
- if %%i EQU low set lowerBound=%%j
- if %%i EQU high set upperBound=%%j
+ if %%i EQU lowAsu set lowerBound=%%j
+ if %%i EQU highAsu set upperBound=%%j
 )
 
 
