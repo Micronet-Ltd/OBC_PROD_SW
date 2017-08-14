@@ -44,14 +44,18 @@ if /I %choice% == Y goto _start_test
 goto _error_found
  
 :_test_passed
-echo ** Wiggle test - passed Count=%wiggleCount%
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Wiggle %xprvar% Count=%wiggleCount%
 @echo Wiggle test - passed wiggle Count=%wiggleCount% >> testResults\%result_file_name%.txt
 goto _end_of_file
  
 :_error_found
 set ERRORLEVEL=1
 echo.
-echo ** Wiggle test - failed wiggle Count=%wiggleCount%
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Wiggle %xprvar% wiggle Count=%wiggleCount%
  
 :_end_of_file
 rem Close wiggle
