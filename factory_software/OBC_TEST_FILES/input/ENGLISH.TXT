@@ -31,5 +31,7 @@ Turn Device OFF - press any key when power is removed ...
 test passed
 test failed
 Failed Tests (Check individual file results to see how they failed):
-Cellular test - failed 
-Cellular test - passed
+test - failed 
+test - passed
+Cellular test failed. Would you like to retry [Y/N]
+Wiggle Test - Tap the device

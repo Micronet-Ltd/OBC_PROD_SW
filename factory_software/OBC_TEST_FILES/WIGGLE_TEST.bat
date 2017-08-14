@@ -17,8 +17,10 @@ set /a loop_cnt = 0
  
 rem Open wiggle
 ..\adb shell mctl api 021501 > nul
- 
-echo Wiggle Test - Tap the device
+
+set "xprvar="
+for /F "skip=36 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
  
 :_test_Wiggle
  
