@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -66,11 +65,6 @@
         <receiver android:name=".GetAudioResultReceiver">
             <intent-filter>
                 <action android:name="com.micronet.obctestingapp.GET_AUDIO_RESULT"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".GetSignalStrengthResultReceiver">
-            <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_SIGNAL_RESULT"/>
             </intent-filter>
         </receiver>
     </application>

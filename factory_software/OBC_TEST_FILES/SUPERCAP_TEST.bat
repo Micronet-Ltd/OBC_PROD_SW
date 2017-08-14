@@ -6,6 +6,8 @@ rem echo              SUPERCAP TEST
 rem echo ------------------------------------
 set sc_voltage_file_name=sc_test.txt
 set tmp_file_name=tmp.txt
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
 
 rem Change the default of wi-fi off during power loss
 ..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"  

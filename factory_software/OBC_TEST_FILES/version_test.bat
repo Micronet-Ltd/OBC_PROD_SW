@@ -11,6 +11,9 @@ set fpga_version_file_name=input\fpga_version.dat
 set os_version_file_name=input\os_version.dat
 set version_file_name=version_file.txt
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 if not exist %mcu_version_file_name%  goto _test_error_no_mcu_version
 if not exist %fpga_version_file_name% goto _test_error_no_fpga_version
 if not exist %os_version_file_name% goto _test_error_no_os_version

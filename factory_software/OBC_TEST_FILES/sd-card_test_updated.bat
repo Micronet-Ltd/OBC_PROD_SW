@@ -7,6 +7,9 @@ set file_name=tmp.txt
 set loop_count=0
 if exist %file_name% del %file_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                SD Card Test            
 rem echo ------------------------------------

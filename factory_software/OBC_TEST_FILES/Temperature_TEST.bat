@@ -5,6 +5,9 @@ set ERRORLEVEL=0
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                Temperature Test            
 rem echo ------------------------------------

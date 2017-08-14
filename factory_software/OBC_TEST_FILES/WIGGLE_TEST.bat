@@ -5,6 +5,9 @@ set ERRORLEVEL=0
  
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
+
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
  
 rem echo ------------------------------------
 rem echo                Wiggle Test            
@@ -24,7 +27,7 @@ set /a loop_cnt = %loop_cnt% + 1
 rem Sample
 ..\adb shell mctl api 0216 > %file_name%
  
-set %wiggleCount%=
+set wiggleCount=
 set /p wiggleCount=<%file_name%
 set /a wiggleCount=%wiggleCount:~17,3%
  
@@ -33,11 +36,10 @@ if %wiggleCount% GTR 1 if %wiggleCount% LSS 5000 goto _test_passed
 if %loop_cnt% LSS 80 goto _test_Wiggle
 goto _ask_if_retry
  
-:_single_fail
+:_ask_if_retry
 @echo Wiggle test - failed wiggle Count = %wiggleCount% >> testResults\%result_file_name%.txt
-:_
 set choice=
-echo.&set /p choice=Would you like to repeat the test [Y/N] ?
+echo.&set /p choice=Wiggle test - failed. Would you like to repeat the test [Y/N] ?
 if /I %choice% == Y goto _start_test
 goto _error_found
  

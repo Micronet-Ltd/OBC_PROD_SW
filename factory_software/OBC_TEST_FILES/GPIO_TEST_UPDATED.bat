@@ -19,6 +19,9 @@ set output2_fail=
 set output3_fail=
 if exist %temp_result% del %temp_result%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo               GPIO test            
 rem echo ------------------------------------

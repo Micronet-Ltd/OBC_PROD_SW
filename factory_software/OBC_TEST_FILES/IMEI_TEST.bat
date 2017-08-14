@@ -14,6 +14,9 @@ set matching_imei=1
 if exist %file_name% del %file_name%
 if exist %serial_name% del %serial_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                IMEI test            
 rem echo ------------------------------------

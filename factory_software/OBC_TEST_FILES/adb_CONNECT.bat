@@ -6,6 +6,9 @@ rem echo ------------------------------------
 rem echo         adb connect to 192.168.43.1
 rem echo ------------------------------------
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 set network_file_name=wlan.txt
 set OBC_TESTER_WLAN_HOTSPOT_HEADER=TREQr_5_00
 set OBC_TESTER_WLAN_HOTSPOT_NUNER=%1
