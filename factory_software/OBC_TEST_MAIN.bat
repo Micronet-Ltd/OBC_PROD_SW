@@ -53,6 +53,7 @@ set temperature_test=
 set read_rtc_test=
 set accelerometer_test=
 set gpio_test=
+set wiggle_test=
 set supercap_test=
 
 rem connect to device over hotspot
@@ -233,6 +234,15 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+call WIGGLE_TEST.bat
+if %ERRORLEVEL% == 1 (
+    set wiggle_test=fail
+    set OBC_TEST_STATUS=Fail
+    <nul set /p ".=fail," >> testResults\summary.csv
+) else (
+    <nul set /p ".=pass," >> testResults\summary.csv
+)
+
 call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set supercap_test=fail
@@ -328,6 +338,9 @@ if "%accelerometer_test%" == "fail" (
 )
 if "%gpio_test%" == "fail" (
 	echo ** GPIO %xprvar%
+)
+if "%wiggle_test%" == "fail" (
+    echo ** Wiggle %xprvar%
 )
 if "%supercap_test%" == "fail" (
 	echo ** Supercap %xprvar%
