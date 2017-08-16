@@ -41,15 +41,15 @@ for /F "tokens=2" %%G in (%temp_result%) do set /A asuValue=%%G
 rem echo ASU = %asuValue%
 
 if %asuValue% EQU 99 (
- set cell_fail=ASU value is 99
+ set cell_fail=ASU value is 99 - unknown
  goto _ask_if_retry
 )
 if %lowerBound% GTR %asuValue% (
- set cell_fail=ASU value %asuValue% is greater than %upperBound%
+ set cell_fail=ASU value %asuValue% is less than than %lowerBound%
  goto _ask_if_retry
 )
 if %upperBound% LSS %asuValue% (
- set cell_fail=ASU value %asuValue% is less than than %lowerBound%
+ set cell_fail=ASU value %asuValue% is greater than %upperBound%
  goto _ask_if_retry
 )
 goto _test_pass
