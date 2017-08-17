@@ -1,6 +1,6 @@
 @echo off
 
-set test_script_version=1.2.24
+set test_script_version=1.2.25
 
 cls
 echo ---------------------------------------------------
@@ -20,8 +20,8 @@ set language_choice_file=input/language.dat
 set /p language_choice=<%language_choice_file%
 set language_choice=%language_choice%
 
-if "%language_choice%" == "English" goto _english
-if "%language_choice%" == "Chinese" goto _chinese
+if /I "%language_choice%" == "English" goto _english
+if /I "%language_choice%" == "Chinese" goto _chinese
 echo.
 echo Error: input/language.dat file contains invalid value. 
 echo Should either be "English" or "Chinese"
