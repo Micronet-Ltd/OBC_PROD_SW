@@ -1,5 +1,7 @@
 @echo off
-set test_script_version=1.2.24_DEV
+
+set test_script_version=1.2.24
+
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
