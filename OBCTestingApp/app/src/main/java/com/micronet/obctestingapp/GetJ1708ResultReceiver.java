@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Runs an automated J1708 test and returns the result.
  *
- * Created by scott.krstyen on 4/19/2017.
+ * Modified by scott.krstyen on 8/17/2017.
  */
 public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
@@ -30,7 +30,9 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
     private StringBuilder sb;
     private StringBuilder returnString;
-    private File J1708 = new File("/dev/ttyACM4");
+    // Use these instead of ttyACM4 because then there won't be conflicts with rild
+    private File J1708_write = new File("/dev/ttyMICRONET_J1708");
+    private File J1708_read = new File("/dev/j1708");
 
     private boolean finalResult = true;
     private boolean pass;
@@ -78,17 +80,12 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
         returnString = new StringBuilder();
 
-        /*Port j1708Port = new Port("/dev/ttyACM4");
-        j1708Port.closePort();*/
-
-        // Enable j1708 power
-        // adb shell "mctl api 02fc01"
-        // adb shell mctl api 0213020001
-        mFd = open("/dev/ttyACM4", 115200);
+        //mFd = open("/dev/ttyACM4", 115200);
+        mFd = open("/dev/ttyMICRONET_J1708", 115200);
         close();
 
         try{
-            writeReceiveTest(J1708, J1708);
+            writeReceiveTest(J1708_write, J1708_read);
 
             if(pass){
                 returnString.append("P");
@@ -142,10 +139,10 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
             // Set to whatever is inputted by the user
             outputStream = new FileOutputStream(fileToSendOutOf);
 
-            // Get bytes from string to send
+            // Sending "~1j1708(checksum)~"
             byte[] bytesToSend = {(byte)0x7e,(byte)0x31,(byte)0x6a,(byte)0x31,(byte)0x37,(byte)0x30,(byte)0x38,(byte)0x95,(byte)0x7e};
 
-            // Write bytes to /dev/ttyACM4
+            // Write bytes to /dev/ttyMICRONET_J1708
             outputStream.write(bytesToSend);
 
             // Display information
@@ -162,15 +159,18 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
             pass = false;
         }
 
-        // Don't add in a wait because when I did, it stopped receiving the data.
-        // When I got rid of the wait it received the data.
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
+        }
 
         // After the data has been sent now try to read the data.
         try{
             sb = new StringBuilder();
 
-            readBuffer = new byte [32];
-            char[] bufferChar = new char [32];
+            readBuffer = new byte [128];
+            char[] bufferChar = new char [128];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).
@@ -201,6 +201,8 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
             readSB.append(sb.toString());
 
+            executor.shutdownNow();
+
             inputStream.close();
 
         }catch (TimeoutException e){
@@ -226,7 +228,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check to make sure that sent string contains j1708 characters.
-        if(readSB.toString().contains("j") && readSB.toString().contains("1") && readSB.toString().contains("7") && readSB.toString().contains("0") && readSB.toString().contains("8")){
+        if(readSB.toString().contains("j1708")){
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
             // (used to write to the file here, but don't need to anymore since the app uses a broadcast)
         }else {
