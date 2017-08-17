@@ -24,11 +24,13 @@ class TestResult(Base):
 	os_ver = Column(String(30))
 	mcu_ver = Column(String(20))
 	fpga_ver = Column(String(20))
+	asuValue = Column(Integer)
 	serialTest = Column(Boolean)
 	imeiTest = Column(Boolean)
 	versionTest = Column(Boolean)
 	ledTest = Column(Boolean)
 	sdCardTest = Column(Boolean)
+	cellularTest = Column(Boolean)
 	canbusTest = Column(Boolean)
 	swcTest = Column(Boolean)
 	j1708Test = Column(Boolean)
@@ -44,6 +46,7 @@ class TestResult(Base):
 	wiggleTest = Column(Boolean)
 	supercapTest = Column(Boolean)
 	allPassed = Column(Boolean)
+	runTime = Column(Integer)
 	
 	def getTestResultDict(self):
 		returnDict = {}
@@ -52,6 +55,7 @@ class TestResult(Base):
 		returnDict['VersionTest'] = self.versionTest
 		returnDict['LEDTest'] = self.ledTest
 		returnDict['SDCardTest'] = self.sdCardTest
+		returnDict['CellularTest'] = self.cellularTest
 		returnDict['CANBusTest'] = self.canbusTest
 		returnDict['SWCTest'] = self.swcTest
 		returnDict['J1708Test'] = self.j1708Test
@@ -132,6 +136,10 @@ def updateLastTestResult(column, value):
 		testResult.ledTest = value
 	elif column == 'sdCardTest':
 		testResult.sdCardTest = value
+	elif column == 'cellularTest':
+		testResult.cellularTest = value
+	elif column == 'asuValue':
+		testResult.asuValue = value
 	elif column == 'canbusTest':
 		testResult.canbusTest = value
 	elif column == 'swcTest':
@@ -162,6 +170,8 @@ def updateLastTestResult(column, value):
 		testResult.supercapTest = value
 	elif column == 'allPassed':
 		testResult.allPassed = value
+	elif column == 'runTime':
+		testResult.runTime = value
 	else:
 		print('Invalid column selection')
 		return

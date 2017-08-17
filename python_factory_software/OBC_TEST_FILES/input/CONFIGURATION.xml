@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurations>
+	<asu_lower>10</asu_lower>
+	<asu_upper>32</asu_upper>
 	<fpga_ver>0x41000002</fpga_ver>
 	<mcu_ver>a.1.8.0</mcu_ver>
 	<os_ver>TREQr_5_0.0.26.0_20170119.1536</os_ver>

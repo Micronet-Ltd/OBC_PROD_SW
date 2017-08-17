@@ -36,10 +36,10 @@ def Main(dict, update=True):
 	deviceSerialNumber = getSerialNumber()
 
 	if scannedSerial == deviceSerialNumber:
-		print(Fore.GREEN + dict['SNPass'].format(deviceSerialNumber) + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + dict['SNPass'].format(deviceSerialNumber) + Style.RESET_ALL)
 		resultBool = True
 	else:
-		print(Fore.RED + dict['SNFail'].format(deviceSerialNumber, scannedSerial) + Style.RESET_ALL)
+		print(Fore.RED + Style.BRIGHT + dict['SNFail'].format(deviceSerialNumber, scannedSerial) + Style.RESET_ALL)
 		resultBool = False
 
 	if update == True:

@@ -1,2 +1,4 @@
 /wlan.txt
 /IMEIrsult.txt
+__pycache__/*
+*.db

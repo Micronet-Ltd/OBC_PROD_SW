@@ -6,6 +6,7 @@
 		<test retry="1">VersionTest</test>
 		<test retry="1">LEDTest</test>
 		<test retry="1">SDCardTest</test>
+		<test retry="1">CellularTest</test>
 		<test retry="1">CANBusTest</test>
 		<test retry="1">SWCTest</test>
 		<test retry="1">J1708Test</test>
@@ -25,6 +26,7 @@
 		<test retry="1">VersionTest</test>
 		<test retry="1">LEDTest</test>
 		<test retry="1">SDCardTest</test>
+		<test retry="1">CellularTest</test>
 		<test retry="1">CANBusTest</test>
 		<test retry="1">SWCTest</test>
 		<test retry="1">J1708Test</test>

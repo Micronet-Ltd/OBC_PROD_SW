@@ -46,6 +46,10 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 	if 'SDCardTest' in testDict:
 		SD_CARD_TEST.Main(langDict)
 	
+	# Run Cellular Test
+	if 'CellularTest' in testDict:
+		CELLULAR_TEST.Main(langDict, configDict)
+	
 	# Run CANBus Test
 	if 'CANBusTest' in testDict:
 		CANBUS_TEST.Main(langDict)
@@ -106,6 +110,9 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 # Main Script starts here
 def Main():
 
+	# Start Time
+	startTime = time.time()
+
 	# Clear Screen
 	os.system('cls')
 	
@@ -114,7 +121,7 @@ def Main():
 	
 	print(Style.RESET_ALL, end="")
 
-	test_script_version = '1.2.26'
+	test_script_version = 'PY_1.2.27'
 
 	print('---------------------------------------------------')
 	print(Fore.CYAN + '  starting test, test script version is : ' + test_script_version + Style.RESET_ALL)
@@ -163,21 +170,29 @@ def Main():
 	result = DBUtil.getLastInserted()
 	serialNum = result.serial
 	
-	with open('testResults\{}.txt'.format(serialNum), 'w') as f:
-		subprocess.call(['adb','logcat', '-d'], stdout=f)
+	# Change dir to test results
+	os.chdir('testResults')
 	
-	file = zipfile.ZipFile('testResults\{}.zip'.format(serialNum), 'w')
-	file.write('testResults\{}.txt'.format(serialNum))
+	with open('{}.txt'.format(serialNum), 'w') as f:
+		subprocess.call(['../../adb','logcat', '-d'], stdout=f)
+	
+	file = zipfile.ZipFile('{}.zip'.format(serialNum), 'w')
+	file.write('{}.txt'.format(serialNum))
 	file.close()
 	
-	print('Zipped up logging files')
+	os.remove('{}.txt'.format(serialNum))
 	
-	os.remove('testResults\{}.txt'.format(serialNum))
+	# Change dir to test results
+	os.chdir('..')
 	
 	# Disconnect ADB from device
 	cmd = '../adb.exe disconnect'
 	s = subprocess.check_output(cmd.split())
 	time.sleep(2)
+	
+	# Get total runtime
+	totalRunTime = int(time.time() - startTime)
+	DBUtil.updateLastTestResult('runTime', totalRunTime)
 	
 	
 	
