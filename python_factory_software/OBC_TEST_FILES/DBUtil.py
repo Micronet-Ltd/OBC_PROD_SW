@@ -17,11 +17,11 @@ class TestResult(Base):
 	__tablename__ = 'testResults'
 	index = Column(Integer, primary_key=True)
 	time = Column(DateTime, default=datetime.datetime.now())
-	test_ver = Column(String(10))
+	test_ver = Column(String(20))
 	test_type = Column(String(30))
 	serial = Column(String(15))
 	imei = Column(String(20))
-	os_ver = Column(String(30))
+	os_ver = Column(String(50))
 	mcu_ver = Column(String(20))
 	fpga_ver = Column(String(20))
 	asuValue = Column(Integer)

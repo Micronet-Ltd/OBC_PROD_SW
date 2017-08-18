@@ -10,6 +10,11 @@ from colorama import Fore, Back, Style
 #**********************
 
 def j1708Test():
+
+	# Enable J1708 power
+	cmd = '../adb.exe shell mctl api 0213020001'
+	s = subprocess.check_output(cmd.split())
+	returnString = s.decode("ascii")
 	
 	cmd = '../adb.exe shell am broadcast -a com.micronet.obctestingapp.GET_J1708_RESULT'
 	s = subprocess.check_output(cmd.split())

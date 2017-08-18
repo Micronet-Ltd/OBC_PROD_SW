@@ -124,7 +124,7 @@ def Main():
 	test_script_version = 'PY_1.2.27'
 
 	print('---------------------------------------------------')
-	print(Fore.CYAN + '  starting test, test script version is : ' + test_script_version + Style.RESET_ALL)
+	print(Fore.CYAN + ' starting test, test script version is : ' + test_script_version + Style.RESET_ALL)
 	print('---------------------------------------------------')
 	
 
