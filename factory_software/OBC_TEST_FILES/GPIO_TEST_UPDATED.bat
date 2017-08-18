@@ -17,8 +17,10 @@ set output0_fail=
 set output1_fail=
 set output2_fail=
 set output3_fail=
-set loop_count=0
 if exist %temp_result% del %temp_result%
+
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
 
 rem echo ------------------------------------
 rem echo               GPIO test            
@@ -43,42 +45,41 @@ rem Data should be twelve letters total
 set data=%Result:~37,12%
 
 if "%Result:~28,1%" == "%success%" goto _test_pass
+goto _ask_if_retry
 
-set /a loop_count=%loop_count%+1
 set Result=
-rem If GPIO test has failed multiple times then goto _test_fail
-if %loop_count% GTR 2 goto _test_fail
 rem Don't show while it is repeating
-rem echo repeat test, failure count = %loop_count%
 goto _test_loop
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** GPIO test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** GPIO %xprvar% 
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
-	set ignition_fail="Ignition voltage was not in the range of 4000 to 13000 mv",
+	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
 )
 if "%data:~1,1%" == "F" (
-	set input1_fail="Input 1 voltage was not in the range of 9000 to 13000 mv",
+	set input1_fail="Input 1 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~2,1%" == "F" (
 	set input2_fail="Input 2 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~3,1%" == "F" (
-	set input3_fail="Input 3 voltage was not in the range of 9000 to 13000 mv",
+	set input3_fail="Input 3 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~4,1%" == "F" (
 	set input4_fail="Input 4 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~5,1%" == "F" (
-	set input5_fail="Input 5 voltage was not in the range of 9000 to 13000 mv",
+	set input5_fail="Input 5 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~6,1%" == "F" (
 	set input6_fail="Input 6 voltage was not in the range of 4000 to 5000 mv",
 )
 if "%data:~7,1%" == "F" (
-	set input7_fail="Input 7 voltage was not in the range of 9000 to 13000 mv",
+	set input7_fail="Input 7 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~8,1%" == "F" (
 	set output0_fail="Input 1 and 5 voltages not in correct range when when Output 0 set high and/or low",
@@ -97,9 +98,20 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** GPIO test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** GPIO %xprvar%
 @echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
+
+:_ask_if_retry
+set "xprvar="
+for /F "skip=28 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
+if /I "%option%"=="y" goto _test_loop
+if /I "%option%"=="n" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 
 :_end_of_file
@@ -115,4 +127,3 @@ set gpo0_fail=
 set gpo1_fail=
 set gpo2_fail=
 set gpo3_fail=
-set loop_count=

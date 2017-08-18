@@ -5,6 +5,9 @@ set ERRORLEVEL=0
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo                Temperature Test            
 rem echo ------------------------------------
@@ -22,14 +25,18 @@ rem @echo %temperature%
 rem pause
 if %temperature% LSS 20 goto _temperature_value_error
 if %temperature% GTR 50 goto _temperature_value_error
-echo ** Temperature test - passed  
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Temperature %xprvar% 
 @echo Temperature test - passed  temperature is: %temperature%  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_temperature_value_error
 set ERRORLEVEL=1
 rem echo.
-echo ** Temperature test - failed Expected temperature 20-50c got %temperature%
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Temperature %xprvar% Expected temperature 20-50c got %temperature%
 @echo Temperature  test - failed Expected temperature 20-50c got %temperature%  >> testResults\%result_file_name%.txt
 
 

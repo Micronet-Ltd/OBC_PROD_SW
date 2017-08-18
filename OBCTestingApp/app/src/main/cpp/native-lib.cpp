@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <unistd.h>
 
 #include "android/log.h"
 static const char *TAG="OBCTestingApp_C_Code";

@@ -1,6 +1,5 @@
 package com.micronet.obctestingapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -87,11 +86,6 @@ public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
             finalResult = false;
             returnString.append("F");
         }
-
-
-
-
-
     }
 
 }

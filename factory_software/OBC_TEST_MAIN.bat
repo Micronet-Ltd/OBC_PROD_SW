@@ -1,5 +1,7 @@
 @echo off
-set test_script_version=1.2.16
+
+set test_script_version=1.2.25
+
 cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%           
@@ -8,12 +10,41 @@ echo ---------------------------------------------------
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
 
+:_language_selection
+set language_choice_file=
+set language_choice=
+set language_file=
+
+set language_choice_file=input/language.dat
+
+set /p language_choice=<%language_choice_file%
+set language_choice=%language_choice%
+
+if /I "%language_choice%" == "English" goto _english
+if /I "%language_choice%" == "Chinese" goto _chinese
+echo.
+echo Error: input/language.dat file contains invalid value. 
+echo Should either be "English" or "Chinese"
+echo Defaulting to English
+echo.
+goto _english
+
+:_english
+set language_file=input/English.txt
+goto _continue_test
+
+:_chinese
+set language_file=input/Chinese.txt
+goto _continue_test
+
+:_continue_test
 rem Variables to list which tests failed at the end
 set imei_test=
 set serial_test=
 set version_test=
 set led_test=
 set sd_card_test=
+set cellular_test=
 set canbus_test=
 set swc_test=
 set j1708_test=
@@ -25,6 +56,7 @@ set temperature_test=
 set read_rtc_test=
 set accelerometer_test=
 set gpio_test=
+set wiggle_test=
 set supercap_test=
 
 rem connect to device over hotspot
@@ -56,7 +88,7 @@ call install_files_test.bat
 rem ---------- Test Start ----------
 rem check that imei on barcode is the same as imei of the device
 rem this batch file also writes to SerialIMEI.csv
-call IMEI_TEST.bat 
+call IMEI_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set imei_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -100,6 +132,15 @@ if %ERRORLEVEL% == 1 (
 call sd-card_test_updated.bat
 if %ERRORLEVEL% == 1 (
 	set sd_card_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+call Cellular.bat
+if %ERRORLEVEL% == 1 (
+	set cellular_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> testResults\summary.csv
 ) else (
@@ -174,7 +215,6 @@ if %ERRORLEVEL% == 1 (
 	set temperature_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> testResults\summary.csv
-	<nul set /p ".=fail," >> testResults\summary.csv
 ) else (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
@@ -206,6 +246,15 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> testResults\summary.csv
 )
 
+call WIGGLE_TEST.bat
+if %ERRORLEVEL% == 1 (
+    set wiggle_test=fail
+    set OBC_TEST_STATUS=Fail
+    <nul set /p ".=fail," >> testResults\summary.csv
+) else (
+    <nul set /p ".=pass," >> testResults\summary.csv
+)
+
 call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set supercap_test=fail
@@ -225,8 +274,10 @@ if "%OBC_TEST_STATUS%" == "Fail" (
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
 color 20
 echo.
+set "xprvar="
+for /F "skip=30 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
-echo ***** Entire OBC test passed !!! *****
+echo ***** Entire OBC %xprvar% !!! *****
 echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
@@ -235,8 +286,10 @@ goto _end_of_tests
 
 :_test_failed
 echo.
+set "xprvar="
+for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo **************************************
-echo ********  OBC test failed !!! ********
+echo ********  OBC %xprvar% !!! ********
 echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
@@ -244,63 +297,76 @@ echo **************************************
 color 47
 
 echo.
-echo Failed Tests (Check individual file results to see how they failed):
+set "xprvar="
+for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 rem Check which tests failed and print which ones did fail
 if "%imei_test%" == "fail" (
-	echo ** IMEI test - failed
+	echo ** IMEI %xprvar%
 )
 if "%serial_test%" == "fail" (
-	echo ** Serial test - failed
+	echo ** Serial %xprvar%
 )
 if "%version_test%" == "fail" (
-	echo ** Version test - failed
+	echo ** Version %xprvar%
 )
 if "%led_test%" == "fail" (
-	echo ** LED test - failed
+	echo ** LED %xprvar%
 )
 if "%sd_card_test%" == "fail" (
-	echo ** SD Card test - failed
+	echo ** SD Card %xprvar%
+)
+if "%cellular_test%" == "fail" (
+	echo ** Cellular %xprvar%
 )
 if "%canbus_test%" == "fail" (
-	echo ** CANBus test - failed
+	echo ** CANBus %xprvar%
 )
 if "%swc_test%" == "fail" (
-	echo ** SWC test - failed
+	echo ** SWC %xprvar%
 )
 if "%j1708_test%" == "fail" (
-	echo ** J1708 test - failed
+	echo ** J1708 %xprvar%
 )
 if "%com_test%" == "fail" (
-	echo ** Com Port test - failed
+	echo ** Com Port %xprvar%
 )
 if "%nfc_test%" == "fail" (
-	echo ** NFC test - failed
+	echo ** NFC %xprvar%
 )
 if "%help_key_test%" == "fail" (
-	echo ** Help Key test - failed
+	echo ** Help Key %xprvar%
 )
 if "%audio_test%" == "fail" (
-	echo ** Audio test - failed
+	echo ** Audio %xprvar%
 )
 if "%temperature_test%" == "fail" (
-	echo ** Temperature test - failed
+	echo ** Temperature %xprvar%
 )
 if "%read_rtc_test%" == "fail" (
-	echo ** Read RTC test - failed
+	echo ** Read RTC %xprvar%
 )
 if "%accelerometer_test%" == "fail" (
-	echo ** Accelerometer test - failed
+	echo ** Accelerometer %xprvar%
 )
 if "%gpio_test%" == "fail" (
-	echo ** GPIO test - failed
+	echo ** GPIO %xprvar%
+)
+if "%wiggle_test%" == "fail" (
+    echo ** Wiggle %xprvar%
 )
 if "%supercap_test%" == "fail" (
-	echo ** Supercap test - failed
+	echo ** Supercap %xprvar%
 )
 
 :_end_of_tests
 set test_script_version=
 set OBC_TEST_STATUS=
+set language_choice_file=
+set language_choice=
+set language_file=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_00%1>nul
 cd ..

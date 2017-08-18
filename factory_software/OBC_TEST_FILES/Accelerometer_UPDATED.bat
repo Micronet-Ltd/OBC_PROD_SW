@@ -9,6 +9,9 @@ set accel_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo               Accelerometer test            
 rem echo ------------------------------------
@@ -27,17 +30,23 @@ set data=%Result:~37,1%
 
 if "%Result:~28,1%" == "%success%" goto _test_pass
 
-set /a loop_count=%loop_count%+1
-rem If Accelerometer test has failed multiple times then goto _test_fail
-if %loop_count% GTR 7 goto _test_fail
-rem echo repeat test, failure count = %loop_count%
 set Result=
+goto _ask_if_retry
 
-goto _test_loop
+:_ask_if_retry
+set "xprvar="
+for /F "skip=27 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+set /p option=%xprvar%
+if /I "%option%"=="Y" goto _test_loop
+if /I "%option%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo  ** Accelerometer test - failed 
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Accelerometer %xprvar%
 rem If Accelerometer test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set accel_fail="Invalid accelerometer %Result:~31%",
@@ -47,13 +56,15 @@ goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
-echo ** Accelerometer test - passed 
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Accelerometer %xprvar%
 @echo Accelerometer test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 
 :_end_of_file
-if exist %temp_result% del %temp_result%
+rem if exist %temp_result% del %temp_result%
 set Result= 
 set success= 
 set temp_result=

@@ -6,6 +6,8 @@ rem echo              SUPERCAP TEST
 rem echo ------------------------------------
 set sc_voltage_file_name=sc_test.txt
 set tmp_file_name=tmp.txt
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
 
 rem Change the default of wi-fi off during power loss
 ..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"  
@@ -40,8 +42,10 @@ set /a power_in_voltage_on=%power_in_voltage_on:~24,5% >nul 2>&1
 rem echo power in voltage ON state: %power_in_voltage_on%
 
 rem measure Input voltage - verify power is OFF
-echo
-echo Turn Device OFF - press any key when power is removed ...
+echo.
+set "xprvar="
+for /F "skip=29 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
 pause > nul
 
 rem 2 sec delay added after the device is switched off incase the user presses any key before disconnecting power
@@ -49,7 +53,7 @@ rem It also takes 2 seconds of power loss before the power loss GPIO is toggled 
 timeout /T 2 /NOBREAK > nul
 
 rem Read input power voltage after power is removed (running on supercap)
-..\adb shell mctl api 020408>%sc_voltage_file_name%
+..\adb shell mctl api 020408 2>nul rem >%sc_voltage_file_name%
 rem line structure is: GPI 8, approx voltage = VALUE mV, ret = 4
 rem need to read only the VALUE and compare to expected range
 set /p power_in_voltage_off=<%sc_voltage_file_name% >nul 2>&1
@@ -65,15 +69,15 @@ set /a loop_cnt = 0
 :_SC_LOOP
 rem echo | set /p=.
 set /a loop_cnt = %loop_cnt% + 1 >nul 2>&1
-..\adb shell mctl api 020409 > %sc_voltage_file_name%
+..\adb shell mctl api 020409 > %sc_voltage_file_name% 2>nul
 set /p sc_voltage_off=<%sc_voltage_file_name% >nul 2>&1
 set /a sc_voltage_off=%sc_voltage_off:~24,5% >nul 2>&1
-..\adb shell cat /sys/class/gpio/gpio991/value > %tmp_file_name%
+..\adb shell cat /sys/class/gpio/gpio991/value > %tmp_file_name% 2>nul
 set /p power_loss=<%tmp_file_name% >nul 2>&1
 rem echo supercap discharging %sc_voltage_off%
 rem echo %power_loss%
 
-if %power_loss%==1 goto _test_pass 
+if [%power_loss%] EQU [1] goto _test_pass 
 if %loop_cnt%   GTR  50 goto _Power_loss_error
 rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing 
 goto _SC_LOOP
@@ -86,31 +90,40 @@ rem goto _test_pass
 rem   ############## TEST STATUS ############
 :_SC_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed initial SuperCap voltage not in range - _SC_LEVEL_ERROR
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** Supercap %xprvar% initial SuperCap voltage not in range - _SC_LEVEL_ERROR
 @echo Supercap test - failed initial SuperCap voltage not in range (SC voltage = %sc_voltage%) - _SC_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_input_voltage_level
 
 :_VIN_LEVEL_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** Supercap %xprvar% Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
 @echo Supercap test - failed Input voltage too high in supercap mode (Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _VIN_LEVEL_ERROR >> testResults\%result_file_name%.txt
 goto _read_supercap_discharge
 
 :_DisCharge_ERROR
 set ERRORLEVEL=1
-echo ** Supercap test - failed Supercap did not discharge - _DisCharge_ERROR
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** Supercap %xprvar% Supercap did not discharge - _DisCharge_ERROR
 @echo Supercap test - failed Supercap did not discharge (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _DisCharge_ERROR >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_Power_loss_error
 set ERRORLEVEL=1
-
-echo ** Supercap test - failed didn't get power loss notification - _Power_loss_error
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** Supercap %xprvar% didn't get power loss notification - _Power_loss_error
 @echo Supercap test - failed didn't get power loss notification (SC voltage = %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state= %power_in_voltage_off%) - _Power_loss_error >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_pass
-echo ** Supercap test - passed
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Supercap %xprvar%
 @echo Supercap test - passed supercap voltage : %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state: %power_in_voltage_off% >> testResults\%result_file_name%.txt
 
 :_end_of_test
