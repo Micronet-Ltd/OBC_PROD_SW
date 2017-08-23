@@ -1,4 +1,4 @@
-name: OBCTestMini
+name: OBCTestEnv
 channels:
 - defaults
 dependencies:
@@ -13,5 +13,5 @@ dependencies:
   - future==0.16.0
   - pyinstaller==3.2.1
   - pypiwin32==219
-prefix: C:\Users\scott.krstyen\AppData\Local\Continuum\Miniconda3\envs\OBCTestMini
+prefix: C:\Users\scott.krstyen\AppData\Local\Continuum\Miniconda3\envs\OBCTestEnv
 
