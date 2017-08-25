@@ -22,11 +22,12 @@ def supercapTest(dict):
 
 	
 	# ---------- CHECK IF SUPERCAP CHARGING ----------
-	# Export the gpio
 	cmd = '../adb.exe shell mctl api 020409'
 	s = subprocess.check_output(cmd.split())
 	supercapVoltage = s.decode("ascii")
+	#print(supercapVoltage)
 	supercapVoltage = int(supercapVoltage[24:29])
+	#print(supercapVoltage)
 	
 	# Verify supercap is charged but not over charged
 	if supercapVoltage < 3000 or supercapVoltage > 5500:
@@ -41,7 +42,9 @@ def supercapTest(dict):
 	cmd = '../adb.exe shell mctl api 020408'
 	s = subprocess.check_output(cmd.split())
 	powerInVoltageOn = s.decode("ascii")
+	#print(powerInVoltageOn)
 	powerInVoltageOn = int(powerInVoltageOn[24:29])
+	#print(powerInVoltageOn)
 	
 	# ---------- PROMPT USER TO REMOVE POWER ----------
 	
@@ -52,8 +55,6 @@ def supercapTest(dict):
 		sys.stdout = nul
 		msvcrt.getch()
 	sys.stdout = save_stdout
-	
-	print('stdout is back bois')
 	
 	# 2 sec delay added after the device is switched off incase the user presses any key before disconnecting power
 	# It also takes 2 seconds of power loss before the power loss GPIO is toggled by the MCU
@@ -66,12 +67,12 @@ def supercapTest(dict):
 	s = subprocess.check_output(cmd.split())
 	powerInVoltageOff = s.decode("ascii")
 	
-	print(powerInVoltageOff)
+	#print(powerInVoltageOff)
 	
 	index = powerInVoltageOff.find('voltage =') + 10
 	endIndex = powerInVoltageOff.find('mV')
 	
-	print(powerInVoltageOff[index:endIndex])
+	#print(powerInVoltageOff[index:endIndex])
 	
 	powerInVoltageOff = int(powerInVoltageOff[index:endIndex])
 	# Verify input voltage is off
@@ -82,22 +83,30 @@ def supercapTest(dict):
 	
 	# ---------- START LOOP FOR POWERLOSS NOTIFICATION ----------
 	
-	for i in range(50):
+	for i in range(15):
 		with open(os.devnull, 'w') as nul:
 			cmd = '../adb.exe shell mctl api 020409'
 			s = subprocess.check_output(cmd.split(), stderr=nul)
 			supercapVoltageOff = s.decode("ascii")
+			
+			#print(supercapVoltageOff)
 			
 			index = supercapVoltageOff.find('voltage =') + 10
 			endIndex = supercapVoltageOff.find('mV')
 			
 			supercapVoltageOff = int(supercapVoltageOff[index:endIndex])
 			
+			#print(supercapVoltageOff)
+			
 			cmd = '../adb.exe shell cat /sys/class/gpio/gpio991/value'
 			s = subprocess.check_output(cmd.split(), stderr=nul)
 			powerLoss = s.decode("ascii")
 			
-			if powerLoss == '1':
+			#print(powerLoss)
+			
+			powerLoss = int(powerLoss)
+			
+			if powerLoss == 1:
 				supercapPass = True
 				print('Powerloss detected')
 				break
@@ -150,6 +159,8 @@ def Main(dict, update=True):
 if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
+	import colorama
+	colorama.init()
 	langDict = TestUtil.getLanguageDictSoloTest()
 	Main(langDict, False)
 else:

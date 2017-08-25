@@ -104,8 +104,7 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 		
 	# Run Supercap Test
 	if 'SupercapTest' in testDict:
-		#SUPERCAP_TEST.Main(langDict)
-		pass
+		SUPERCAP_TEST.Main(langDict)
 
 # Main Script starts here
 def Main():
@@ -121,7 +120,7 @@ def Main():
 	
 	print(Style.RESET_ALL, end="")
 
-	test_script_version = 'PY_1.2.27'
+	test_script_version = 'PY_1.2.28'
 
 	print('---------------------------------------------------')
 	print(Fore.CYAN + ' starting test, test script version is : ' + test_script_version + Style.RESET_ALL)

@@ -87,7 +87,7 @@ def Main(dict, configDict, update=True):
 			fpgaBoolean = False
 		
 	if osExistBoolean and osBoolean and mcuExistBoolean and mcuBoolean and fpgaExistBoolean and fpgaBoolean:
-		print(Fore.GREEN + Style.BRIGHT + '** Version ' + dict['TestPassDash'] + Style.RESET_ALL)
+		print(Fore.GREEN + '** Version ' + dict['TestPassDash'] + Style.RESET_ALL)
 	else:
 		print(Fore.RED + '** Version', dict['TestFailDash'] + Style.RESET_ALL)
 		
