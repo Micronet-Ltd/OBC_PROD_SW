@@ -5,11 +5,12 @@ To create the EXE:
 	-If you aren't using Windows, I'm not sure about the cross platform support for the EXE files. Someone needs to look deeper into pyinstaller and see what it's cross platform support is.
 	-Install Miniconda Python 3.6. https://conda.io/miniconda.html Set options as desired.
 	-Start Anaconda Prompt.
-	-If you haven't yet, create Anaconda Environment using the obcTestEnvironment.yml file included in this folder. Use command "conda env create -f obcTestEnvironment.yml".
+	-If you haven't yet, create Anaconda Environment using the obcTestEnvironment.yml file included in this folder. Change to folder containing .yml file and use command "conda env create -f obcTestEnvironment.yml".
 	-Check to make sure new environment was created. Use "conda info -e" to see which environments are available.
 	-Use "activate OBCTestEnv" to start using the test environment. 
 	-Use "python --version" to check to make sure you are using the environments python.
 	-Go to folder where OBC_TEST_MAIN.py is located.
+	-Run "pyinstaller --clean --onefile --hidden-import=OBC_TEST_FILES.ADB_CONNECT --hidden-import=OBC_TEST_FILES.ACCELEROMETER_TEST --hidden-import=OBC_TEST_FILES.AUDIO_TEST --hidden-import=OBC_TEST_FILES.CANBUS_TEST --hidden-import=OBC_TEST_FILES.CELLULAR_TEST --hidden-import=OBC_TEST_FILES.COM_TEST --hidden-import=OBC_TEST_FILES.DBUtil --hidden-import=OBC_TEST_FILES.GPIO_TEST --hidden-import=OBC_TEST_FILES.GPIO_INPUTS_TEST --hidden-import=OBC_TEST_FILES.HELP_KEY_TEST --hidden-import=OBC_TEST_FILES.IMEI_TEST --hidden-import=OBC_TEST_FILES.INSTALL_FILES_TEST --hidden-import=OBC_TEST_FILES.J1708_TEST --hidden-import=OBC_TEST_FILES.LED_TEST --hidden-import=OBC_TEST_FILES.NFC_TEST --hidden-import=OBC_TEST_FILES.ReadRTC_TEST --hidden-import=OBC_TEST_FILES.SD_CARD_TEST --hidden-import=OBC_TEST_FILES.SERIAL_TEST --hidden-import=OBC_TEST_FILES.SWC_TEST --hidden-import=OBC_TEST_FILES.TEMPERATURE_TEST --hidden-import=OBC_TEST_FILES.TestUtil --hidden-import=OBC_TEST_FILES.VERSION_TEST --hidden-import=OBC_TEST_FILES.WIGGLE_TEST --hidden-import=OBC_TEST_FILES.SUPERCAP_TEST OBC_TEST_MAIN.py".
 	-Run "pyinstaller --clean --onefile --hidden-import=OBC_TEST_FILES.ADB_CONNECT ^
 										--hidden-import=OBC_TEST_FILES.ACCELEROMETER_TEST ^
 										--hidden-import=OBC_TEST_FILES.AUDIO_TEST ^
@@ -32,7 +33,8 @@ To create the EXE:
 										 --hidden-import=OBC_TEST_FILES.TEMPERATURE_TEST ^
 										 --hidden-import=OBC_TEST_FILES.TestUtil ^
 										 --hidden-import=OBC_TEST_FILES.VERSION_TEST ^
-										 --hidden-import=OBC_TEST_FILES.WIGGLE_TEST OBC_TEST_MAIN.py".
+										 --hidden-import=OBC_TEST_FILES.WIGGLE_TEST ^
+										 --hidden-import=OBC_TEST_FILES.SUPERCAP_TEST OBC_TEST_MAIN.py".
 	-Running the previous command should create a .spec file and two folders: dist and build. Dist will contain the one file executable.
 	-Copy OBC_TEST_FILES folder and paste in the same folder as the EXE. You can delete all test scripts from this copied folder because they are already contained in the EXE.
 	-Copy the ADB.exe and it's two dll's to the same folder as the EXE. 
