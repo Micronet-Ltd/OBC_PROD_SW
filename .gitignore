@@ -21,3 +21,6 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Include these files 
+!OBC_TEST_MAIN.exe
