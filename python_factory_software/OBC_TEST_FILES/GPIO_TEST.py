@@ -19,8 +19,15 @@ def gpioTest():
 	index = returnString.find('result=') + 7
 	resultCode = returnString[index:index + 1]
 	
-	index = returnString.find('"')
-	resultData = returnString[index:].strip()
+	index = returnString.find('data=') + 10
+	resultData = returnString[index:-1].strip()
+	
+	if not "Failures" in resultData:
+		# Take off ', "' at the end
+		resultData = resultData[:-3]
+	else:
+		# Only take off double quote at end
+		resultData = resultData[:-1]
 	
 	result = (resultCode, resultData)
 	
@@ -76,6 +83,8 @@ if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()
+	import colorama
+	colorama.init()
 	Main(langDict, False)
 else:
 	import OBC_TEST_FILES.TestUtil as TestUtil

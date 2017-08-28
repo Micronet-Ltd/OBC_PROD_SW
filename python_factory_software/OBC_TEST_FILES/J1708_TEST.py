@@ -24,8 +24,10 @@ def j1708Test():
 	index = returnString.find('result=') + 7
 	resultCode = returnString[index:index + 1]
 	
-	index = returnString.find('"')
+	index = returnString.find('data=') + 6
 	resultData = returnString[index:].strip()
+	
+	resultData = resultData[:-1]
 	
 	result = (resultCode, resultData)
 	
@@ -80,6 +82,8 @@ if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
 	langDict = TestUtil.getLanguageDictSoloTest()
+	import colorama
+	colorama.init()
 	Main(langDict, False)
 else:
 	import OBC_TEST_FILES.TestUtil as TestUtil

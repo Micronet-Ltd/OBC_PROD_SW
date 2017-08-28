@@ -108,7 +108,7 @@ def supercapTest(dict):
 			
 			if powerLoss == 1:
 				supercapPass = True
-				print('Powerloss detected')
+				#print('Powerloss detected')
 				break
 	
 	
@@ -127,16 +127,16 @@ def Main(dict, update=True):
 	data = supercapTest(dict)
 	
 	if data[0] == 1:
-		print(Fore.GREEN + 'Supercap', dict['TestPassDash'] + Style.RESET_ALL)
+		print(Fore.GREEN + '** Supercap', dict['TestPassDash'] + Style.RESET_ALL)
 		resultBool = True
 	elif data[0] == -1:
-		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'initial SuperCap voltage not in range - SC_LEVEL_ERROR' + Style.RESET_ALL)
+		print(Fore.RED + ' ** Supercap', dict['TestFailDash'], 'initial SuperCap voltage not in range - SC_LEVEL_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	elif data[0] == -2:
-		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'input voltage too high in supercap mode - VIN_LEVEL_ERROR' + Style.RESET_ALL)
+		print(Fore.RED + ' ** Supercap', dict['TestFailDash'], 'input voltage too high in supercap mode - VIN_LEVEL_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	elif data[0] == -3:
-		print(Fore.RED + 'Supercap', dict['TestFailDash'], 'didn\'t get power loss notification - POWER_LOSS_ERROR' + Style.RESET_ALL)
+		print(Fore.RED + ' ** Supercap', dict['TestFailDash'], 'didn\'t get power loss notification - POWER_LOSS_ERROR' + Style.RESET_ALL)
 		resultBool = False
 	
 	length = len(data[1])

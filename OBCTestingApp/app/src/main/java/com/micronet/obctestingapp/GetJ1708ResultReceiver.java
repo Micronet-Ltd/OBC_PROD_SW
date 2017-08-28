@@ -36,6 +36,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
     private boolean finalResult = true;
     private boolean pass;
+    private boolean timeout;
 
     private byte[] readBuffer;
 
@@ -77,6 +78,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         Log.i(TAG, "*** J1708 Test Started ***");
 
         finalResult = true;
+        timeout = false;
 
         returnString = new StringBuilder();
 
@@ -85,12 +87,16 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         close();
 
         try{
-            writeReceiveTest(J1708_write, J1708_read);
+            String receivedString = writeReceiveTest(J1708_write, J1708_read);
 
             if(pass){
-                returnString.append("P");
+                returnString.append("");
             }else{
-                returnString.append("F");
+                if(timeout){
+                    returnString.append("Time Out Error: nothing read");
+                }else{
+                    returnString.append("Error: should contain \"j1708\" but received \"" + receivedString + "\"");
+                }
             }
 
         }catch (Exception e){
@@ -119,6 +125,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
         // Result of individual writeReceiveTest
         pass = true;
+        timeout = false;
 
         inputStream = new FileInputStream(fileToReceiveIn);
 
@@ -209,6 +216,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
             Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
             finalResult = false;
             pass = false;
+            timeout = true;
 
             try {
                 inputStream.close();
@@ -247,6 +255,6 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Only return whether the test passed or failed.
-        return String.valueOf(pass);
+        return readSB.toString();
     }
 }
