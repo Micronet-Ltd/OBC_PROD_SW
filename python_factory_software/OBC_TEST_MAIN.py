@@ -10,13 +10,33 @@ from colorama import Fore, Back, Style
 from OBC_TEST_FILES import *
 
 def runIndividualTests(langDict, configDict, testDict, test_script_version):
-	# Connect over ADB hotspot
-	connectedBool = ADB_CONNECT.Main()
+
+	tryToConnect = True
 	
-	if not connectedBool:
-		print('Test ERROR: No device connected.')
-		print('Please make sure device is set up correctly and restart test.')
-		sys.exit()
+	while(tryToConnect):
+		# Connect over ADB hotspot
+		connectedBool = ADB_CONNECT.Main()
+		if(connectedBool):
+			tryToConnect = False
+			break;
+		else:
+			print()
+			choice = input("Try to connect to device again? [Y/N]: ")
+			selection = True
+			while(selection):
+				if choice.lower() == 'y':
+					tryToConnect = True
+					selection = False
+				elif choice.lower() == 'n':
+					tryToConnect = False
+					selection = False
+					print()
+					print(Fore.CYAN + 'Exiting test... ' + Style.RESET_ALL)
+					sys.exit()
+				else:
+					print('Invalid option. Please select either [Y/N]')
+					selection = True
+			
 	
 	# If test is able to connect to device then right to the database
 	testResult = DBUtil.TestResult(test_ver = test_script_version, test_type = configDict['test_type'])

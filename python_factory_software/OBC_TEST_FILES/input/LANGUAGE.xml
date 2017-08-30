@@ -13,7 +13,7 @@
 		<text description="SDCardError">SD card error: can't find the SD card</text>
 		<text description="RetryPrompt">Would you like to repeat the test [Y/N] ?</text>
 		<text description="SDCardWriteError">SD card error: can't find SD card or error writing to it</text>
-		<text description="CANRetryPrompt">Canbus test failed. Would you like to retry? [Y/N]:</text>
+		<text description="CANRetryPrompt">Canbus test failed. Would you like to retry? [Y/N]: </text>
 		<text description="SWCRetryPrompt">SWC test failed. Would you like to retry? [Y/N]: </text>
 		<text description="J1708RetryPrompt">J1708 test failed. Would you like to retry? [Y/N]: </text>
 		<text description="ComRetryPrompt">COM port test failed. Would you like to retry? [Y/N]: </text>
