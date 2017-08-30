@@ -13,12 +13,12 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 
 	tryToConnect = True
 	
-	while(tryToConnect):
+	while tryToConnect:
 		# Connect over ADB hotspot
 		connectedBool = ADB_CONNECT.Main()
 		if(connectedBool):
 			tryToConnect = False
-			break;
+			break
 		else:
 			print()
 			choice = input("Try to connect to device again? [Y/N]: ")
@@ -45,7 +45,7 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 	
 	# Install Test Files
 	INSTALL_FILES_TEST.Main()
-		
+	
 	# Run Serial Test
 	if 'SerialTest' in testDict:
 		SERIAL_TEST.Main(langDict)
