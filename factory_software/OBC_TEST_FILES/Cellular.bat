@@ -44,11 +44,11 @@ if %asuValue% EQU 99 (
  set cell_fail=ASU value is 99 - unknown
  goto _ask_if_retry
 )
-if %lowerBound% GTR %asuValue% (
+if %asuValue% LSS %lowerBound% (
  set cell_fail=ASU value %asuValue% is less than than %lowerBound%
  goto _ask_if_retry
 )
-if %upperBound% LSS %asuValue% (
+if %asuValue% GTR %upperBound% (
  set cell_fail=ASU value %asuValue% is greater than %upperBound%
  goto _ask_if_retry
 )
