@@ -72,14 +72,14 @@ def getTestDict():
 	test_choice = configDict['test_type'].strip().lower()
 	
 	if test_choice == 'system-a002':
-		test_type = 'A002'
+		test_type = 'system-a002'
 	elif test_choice == 'system-a001':
-		test_type = 'A001'
+		test_type = 'system-a001'
 	elif test_choice == 'board':
 		test_type = 'board'
 	else:
 		print('Invalid choice in CONFIGURATION.xml for test type. Should be either \'System-A002\', \'System-A001\', or \'Board\'. Defaulting to System-A002')
-		test_type = 'A002'
+		test_type = 'system-a002'
 	
 	#Get prompt
 	tree = ET.parse('obc_test_files\input\TESTS.xml')

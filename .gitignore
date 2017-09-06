@@ -23,4 +23,6 @@
 *.hex
 
 # Include these files 
-!OBC_TEST_MAIN.exe
+!adb.exe
+!AdbWinApi.dll
+!AdbWinUsbApi.dll

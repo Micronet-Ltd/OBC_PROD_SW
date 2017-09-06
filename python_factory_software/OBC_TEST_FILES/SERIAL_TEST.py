@@ -55,6 +55,8 @@ def Main(dict, update=True):
 if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
+	import colorama
+	colorama.init()
 	langDict = TestUtil.getLanguageDictSoloTest()
 	Main(langDict, False)
 else:

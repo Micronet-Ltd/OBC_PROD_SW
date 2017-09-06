@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Three different test types currently. Tests included here will run for that particular test
+ Could use the retry count for each but currently that is not implemented -->
 <type>
-	<A001>
+	<system-a001>
 		<test retry="1">IMEITest</test>
 		<test retry="1">SerialTest</test>
 		<test retry="1">VersionTest</test>
@@ -19,8 +21,8 @@
 		<test retry="1">GPIOInputsTest</test>
 		<test retry="1">WiggleTest</test>
 		<test retry="1">SupercapTest</test>
-	</A001>
-	<A002>
+	</system-a001>
+	<system-a002>
 		<test retry="1">IMEITest</test>
 		<test retry="1">SerialTest</test>
 		<test retry="1">VersionTest</test>
@@ -40,7 +42,7 @@
 		<test retry="1">GPIOTest</test>
 		<test retry="1">WiggleTest</test>
 		<test retry="1">SupercapTest</test>
-	</A002>
+	</system-a002>
 	<board>
 		<test retry="1">VersionTest</test>
 		<test retry="1">LEDTest</test>

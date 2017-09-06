@@ -54,7 +54,7 @@ def Main(dict, update=True):
 		print(Fore.RED + dict['IMEIFail'].format(deviceIMEI, scannedIMEI) + Style.RESET_ALL)
 	else:
 		print(Fore.RED + dict['IMEIFail'].format(deviceIMEI, scannedIMEI), ': incorrect label and IMEI should start with \'35483308\'' + Style.RESET_ALL)
-	
+
 	if update:
 		DBUtil.updateLastTestResult('imei', deviceIMEI)
 		if resultBool:
@@ -66,6 +66,8 @@ def Main(dict, update=True):
 if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
+	import colorama
+	colorama.init()
 	langDict = TestUtil.getLanguageDictSoloTest()
 	Main(langDict, False)
 else:

@@ -108,6 +108,8 @@ def Main(dict, configDict, update=True):
 if __name__ == "__main__":
 	import DBUtil
 	import TestUtil
+	import colorama
+	colorama.init()
 	langDict = TestUtil.getLanguageDictSoloTest()
 	configDict = TestUtil.getConfigurationsDictSoloTest()
 	Main(langDict, configDict, False)

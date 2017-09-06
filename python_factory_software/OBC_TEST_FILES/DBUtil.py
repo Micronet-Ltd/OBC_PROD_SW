@@ -179,7 +179,22 @@ def updateLastTestResult(column, value):
 	commitSession()
 	#print('Updated Test Result:', column, '=', value)
 	
-	
+def	searchForDuplicates(inputIMEI, inputSerial):
+	# Initially no duplicate value
+	duplicate = False
+
+	# Check for test results that have the same IMEI but different serial numbers
+	for testResult in session.query(TestResult).filter(TestResult.imei == inputIMEI):
+		if(testResult.serial != inputSerial):
+			duplicate = True
+
+	# Check for test results that have the same Serial but different IMEI numbers
+	for testResult in session.query(TestResult).filter(TestResult.serial == inputSerial):
+		if(testResult.imei != inputIMEI):
+			duplicate = True
+
+	return duplicate
+
 	
 	
 	

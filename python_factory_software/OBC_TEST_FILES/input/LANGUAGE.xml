@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Contains language strings that will be used in the test -->
 <data>
 	<language type="English">
 		<text description="ScanIMEI">Scan IMEI: </text>

@@ -28,5 +28,5 @@ def Main():
 	
 # If this script is called directly then run the main function	
 if __name__ == "__main__":
-	print("Install Files is being called directly")
+	#print("Install Files is being called directly")
 	Main()

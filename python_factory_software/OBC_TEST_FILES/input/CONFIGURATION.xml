@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Configurations for the test. More configurations could be added here -->
 <configurations>
+	<!-- Cell signal input values -->
 	<asu_lower>10</asu_lower>
 	<asu_upper>32</asu_upper>
+	<!-- Version strings used in the test -->
 	<fpga_ver>0x41000002</fpga_ver>
 	<mcu_ver>a.1.8.0</mcu_ver>
 	<os_ver>TREQr_5_0.0.26.0_20170119.1536</os_ver>
+	<!-- Language options are "English" and "Chinese" -->
 	<language>English</language>
+	<!-- Test choices are "System-A001", "System-A002", "Board" -->
 	<test_type>System-A002</test_type>
 </configurations>

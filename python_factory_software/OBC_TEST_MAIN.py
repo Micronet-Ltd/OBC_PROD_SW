@@ -53,6 +53,28 @@ def runIndividualTests(langDict, configDict, testDict, test_script_version):
 	# Run IMEI Test
 	if 'IMEITest' in testDict:
 		IMEI_TEST.Main(langDict)
+
+	# Check for duplicate devices
+	deviceSerial = DBUtil.getLastInserted().serial
+	deviceIMEI = DBUtil.getLastInserted().imei
+	duplicate = DBUtil.searchForDuplicates(deviceIMEI, deviceSerial)
+
+	if duplicate:
+		print()
+		choice = input(Fore.RED + "Duplicate IMEI or Serial found. Would you like to continue testing? [Y/N]: " + Style.RESET_ALL)
+		selection = True
+		while(selection):
+			if choice.lower() == 'y':
+				selection = False
+			elif choice.lower() == 'n':
+				selection = False
+				print()
+				print(Fore.CYAN + 'Exiting test... ' + Style.RESET_ALL)
+				sys.exit()
+			else:
+				print('Invalid option. Please select either [Y/N]')
+				selection = True
+
 	
 	# Run Version Test
 	if 'VersionTest' in testDict:
@@ -140,7 +162,7 @@ def Main():
 	
 	print(Style.RESET_ALL, end="")
 
-	test_script_version = 'PY_1.2.29'
+	test_script_version = 'PY_1.2.30'
 
 	print('---------------------------------------------------')
 	print(Fore.CYAN + ' starting test, test script version is : ' + test_script_version + Style.RESET_ALL)
@@ -184,25 +206,6 @@ def Main():
 			print(' **', x, ':',langDict['TestFail'])
 			
 		print(Style.RESET_ALL, end="")
-	
-	# Zip up logcat of results
-	result = DBUtil.getLastInserted()
-	serialNum = result.serial
-	
-	# Change dir to test results
-	os.chdir('testResults')
-	
-	with open('{}.txt'.format(serialNum), 'w') as f:
-		subprocess.call(['../../adb','logcat', '-d'], stdout=f)
-	
-	file = zipfile.ZipFile('{}.zip'.format(serialNum), 'w')
-	file.write('{}.txt'.format(serialNum))
-	file.close()
-	
-	os.remove('{}.txt'.format(serialNum))
-	
-	# Change dir to test results
-	os.chdir('..')
 	
 	# Disconnect ADB from device
 	cmd = '../adb.exe disconnect'
