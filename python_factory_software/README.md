@@ -11,5 +11,5 @@ What is included in this folder:
 
 The database can be viewed a in a few ways, but currently I find the easiest way to use an online sqlite database viewer for testing.
 
-The three xml configuration files are used to select which tests you are using, which language, and which other test options.
+The three xml configuration files are used to select which tests you are using, which language, and which other test options. There are located in "python_factory_software/OBC_TEST_FILES/input".
 
