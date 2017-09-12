@@ -17,7 +17,7 @@ def nfcTest(dict):
 	
 	nfcTextGenerated = False
 	
-	for i in range(75):
+	for i in range(125):
 		# Read the file size 
 		cmd = '../adb.exe shell ls -l ./sdcard/nfc.txt'
 		s = subprocess.check_output(cmd.split())

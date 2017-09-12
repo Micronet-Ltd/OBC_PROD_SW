@@ -27,7 +27,7 @@ def hkTest(dict):
 	
 	helpKeyPressedBool = False
 	
-	for i in range(75):
+	for i in range(125):
 		cmd = '../adb.exe shell cat /sys/class/gpio/gpio1014/value'
 		s = subprocess.check_output(cmd.split())
 		returnString = s.decode("ascii")

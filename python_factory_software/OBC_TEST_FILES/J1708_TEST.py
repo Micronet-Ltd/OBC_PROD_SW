@@ -18,8 +18,11 @@ def j1708Test():
 	
 	cmd = '../adb.exe shell am broadcast -a com.micronet.obctestingapp.GET_J1708_RESULT'
 	s = subprocess.check_output(cmd.split())
-	returnString = s.decode("ascii")
-	
+	try:
+		returnString = s.decode("ascii")
+	except UnicodeDecodeError:
+		return (-1, "Code not parse return string.")
+
 	# Find index of return code and return data
 	index = returnString.find('result=') + 7
 	resultCode = returnString[index:index + 1]

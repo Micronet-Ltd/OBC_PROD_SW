@@ -37,6 +37,7 @@
 		<text description="FailedTestsPrompt">Failed Tests (Check individual file results to see how they failed):</text>
 		<text description="TestPassDash">test - passed</text>
 		<text description="TestFailDash">test - failed</text>
+		<text description="TempRetryPrompt">Temperature Test could not get temperature. Would you like to retry? [Y/N]:</text>
 	</language>
 	<language type="Chinese">
 		<text description="ScanIMEI">请扫描IMEI号： </text>
@@ -74,5 +75,6 @@
 		<text description="FailedTestsPrompt">失败的测试（检查文件结果以查看它们是如何失败的）：</text>
 		<text description="TestPassDash">测试通过</text>
 		<text description="TestFailDash">测试失败</text>
+		<text description="TempRetryPrompt">Temperature Test could not get temperature. Would you like to retry? [Y/N]:</text>
 	</language>
 </data>

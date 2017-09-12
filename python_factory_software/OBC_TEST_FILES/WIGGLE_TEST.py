@@ -20,7 +20,7 @@ def wiggleTest():
 	
 	returnBool = False
 	
-	for i in range(75):
+	for i in range(125):
 		# Sample wiggle
 		cmd = '../adb.exe shell mctl api 0216'
 		s = subprocess.check_output(cmd.split())

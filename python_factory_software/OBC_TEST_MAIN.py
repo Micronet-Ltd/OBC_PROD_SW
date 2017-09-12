@@ -162,7 +162,7 @@ def Main():
 	
 	print(Style.RESET_ALL, end="")
 
-	test_script_version = 'PY_1.2.30'
+	test_script_version = 'PY_1.2.31'
 
 	print('---------------------------------------------------')
 	print(Fore.CYAN + ' starting test, test script version is : ' + test_script_version + Style.RESET_ALL)

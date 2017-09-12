@@ -14,11 +14,29 @@ def tempTest():
 	s = subprocess.check_output(cmd.split())
 	returnString = s.decode("ascii")
 	
+	print(returnString)
+
 	returnString = returnString[25:29]
-	temperature = int(returnString)
+	try:
+		temperature = int(returnString)
+	except ValueError:
+		return -1
+
 	temperature = (temperature - 500)/10
 	
 	return temperature			
+
+def retryPrompt(dict):
+
+	while True:
+		choice = input(dict['TempRetryPrompt'])
+	
+		if choice.lower() == 'y':
+			return True
+		elif choice.lower() == 'n':
+			return False
+		else:
+			print('Invalid option. Please select either [Y/N]')
 
 #**********************
 #     Main Script
@@ -28,7 +46,17 @@ def Main(dict, update=True):
 
 	print()
 	
-	temp = tempTest()
+	continueTesting = True
+
+	while continueTesting == True:
+		temp = tempTest()
+		if temp == -1:
+			continueTesting = retryPrompt(dict)
+		else:
+			continueTesting = False
+			break
+
+
 	if temp >= 20 and temp <= 50:
 		print(Fore.GREEN + '** Temperature' , dict['TestPassDash'], '==', temp, Style.RESET_ALL)
 		resultBool = True
