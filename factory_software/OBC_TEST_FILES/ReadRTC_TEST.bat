@@ -3,6 +3,9 @@
 set currentTime_file_name=currentTime.txt
 set ERRORLEVEL=0
 
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
+
 rem echo ------------------------------------
 rem echo              Read MCU RTC TEST            
 rem echo ------------------------------------
@@ -23,14 +26,17 @@ if %MCUdate% GEQ "2000-00-00 00:01:00" goto _test_pass
 
 :_test_error
 set ERRORLEVEL=1
-echo ** RTC test - failed
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** RTC %xprvar%
 @echo RTC test - failed date supposed to be greater then "2000-00-00 00:01:00" but it %MCUdate%  >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 
 :_test_pass
-
-echo ** RTC test - Passed
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** RTC %xprvar%
 @echo RTC test - passed, date is: %MCUdate% >> testResults\%result_file_name%.txt
 
 :_end_of_test

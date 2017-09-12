@@ -3,64 +3,84 @@
 set ERRORLEVEL=0
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
+rem If language file is not set then default to english
+if not defined language_file set language_file=input/English.txt
 
 rem echo ------------------------------------
 rem echo                AUDIO TEST            
 rem echo ------------------------------------
 
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
-timeout /T 1 /NOBREAK > nul 
-..\adb shell input keyevent 20
-
 :_start_test
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-..\adb shell input keyevent 20
-rem ..\adb shell input keyevent 20
-
-
-
-rem turning off both speakers 
-rem ..\adb shell mctl api 0213000600 > nul
-rem ..\adb shell mctl api 0213001C00 > nul 
-rem ..\adb shell input keyevent 86  
+set HASFAILED=0
+set LEFTFAIL=0
+set RIGHTFAIL=0
+rem These turn off both speakers.
+..\adb shell mctl api 0213000600 > nul
+..\adb shell mctl api 0213001C00 > nul 
 
 :_right_speaker
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell input keyevent 66
-rem Turning off the left  speaker 
-..\adb shell mctl api 0213001C00 > nul
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT > nul
+..\adb shell mctl api 0213000601 > nul rem This turns the right speaker on.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+
+:_right_speaker_validation
 set choice=
-echo.&set /p choice=Do you hear the right speaker [Y/N] ?
-if /I %choice% NEQ Y goto _test_fail
+set "xprvar="
+for /F "skip=23 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p choice=%xprvar%
+if /I %choice% == Y goto _left_speaker
+if /I %choice% == N goto _right_test_fail
+echo Invalid option
+goto _right_speaker_validation
+
+:_right_test_fail
+set HASFAILED=1
+set RIGHTFAIL=1
+@echo Audio right speaker test - failed >> testResults\%result_file_name%.txt
+goto :_left_speaker
 
 :_left_speaker
-rem ..\adb shell am start -a android.intent.action.VIEW -d file:///data/local/tmp/track56.mp3 -t audio/mp3 > nul
-..\adb shell input keyevent 66
-rem Turning off the right speaker 
-..\adb shell mctl api 0213000600 > nul 
-rem Turning on the left speaker 
-..\adb shell mctl api 0213001C01 > nul
-set choice=
-echo.&set /p choice=Do you hear the left speaker [Y/N] ?
-if /I %choice% == Y goto _test_pass
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT > nul
+..\adb shell mctl api 0213001C01 > nul rem This turns the left speaker on.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 
-
-rem   ############## TEST STATUS ############
-:_test_fail
-rem mute the music with back command
-..\adb shell input keyevent 4
+:_left_speaker_validation
 set choice=
-echo.&set /p choice=Would you like to repeat the test [Y/N] ?
-if /I %choice% == Y goto _retest 
+set "xprvar="
+for /F "skip=24 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p choice=%xprvar%
+if /I %choice% == Y goto _evaluate
+if /I %choice% == N goto _left_test_fail
+echo Invalid option
+goto _left_speaker_validation
+
+:_left_test_fail
+set HASFAILED=1
+set LEFTFAIL=1
+@echo Audio left speaker test - failed >> testResults\%result_file_name%.txt
+goto _evaluate
+
+:_evaluate
+if %HASFAILED% EQU 1 goto _ask_if_retry
+goto _test_pass
+
+:_ask_if_retry
+set "xprvar="
+for /F "skip=25 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
+if /I "%option%"=="Y" goto _start_test
+if /I "%option%"=="N" goto _prepare_for_fail
+echo Invalid option
+goto _ask_if_retry
+
+:_prepare_for_fail
 set ERRORLEVEL=1
-echo ** audio test - failed
-@echo audio  test - failed >> testResults\%result_file_name%.txt
-goto _end_of_file
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Audio %xprvar%
+@echo Audio test - failed >> testResults\%result_file_name%.txt
 
+goto _end_of_file
 
 :_retest
 ..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
@@ -69,15 +89,15 @@ goto _start_test
 
 
 :_test_pass
-echo ** audio test - passed
-@echo audio test - passed  >> testResults\%result_file_name%.txt
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** Audio %xprvar%
+@echo Audio test - passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file
-rem turning on both speakers 
+rem These turn off both speakers.
 ..\adb shell mctl api 0213000600 > nul
-..\adb shell mctl api 0213001C00 > nul 
-rem mute the music with back command
-..\adb shell input keyevent 4
+..\adb shell mctl api 0213001C00 > nul
 
 
 if exist %file_name% del %file_name%

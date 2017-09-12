@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+libs/
+src/main/res/drawable/
+
+#micronet files
+treqr5platformkey.properties
+micronet-treqr5-platform.keystore
+
+app/src/main/res/drawable/
