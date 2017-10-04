@@ -18,8 +18,9 @@ rem echo ------------------------------------
 ..\adb shell mctl api 02040A > %file_name%
 
 set /p temperature=<%file_name%
-set temperature=%temperature:~25,3%
+set temperature=%temperature:~25,4%
 rem @echo %temperature%
+echo %temperature%
 SET /A temperature=(%temperature% - 500)/ 10
 rem @echo %temperature%
 rem pause
