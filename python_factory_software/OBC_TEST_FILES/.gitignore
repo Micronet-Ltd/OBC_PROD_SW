@@ -2,3 +2,4 @@
 /IMEIrsult.txt
 __pycache__/*
 *.db
+.idea/
