@@ -61,11 +61,22 @@ set supercap_test=
 
 rem connect to device over hotspot
 call adb_CONNECT.bat %1
-
+ 
 rem create a status file 
 set result_file_name=tmp.txt
 ..\adb shell getprop ro.serialno > %result_file_name%
 set /p deviceSN=<%result_file_name%
+
+rem TODO add check to make sure serialNumber is eight digits long and if it isn't then add a 0 to the front of it
+rem call strLen.bat %deviceSN% %string%
+rem echo %string%
+
+rem if not "%strLength%"=="8" (echo strLength not equal to 8)
+rem if not "%strLength%"=="8" (set strLength = 0%string%)
+
+rem echo %string%
+
+
 set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
 
