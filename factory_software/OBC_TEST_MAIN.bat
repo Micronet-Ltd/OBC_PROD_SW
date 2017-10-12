@@ -1,6 +1,6 @@
 @echo off
 
-set test_script_version=1.2.25
+set test_script_version=1.2.26
 
 cls
 echo ---------------------------------------------------
@@ -67,15 +67,10 @@ set result_file_name=tmp.txt
 ..\adb shell getprop ro.serialno > %result_file_name%
 set /p deviceSN=<%result_file_name%
 
-rem TODO add check to make sure serialNumber is eight digits long and if it isn't then add a 0 to the front of it
-rem call strLen.bat %deviceSN% %string%
-rem echo %string%
-
-rem if not "%strLength%"=="8" (echo strLength not equal to 8)
-rem if not "%strLength%"=="8" (set strLength = 0%string%)
-
-rem echo %string%
-
+rem check to make sure serialNumber is eight digits long and if it isn't then add a 0 to the front of it
+set tempSerial=%deviceSN%
+call :strLen serialLen tempSerial
+if not "%serialLen%"=="8" (set deviceSN=0%tempSerial%)
 
 set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
@@ -383,3 +378,23 @@ Netsh WLAN delete profile TREQr_5_00%1>nul
 cd ..
 timeout /t 2 /NOBREAK > nul
 color 07
+goto :eof
+
+:strlen <resultVar> <stringVar>
+(   
+    setlocal EnableDelayedExpansion
+    set "s=!%~2!#"
+    set "len=0"
+	echo ** strLen func called **
+    for %%P in (4096 2048 1024 512 256 128 64 32 16 8 4 2 1) do (
+        if "!s:~%%P,1!" NEQ "" ( 
+            set /a "len+=%%P"
+            set "s=!s:~%%P!"
+        )
+    )
+)
+( 
+    endlocal
+    set "%~1=%len%"
+    exit /b
+)

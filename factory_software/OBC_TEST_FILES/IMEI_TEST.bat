@@ -108,21 +108,8 @@ rem Write result to summary file
 <nul set /p ".=," >> testResults\summary.csv
 
 :_write_serial_imei
-rem write SerialNumber and IMEI to SerialIMEI.csv
-
-rem Get uppercase Serial Number
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SERIAL> %serial_name%
-rem Get the second line with the results
-set "xprvar="
-for /F "skip=1 delims=" %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
-echo %xprvar% > %serial_name%
-set /p Result=<%serial_name%
-
-rem Parse serial number
-set pm_serial=%Result:~37,8%
-
 rem Write Serial and IMEI to SerialIMEI.csv
-@echo %pm_serial%,%trueIMEI% >> testResults\%list_name%.csv
+@echo %deviceSN%,%trueIMEI% >> testResults\%list_name%.csv
 goto _end_of_file
 
 

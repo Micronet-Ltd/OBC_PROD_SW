@@ -72,7 +72,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** MCU version %xprvar% : Error, no MCU version string in the input folder. Contact MICRONET for the MCU string
-@echo MCU version - fail : There is no MCU version string in the input folder. Contact MICRONET for the MCU string >> testResults\%result_file_name%.txt
+@echo MCU version - failed : There is no MCU version string in the input folder. Contact MICRONET for the MCU string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_error_no_fpga_version
@@ -80,7 +80,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** FPGA version %xprvar% : Error no FPGA version string in the input folder. Contact MICRONET for the FPGA string
-@echo FPGA version - fail : There is no FPGA version string in the input folder. Contact MICRONET for the FPGA string >> testResults\%result_file_name%.txt
+@echo FPGA version - failed : There is no FPGA version string in the input folder. Contact MICRONET for the FPGA string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_error_no_os_version
@@ -96,7 +96,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
-@echo MCU version - fail : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
+@echo MCU version - failed : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto _check_FPGA_version
@@ -106,7 +106,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** FPGA  version %xprvar% : expected %fpga_version% got %version%. Burn correct FPGA version.
-@echo FPGA version - fail : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
+@echo FPGA version - failed : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv
 goto _check_OS_version
