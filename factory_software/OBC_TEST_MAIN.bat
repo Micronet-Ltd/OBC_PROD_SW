@@ -70,7 +70,7 @@ set /p deviceSN=<%result_file_name%
 rem check to make sure serialNumber is eight digits long and if it isn't then add a 0 to the front of it
 set tempSerial=%deviceSN%
 call :strLen serialLen tempSerial
-if not "%serialLen%"=="8" (set deviceSN=0%tempSerial%)
+if "%serialLen%"=="7" (set deviceSN=0%tempSerial%)
 
 set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
@@ -385,7 +385,6 @@ goto :eof
     setlocal EnableDelayedExpansion
     set "s=!%~2!#"
     set "len=0"
-	echo ** strLen func called **
     for %%P in (4096 2048 1024 512 256 128 64 32 16 8 4 2 1) do (
         if "!s:~%%P,1!" NEQ "" ( 
             set /a "len+=%%P"
