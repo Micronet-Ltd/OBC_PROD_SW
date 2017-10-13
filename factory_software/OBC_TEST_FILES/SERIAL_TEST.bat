@@ -44,7 +44,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=4 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
-setlocal DisableDelayedExpansion
+endlocal
 @echo Serial test - failed expected %pm_serial% got %read_in_serial% >> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -54,7 +54,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=5 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
-setlocal DisableDelayedExpansion
+endlocal
 @echo Serial test - passed %pm_serial% >> testResults\%result_file_name%.txt
 
 :_end_of_file

@@ -35,3 +35,4 @@ test - failed
 test - passed
 Cellular test failed. Would you like to retry [Y/N]
 Wiggle Test - Tap the device
+WiFi test failed. Would you like to retry [Y/N]

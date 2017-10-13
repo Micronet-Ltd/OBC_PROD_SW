@@ -1,6 +1,7 @@
 @echo off
 
 set test_script_version=1.2.26
+set ERRORLEVEL=0
 
 cls
 echo ---------------------------------------------------
@@ -95,6 +96,11 @@ rem ---------- Test Start ----------
 rem check that imei on barcode is the same as imei of the device
 rem this batch file also writes to SerialIMEI.csv
 call IMEI_TEST.bat
+if %ERRORLEVEL% == 2 (
+	echo Exiting from main test file...
+	<nul set /p ".=fail," >> testResults\summary.csv
+) 
+if %ERRORLEVEL% == 2 exit /b
 if %ERRORLEVEL% == 1 (
 	set imei_test=fail
 	set OBC_TEST_STATUS=Fail
@@ -147,6 +153,15 @@ if %ERRORLEVEL% == 1 (
 call Cellular.bat
 if %ERRORLEVEL% == 1 (
 	set cellular_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> testResults\summary.csv
+) else (
+	<nul set /p ".=pass," >> testResults\summary.csv
+)
+
+call WIFI_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set WiFi_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> testResults\summary.csv
 ) else (

@@ -95,7 +95,7 @@ goto _end_of_test
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
+echo ** MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
 @echo MCU version - failed : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
 <nul set /p ".=%version%" >> testResults\summary.csv
 <nul set /p ".=," >> testResults\summary.csv

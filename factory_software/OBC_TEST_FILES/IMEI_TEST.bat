@@ -58,7 +58,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo IMEI %xprvar% matching device but tac is not correct, should be "%tac%" or "%tac2%"
-setlocal DisableDelayedExpansion
+endlocal
 rem Write result to individual device file
 @echo IMEI test - failed %imei% matching device but tac is not correct, should be "%tac%" or "%tac2%" >> testResults\%result_file_name%.txt
 rem Write result to summary file
@@ -72,7 +72,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
-setlocal DisableDelayedExpansion
+endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, tac is correct >> testResults\%result_file_name%.txt
 rem Write result to summary file
@@ -86,7 +86,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%, also tac is incorrect, should be "%tac%" or "%tac2%"
-setlocal DisableDelayedExpansion
+endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, also tac is incorrect, should be "%tac%" or "%tac2%" >> testResults\%result_file_name%.txt
 rem Write result to summary file
@@ -100,7 +100,7 @@ setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=2 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
-setlocal DisableDelayedExpansion
+endlocal
 rem Write result to individual device file
 @echo IMEI test - passed %imei% >> testResults\%result_file_name%.txt
 rem Write result to summary file
@@ -108,18 +108,71 @@ rem Write result to summary file
 <nul set /p ".=," >> testResults\summary.csv
 
 :_write_serial_imei
-rem Write Serial and IMEI to SerialIMEI.csv
-@echo %deviceSN%,%trueIMEI% >> testResults\%list_name%.csv
-goto _end_of_file
+rem Get and parse the serial number
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SERIAL> %serial_name%
+set "xprvar="
+for /F "skip=1 delims=" %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar% > %serial_name%
+set /p Result=<%serial_name%
+set serialNum=%Result:~37,8%
 
+rem Write Serial and IMEI to SerialIMEI.csv
+@echo %serialNum%,%trueIMEI% >> testResults\%list_name%.csv
+
+rem Check for possible duplicate Serial/IMEI
+set tempIMEI='%trueIMEI%
+set passedVar=pass
+set tempResult=0
+call :duplicate tempResult %serialNum% %tempIMEI%
+echo The result is %tempResult%
+
+if "%tempResult%"=="1" goto _ask_if_continue
+echo no duplicates found, continuing
+goto :_end_of_file
+
+:_ask_if_continue
+echo.&set /p option=Are you retesting a previously tested device? [Y/N] 
+if /I "%option%"=="Y" goto _continue
+if /I "%option%"=="N" goto _exit
+echo Invalid option
+goto _ask_if_continue
+
+:_continue
+echo Continuing testing.
+goto :_end_of_file
+
+:_exit
+echo  ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
+echo Exiting test ...
+set ERRORLEVEL=2
+goto :_end_of_file
 
 :_end_of_file
+echo end of file
 if exist %file_name% del %file_name%
 if exist %serial_name% del %serial_name%
-set Result= 
-set imei= 
+set Result=
+set imei=
 set pm_serial=
-set trueIMEI=
 set tac=
 set tac2=
 set matching_imei=
+set serialNum=
+goto :eof
+
+:duplicate <resultVar> <serialNum> <imei>
+rem echo %1 %2 %3
+
+for /F "tokens=2,3,29 delims=," %%A in (testResults\summary.csv) do (
+    rem @echo %%A %%B %%C
+    if /I "%2"=="%%A" if /I "%passedVar%"=="%%C" (
+        set %1=1
+        echo Possible duplicate found maybe
+    )
+
+    if /I "%3"=="%%B" if /I "%passedVar%"=="%%C" (
+        set %1=1
+        echo Possible duplicate found maybe
+    )
+)
+exit /b
