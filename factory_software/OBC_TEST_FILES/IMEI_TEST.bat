@@ -158,6 +158,8 @@ set tac=
 set tac2=
 set matching_imei=
 set serialNum=
+set passedVar=
+set tempResult=
 goto :eof
 
 :duplicate <resultVar> <serialNum> <imei>

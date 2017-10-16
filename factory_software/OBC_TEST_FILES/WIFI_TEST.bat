@@ -43,8 +43,6 @@ rem echo %lineNumber%
 
 netsh wlan show networks mode=bssid | find /N " " | find "[%lineNumber%]" > %temp_result%
 
-
-
 for /F "tokens=4" %%G in (%temp_result%) do set WiFiValue=%%G 
 rem echo WiFiRSSI = %WiFiValue%
 set /a WiFiValue=%WiFiValue:~0,-2%
@@ -80,7 +78,7 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** WiFi %xprvar% WiFiRSSI = %WiFiValue%
+echo ** WiFi %xprvar% WiFi RSSI = %WiFiValue%
 @echo WiFi test - passed >> testResults\%result_file_name%.txt
 <nul set /p ".=%WiFiValue%," >> testResults\summary.csv
 goto _end_of_file

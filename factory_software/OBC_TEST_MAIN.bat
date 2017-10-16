@@ -60,6 +60,21 @@ set gpio_test=
 set wiggle_test=
 set supercap_test=
 
+rem Check whether this is a board test or a system test
+set /p line1= <input\TEST_TYPE.dat
+for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
+ if %%i EQU TEST_TYPE set TEST_TYPE=%%j
+)
+
+if /I "%TEST_TYPE%"=="System" (
+	echo Starting a system test.
+	set summaryFile=testResults\summary.csv
+)
+if /I "%TEST_TYPE%"=="Board" (
+	echo Starting a board test.
+	set summaryFile=testResults\boardSummary.csv
+)
+
 rem connect to device over hotspot
 call adb_CONNECT.bat %1
  
@@ -72,6 +87,8 @@ rem check to make sure serialNumber is eight digits long and if it isn't then ad
 set tempSerial=%deviceSN%
 call :strLen serialLen tempSerial
 if "%serialLen%"=="7" (set deviceSN=0%tempSerial%)
+set tempSerial=
+set serialLen=
 
 set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
@@ -83,40 +100,32 @@ rem start writing to individual device file
 @echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 
 rem add new line to summary file
-echo: >>testResults\summary.csv
+echo: >>%summaryFile%
 
 rem add date and device serial number to summary file
-<nul set /p ".=%mydate%," >> testResults\summary.csv
-<nul set /p ".=%deviceSN%," >> testResults\summary.csv
+<nul set /p ".=%mydate%," >> %summaryFile%
+<nul set /p ".=%deviceSN%," >> %summaryFile%
 
 rem install test apk files
 call install_files_test.bat
 
+if "%TEST_TYPE%"=="System" goto _system_test
+
 rem ---------- Test Start ----------
 rem check that imei on barcode is the same as imei of the device
 rem this batch file also writes to SerialIMEI.csv
-call IMEI_TEST.bat
-if %ERRORLEVEL% == 2 (
-	echo Exiting from main test file...
-	<nul set /p ".=fail," >> testResults\summary.csv
-) 
-if %ERRORLEVEL% == 2 exit /b
-if %ERRORLEVEL% == 1 (
-	set imei_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
-) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
-)
+
+:_board_test
+rem ************************ BOARD TEST ************************
 
 rem check that serial on barcode is the same as serial of the device
-call SERIAL_TEST.bat 
+call BOARD_SERIAL_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set serial_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 rem Reset variable values
@@ -127,169 +136,356 @@ call VERSION_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set version_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call LED_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set led_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call sd-card_test_updated.bat
 if %ERRORLEVEL% == 1 (
 	set sd_card_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call Cellular.bat
 if %ERRORLEVEL% == 1 (
 	set cellular_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call WIFI_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set WiFi_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call CANBus_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set canbus_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call SWC_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set swc_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call J1708_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set j1708_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call COM_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set com_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
-)
-
-call NFC_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set nfc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
-) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call HELP_KEY_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set help_key_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call audio_test.bat
 if %ERRORLEVEL% == 1 (
 	set audio_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call Temperature_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set temperature_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call ReadRTC_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set read_rtc_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call Accelerometer_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set accelerometer_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
-call GPIO_TEST_UPDATED.bat
+call GPIO_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set gpio_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 call WIGGLE_TEST.bat
 if %ERRORLEVEL% == 1 (
     set wiggle_test=fail
     set OBC_TEST_STATUS=Fail
-    <nul set /p ".=fail," >> testResults\summary.csv
+    <nul set /p ".=fail," >> %summaryFile%
 ) else (
-    <nul set /p ".=pass," >> testResults\summary.csv
+    <nul set /p ".=pass," >> %summaryFile%
 )
 
 call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set supercap_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
+goto _total_test_status
+
+:_system_test
+rem ************************ SYSTEM TEST ************************
+
+call IMEI_TEST.bat
+if %ERRORLEVEL% == 2 (
+	echo Exiting from main test file...
+	<nul set /p ".=fail," >> %summaryFile%
+) 
+if %ERRORLEVEL% == 2 exit /b
+if %ERRORLEVEL% == 1 (
+	set imei_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+rem check that serial on barcode is the same as serial of the device
+call SERIAL_TEST.bat 
+if %ERRORLEVEL% == 1 (
+	set serial_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+rem Reset variable values
+set mydate=
+set deviceSN=
+
+call VERSION_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set version_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call LED_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set led_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call sd-card_test_updated.bat
+if %ERRORLEVEL% == 1 (
+	set sd_card_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call Cellular.bat
+if %ERRORLEVEL% == 1 (
+	set cellular_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call WIFI_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set WiFi_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call CANBus_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set canbus_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call SWC_TEST_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set swc_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call J1708_TEST_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set j1708_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call COM_TEST.bat 
+if %ERRORLEVEL% == 1 (
+	set com_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call NFC_TEST_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set nfc_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call HELP_KEY_TEST_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set help_key_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call audio_test.bat
+if %ERRORLEVEL% == 1 (
+	set audio_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call Temperature_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set temperature_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call ReadRTC_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set read_rtc_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call Accelerometer_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set accelerometer_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call GPIO_TEST_UPDATED.bat
+if %ERRORLEVEL% == 1 (
+	set gpio_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call WIGGLE_TEST.bat
+if %ERRORLEVEL% == 1 (
+    set wiggle_test=fail
+    set OBC_TEST_STATUS=Fail
+    <nul set /p ".=fail," >> %summaryFile%
+) else (
+    <nul set /p ".=pass," >> %summaryFile%
+)
+
+call SUPERCAP_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set supercap_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+:_total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
-	<nul set /p ".=fail," >> testResults\summary.csv
+	<nul set /p ".=fail," >> %summaryFile%
 ) else (
-	<nul set /p ".=pass," >> testResults\summary.csv
+	<nul set /p ".=pass," >> %summaryFile%
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
@@ -316,6 +512,74 @@ echo **************************************
 @echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
 color 47
+
+if "%TEST_TYPE%"=="System" goto _system_failures
+
+:_board_failures
+rem ************************ BOARD TEST FAILURES ************************
+echo.
+set "xprvar="
+for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+rem Check which tests failed and print which ones did fail
+if "%serial_test%" == "fail" (
+	echo ** Serial %xprvar%
+)
+if "%version_test%" == "fail" (
+	echo ** Version %xprvar%
+)
+if "%led_test%" == "fail" (
+	echo ** LED %xprvar%
+)
+if "%sd_card_test%" == "fail" (
+	echo ** SD Card %xprvar%
+)
+if "%cellular_test%" == "fail" (
+	echo ** Cellular %xprvar%
+)
+if "%canbus_test%" == "fail" (
+	echo ** CANBus %xprvar%
+)
+if "%swc_test%" == "fail" (
+	echo ** SWC %xprvar%
+)
+if "%j1708_test%" == "fail" (
+	echo ** J1708 %xprvar%
+)
+if "%com_test%" == "fail" (
+	echo ** Com Port %xprvar%
+)
+if "%help_key_test%" == "fail" (
+	echo ** Help Key %xprvar%
+)
+if "%audio_test%" == "fail" (
+	echo ** Audio %xprvar%
+)
+if "%temperature_test%" == "fail" (
+	echo ** Temperature %xprvar%
+)
+if "%read_rtc_test%" == "fail" (
+	echo ** Read RTC %xprvar%
+)
+if "%accelerometer_test%" == "fail" (
+	echo ** Accelerometer %xprvar%
+)
+if "%gpio_test%" == "fail" (
+	echo ** GPIO Inputs %xprvar%
+)
+if "%wiggle_test%" == "fail" (
+    echo ** Wiggle %xprvar%
+)
+if "%supercap_test%" == "fail" (
+	echo ** Supercap %xprvar%
+)
+
+goto _end_of_tests
+
+:_system_failures
+rem ************************ SYSTEM TEST FAILURES ************************
 
 echo.
 set "xprvar="
@@ -388,6 +652,8 @@ set OBC_TEST_STATUS=
 set language_choice_file=
 set language_choice=
 set language_file=
+set TEST_TYPE=
+set summaryFile=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_00%1>nul
 cd ..
