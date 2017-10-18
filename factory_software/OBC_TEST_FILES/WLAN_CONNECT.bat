@@ -6,8 +6,9 @@ rem echo ------------------------------------
 rem echo         WLAN connection 
 rem echo ------------------------------------
 
+rem Nuner needs to contain last 6 digits of IMEI
 set network_file_name=wlan.txt
-set OBC_TESTER_WLAN_HOTSPOT_HEADER=TREQr_5_00
+set OBC_TESTER_WLAN_HOTSPOT_HEADER=TREQr_5_
 set OBC_TESTER_WLAN_HOTSPOT_NUNER=%1
 set OBC_TESTER_WLAN_HOTSPOT=%OBC_TESTER_WLAN_HOTSPOT_HEADER%%OBC_TESTER_WLAN_HOTSPOT_NUNER%
 
@@ -28,18 +29,18 @@ rem Connection request was completed successfully.       OR
 rem There is no profile assigned to the specified interface.
 rem if the 1st letter is 'C', connection succeeded, else failed
 
-if %OBC_TESTER_WLAN_CON:~0,1% == C goto _WALN_test_pass
+if %OBC_TESTER_WLAN_CON:~0,1% == C goto _WLAN_test_pass
 if %loop_cnt% LSS 20 goto _WLAN_LOOP
 
 rem   ############## TEST STATUS ############
 set ERRORLEVEL=1
-echo.
-echo *** ERROR !!! - WLAN FAILED (not connected to %OBC_TESTER_WLAN_HOTSPOT%) ***
+rem echo.
+echo WLAN Connect - failed (not connected to %OBC_TESTER_WLAN_HOTSPOT%) ***
 goto _end_of_test
 
-:_WALN_test_pass
+:_WLAN_test_pass
 rem echo.
-echo WLAN connect - Passed : Connected successfully to %OBC_TESTER_WLAN_HOTSPOT%
+echo WLAN Connect - passed : Connected successfully to %OBC_TESTER_WLAN_HOTSPOT%
 
 :_end_of_test
 if exist %network_file_name% del %network_file_name% 

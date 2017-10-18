@@ -1,4 +1,5 @@
 @echo off
+rem Needs to be last 6 of IMEI
 set IMEIstring=%1
 set IMEI=%1
 set ERRORLEVEL=
@@ -6,7 +7,8 @@ set ERRORLEVEL=
 rem echo ------------------------------------
 rem echo         WLAN profile
 rem echo ------------------------------------
-echo  wait for TREQr_5_00%IMEIstring% ...
+rem echo  wait for TREQr_5_00%IMEIstring% ...
+echo.
 :_refresh_wireless_networks
 rem ------------ Main -----------------
 call :_check_Permissions
@@ -26,7 +28,7 @@ set found="Not Found"
 rem checking if the PC sees the device hotspot 
 
 netsh wlan show networks > networks.txt
-findstr /m TREQr_5_00%IMEIstring% networks.txt > tmp.txt
+findstr /m TREQr_5_%IMEIstring% networks.txt > tmp.txt
 rem findstr /m "QA-Test" networks.txt > tmp.txt
 set /p found= < tmp.txt
 rem if the wifi network exist the the findster will return the file name
@@ -90,7 +92,7 @@ if errorlevel = 1 goto next
 if errorlevel = 0 goto win vista
  
 :next
-ver | find "6.1"
+ver | find "6.1" > nul
 if errorlevel = 1 goto next1
 if errorlevel = 0 goto win7
  
@@ -160,11 +162,11 @@ rem Start creating the profile -------------------------------------------------
 rem create a profile 
 @echo ^<?xml version="1.0"?^> > Wi-Fi-TREQr_5.xml
 @echo ^<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1"^> >> Wi-Fi-TREQr_5.xml
-@echo 	^<name^>TREQr_5_00%IMEIstring%^</name^> >> Wi-Fi-TREQr_5.xml
+@echo 	^<name^>TREQr_5_%IMEIstring%^</name^> >> Wi-Fi-TREQr_5.xml
 @echo 	^<SSIDConfig^>  >> Wi-Fi-TREQr_5.xml
 @echo 		^<SSID^>  >> Wi-Fi-TREQr_5.xml
-@echo 			^<hex^>54524551725F355F3030%myhex%^</hex^>  >> Wi-Fi-TREQr_5.xml
-@echo 			^<name^>TREQr_5_00%IMEIstring%^</name^> >> Wi-Fi-TREQr_5.xml
+@echo 			^<hex^>54524551725F355F%myhex%^</hex^>  >> Wi-Fi-TREQr_5.xml
+@echo 			^<name^>TREQr_5_%IMEIstring%^</name^> >> Wi-Fi-TREQr_5.xml
 @echo 		^</SSID^> >> Wi-Fi-TREQr_5.xml
 @echo 	^</SSIDConfig^> >> Wi-Fi-TREQr_5.xml
 @echo 	^<connectionType^>ESS^</connectionType^> >> Wi-Fi-TREQr_5.xml
@@ -179,7 +181,7 @@ rem create a profile
 @echo 			^<sharedKey^> >> Wi-Fi-TREQr_5.xml
 @echo 				^<keyType^>passPhrase^</keyType^> >> Wi-Fi-TREQr_5.xml
 @echo 				^<protected^>false^</protected^> >> Wi-Fi-TREQr_5.xml
-@echo 				^<keyMaterial^>2000%IMEIstring%^</keyMaterial^> >> Wi-Fi-TREQr_5.xml
+@echo 				^<keyMaterial^>80%IMEIstring%^</keyMaterial^> >> Wi-Fi-TREQr_5.xml
 @echo 			^</sharedKey^> >> Wi-Fi-TREQr_5.xml
 @echo 		^</security^> >> Wi-Fi-TREQr_5.xml
 @echo 	^</MSM^> >> Wi-Fi-TREQr_5.xml
@@ -192,7 +194,8 @@ Netsh WLAN add profile filename="Wi-Fi-TREQr_5.xml" >nul 2>&1
 EXIT /B
 rem End creating the profile -------------------------------------------------------------------------
 :_WALN_addProfle_pass
-echo WLAN profile- Passed 
+rem echo.
+echo WLAN profile created successfully - passed
 
 :_end_of_test
 set myhex=

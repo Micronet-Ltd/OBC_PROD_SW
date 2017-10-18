@@ -20,6 +20,20 @@ call :reset_result_variables
 rem Select the test type from the dat file
 call :test_type_selection
 
+echo.
+set /p tempIMEI=Scan IMEIL: 
+
+set imeiEnd=%tempIMEI:~9,6%
+
+rem Set up the WIFI profile
+call WLAN_profile.bat %imeiEnd%
+
+IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Exiting...
+IF %ERRORLEVEL% NEQ 0 exit /b
+
+rem Try to connect to the device
+call WLAN_CONNECT.bat %imeiEnd%
+
 rem connect to device over hotspot
 call adb_CONNECT.bat %1
 
@@ -104,6 +118,8 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+
+set tempIMEI=
 
 rem check that serial on barcode is the same as serial of the device
 call SERIAL_TEST.bat 

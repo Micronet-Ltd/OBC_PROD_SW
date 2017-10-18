@@ -22,6 +22,9 @@ rem echo ------------------------------------
 rem echo                IMEI test            
 rem echo ------------------------------------
 
+if defined tempIMEI set imei=%tempIMEI%
+if defined tempIMEI goto _test
+
 echo.
 set "xprvar="
 for /F "delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
