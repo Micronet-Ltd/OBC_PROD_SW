@@ -21,7 +21,7 @@ rem Select the test type from the dat file
 call :test_type_selection
 
 echo.
-set /p tempIMEI=Scan IMEIL: 
+set /p tempIMEI=Scan IMEI: 
 
 set imeiEnd=%tempIMEI:~9,6%
 
