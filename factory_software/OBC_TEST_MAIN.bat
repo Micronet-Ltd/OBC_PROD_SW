@@ -35,7 +35,7 @@ rem Try to connect to the device
 call WLAN_CONNECT.bat %imeiEnd%
 
 rem connect to device over hotspot
-call adb_CONNECT.bat %1
+call adb_CONNECT.bat
 
 rem Set up result files
 call :set_up_results
