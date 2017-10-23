@@ -180,7 +180,7 @@ rem create a profile
 @echo 		^</SSID^> >> Wi-Fi-TREQr_5.xml
 @echo 	^</SSIDConfig^> >> Wi-Fi-TREQr_5.xml
 @echo 	^<connectionType^>ESS^</connectionType^> >> Wi-Fi-TREQr_5.xml
-@echo 	^<connectionMode^>auto^</connectionMode^> >> Wi-Fi-TREQr_5.xml
+@echo 	^<connectionMode^>manual^</connectionMode^> >> Wi-Fi-TREQr_5.xml
 @echo 	^<MSM^> >> Wi-Fi-TREQr_5.xml
 @echo 		^<security^> >> Wi-Fi-TREQr_5.xml
 @echo 			^<authEncryption^> >> Wi-Fi-TREQr_5.xml
