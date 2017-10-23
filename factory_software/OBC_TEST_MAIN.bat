@@ -1,6 +1,6 @@
 @echo off
 
-set test_script_version=1.2.26
+set test_script_version=1.2.28
 set ERRORLEVEL=0
 
 cls
@@ -20,19 +20,26 @@ call :reset_result_variables
 rem Select the test type from the dat file
 call :test_type_selection
 
+rem Get IMEI and make sure it is the right length before you use it to create connection.
 echo.
+set imeiLen=
+set tempIMEI=
 set /p tempIMEI=Scan IMEI: 
-
+call :strLen imeiLen tempIMEI
+if not "%imeiLen%"=="15" echo Invalid length IMEI entered, should be 15 characters. Check device IMEI. Exiting... & cd ..
+if not "%imeiLen%"=="15" exit /b
+set imeiLen=
 set imeiEnd=%tempIMEI:~9,6%
 
 rem Set up the WIFI profile
 call WLAN_profile.bat %imeiEnd%
-
-IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Exiting...
+IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Check device IMEI. Exiting... & cd ..
 IF %ERRORLEVEL% NEQ 0 exit /b
 
 rem Try to connect to the device
 call WLAN_CONNECT.bat %imeiEnd%
+IF %ERRORLEVEL% NEQ 0 cd ..
+IF %ERRORLEVEL% NEQ 0 exit /b
 
 rem connect to device over hotspot
 call adb_CONNECT.bat
@@ -42,6 +49,8 @@ call :set_up_results
 
 rem install test apk files
 call install_files_test.bat
+
+echo.
 
 rem Run tests depending on test type
 if "%TEST_TYPE%"=="System" call :system_test
@@ -320,6 +329,7 @@ rem Reset variable values
 set mydate=
 set deviceSN=
 
+rem Only mcu/fpga
 call VERSION_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set version_test=fail
@@ -332,33 +342,6 @@ if %ERRORLEVEL% == 1 (
 call LED_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set led_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
-call sd-card_test_updated.bat
-if %ERRORLEVEL% == 1 (
-	set sd_card_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
-call Cellular.bat
-if %ERRORLEVEL% == 1 (
-	set cellular_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
-call WIFI_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set WiFi_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> %summaryFile%
 ) else (
@@ -392,6 +375,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
+rem Depends on the board.
 call COM_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set com_test=fail
@@ -410,6 +394,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
+rem Are they pluggin in speakers?
 call audio_test.bat
 if %ERRORLEVEL% == 1 (
 	set audio_test=fail
@@ -464,6 +449,7 @@ if %ERRORLEVEL% == 1 (
     <nul set /p ".=pass," >> %summaryFile%
 )
 
+rem Might not work, needs to charge. Set up of test?
 call SUPERCAP_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set supercap_test=fail

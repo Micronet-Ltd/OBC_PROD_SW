@@ -127,10 +127,10 @@ set tempIMEI='%trueIMEI%
 set passedVar=pass
 set tempResult=0
 call :duplicate tempResult %serialNum% %tempIMEI%
-echo The result is %tempResult%
+rem echo The result is %tempResult%
 
 if "%tempResult%"=="1" goto _ask_if_continue
-echo no duplicates found, continuing
+rem echo no duplicates found, continuing
 goto :_end_of_file
 
 :_ask_if_continue
@@ -151,7 +151,6 @@ set ERRORLEVEL=2
 goto :_end_of_file
 
 :_end_of_file
-echo end of file
 if exist %file_name% del %file_name%
 if exist %serial_name% del %serial_name%
 set Result=
@@ -172,12 +171,12 @@ for /F "tokens=2,3,29 delims=," %%A in (testResults\summary.csv) do (
     rem @echo %%A %%B %%C
     if /I "%2"=="%%A" if /I "%passedVar%"=="%%C" (
         set %1=1
-        echo Possible duplicate found maybe
+        rem echo Possible duplicate found maybe
     )
 
     if /I "%3"=="%%B" if /I "%passedVar%"=="%%C" (
         set %1=1
-        echo Possible duplicate found maybe
+        rem echo Possible duplicate found maybe
     )
 )
 exit /b

@@ -2,7 +2,8 @@
 rem Needs to be last 6 of IMEI
 set IMEIstring=%1
 set IMEI=%1
-set ERRORLEVEL=
+set ERRORLEVEL=0
+set count=
 
 rem echo ------------------------------------
 rem echo         WLAN profile
@@ -15,11 +16,17 @@ call :_check_Permissions
 IF %ERRORLEVEL% NEQ 0 goto _end_of_test
 set wait_seconds=2
 call :_refresh_networks
+
+set /a count=0
 call :_wait for_wifi
+
+IF %ERRORLEVEL% NEQ 0 echo. & echo Could not find device's WiFi hotspot.
+IF %ERRORLEVEL% NEQ 0 goto _end_of_test
+
 set myhex=
 call :toHex
 call :createProfile
-goto _WALN_addProfle_pass
+goto _WLAN_addProfle_pass
 rem ----------- End Main
 
 rem start wait for Wi-Fi------------------------------------------------------
@@ -30,14 +37,17 @@ rem checking if the PC sees the device hotspot
 netsh wlan show networks > networks.txt
 findstr /m TREQr_5_%IMEIstring% networks.txt > tmp.txt
 rem findstr /m "QA-Test" networks.txt > tmp.txt
-set /p found= < tmp.txt
+set /p found=<tmp.txt
 rem if the wifi network exist the the findster will return the file name
-rem echo  found = %found%
+rem echo found = %found%
 if %found%==networks.txt EXIT /B
 rem echo Please check if the device is on ...
 timeout /T %wait_seconds% /NOBREAK > nul
 echo | set /p=.
 if %wait_seconds% LSS 15 set /a wait_seconds = %wait_seconds% * 2
+if %count% GTR 6 set ERRORLEVEL=1
+if %count% GTR 6 exit /b
+set /a count=%count%+1
 goto _wait for_wifi
 rem End wait for Wi-Fi ---------------------------------------------------------
 
@@ -193,12 +203,13 @@ rem create a profile
 Netsh WLAN add profile filename="Wi-Fi-TREQr_5.xml" >nul 2>&1
 EXIT /B
 rem End creating the profile -------------------------------------------------------------------------
-:_WALN_addProfle_pass
+:_WLAN_addProfle_pass
 rem echo.
 echo WLAN profile created successfully - passed
 
 :_end_of_test
 set myhex=
 set found=
+set count=
 if exist networks.txt del networks.txt
 if exist tmp.txt del tmp.txt

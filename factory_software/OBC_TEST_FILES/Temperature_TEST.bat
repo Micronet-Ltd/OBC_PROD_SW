@@ -20,7 +20,7 @@ rem echo ------------------------------------
 set /p temperature=<%file_name%
 set temperature=%temperature:~25,4%
 rem @echo %temperature%
-echo %temperature%
+rem echo %temperature%
 SET /A temperature=(%temperature% - 500)/ 10
 rem @echo %temperature%
 rem pause
