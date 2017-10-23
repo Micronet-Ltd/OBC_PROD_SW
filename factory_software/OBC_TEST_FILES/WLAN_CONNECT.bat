@@ -29,6 +29,10 @@ rem Connection request was completed successfully.       OR
 rem There is no profile assigned to the specified interface.
 rem if the 1st letter is 'C', connection succeeded, else failed
 
+echo The line below this is what we need to get the first character from.
+echo %OBC_TESTER_WLAN_CON%
+
+rem Need to compare to chinese char if used on a chinese computer.
 if %OBC_TESTER_WLAN_CON:~0,1% == C goto _WLAN_test_pass
 if %loop_cnt% LSS 20 goto _WLAN_LOOP
 
