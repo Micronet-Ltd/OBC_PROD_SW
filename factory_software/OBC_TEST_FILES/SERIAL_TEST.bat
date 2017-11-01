@@ -10,7 +10,7 @@ rem If language file is not set then default to english
 if not defined language_file set language_file=input/English.txt
 
 rem echo ------------------------------------
-rem echo                SERIAL test            
+rem echo            SERIAL test              
 rem echo ------------------------------------
 
 echo.
@@ -24,16 +24,12 @@ set /p read_in_serial=%xprvar%
 rem Send broadcast to receive serial number
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SERIAL> %serial_name%
 
-rem Get the second line with the results
+rem Parse second line of result on double quotes to get serial number whether it is 7 or 8 digits long.
 set "xprvar="
-for /F "skip=1 delims=" %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
-echo %xprvar% > %serial_name%
-
-rem Parse serial number
-set /p Result=<%serial_name%
+for /F delims^=^"^ tokens^=2^ skip^=1 %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
 
 rem Final serial number from device with PM
-set pm_serial=PM%Result:~37,8%
+set pm_serial=PM%xprvar%
 
 rem If serial number scanned is the same as the one in the device then goto pass
 if "%pm_serial%" == "%read_in_serial%" goto _test_pass

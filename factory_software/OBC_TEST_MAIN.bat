@@ -1,5 +1,8 @@
 @echo off
 
+rem ************************************************************
+rem ************************ MAIN TEST *************************
+rem ************************************************************
 set test_script_version=1.2.28
 set ERRORLEVEL=0
 
@@ -101,7 +104,8 @@ set language_file=
 set TEST_TYPE=
 set summaryFile=
 ..\adb disconnect
-Netsh WLAN delete profile TREQr_5_00%1>nul
+Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
+set imeiEnd=
 cd ..
 timeout /t 2 /NOBREAK > nul
 color 07
@@ -555,13 +559,7 @@ set result_file_name=tmp.txt
 ..\adb shell getprop ro.serialno > %result_file_name%
 set /p deviceSN=<%result_file_name%
 
-rem check to make sure serialNumber is eight digits long and if it isn't then add a 0 to the front of it
-set tempSerial=%deviceSN%
-call :strLen serialLen tempSerial
-if "%serialLen%"=="7" (set deviceSN=0%tempSerial%)
-set tempSerial=
-set serialLen=
-
+rem Set result file name to serial number
 set mydate=%DATE:~0,10%
 set result_file_name=%deviceSN%
 

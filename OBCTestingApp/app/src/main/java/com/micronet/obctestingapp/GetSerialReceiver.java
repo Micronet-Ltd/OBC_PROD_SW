@@ -38,18 +38,12 @@ public class GetSerialReceiver extends MicronetBroadcastReceiver {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.toLowerCase().contains("ro.boot.serialno")) {
                     serialNumberLine = line;
-                    //Log.i(TAG, "Line: " + serialNumberLine);
 
                     // Check for the last ']' because that is the char after the serial number
                     int lastIndex = serialNumberLine.lastIndexOf(']');
-                    //Log.i(TAG, "Last index: " + lastIndex);
 
-                    // If last index is 28 that means that the serial number is short.
-                    if(lastIndex == 28){
-                        serialNumber = "0"+serialNumberLine.substring(21,lastIndex).toUpperCase();
-                    }else{
-                        serialNumber = serialNumberLine.substring(21,lastIndex).toUpperCase();
-                    }
+                    // Set serial number
+                    serialNumber = serialNumberLine.substring(21,lastIndex).toUpperCase();
 
                     Log.i(TAG, "Serial Number: " + serialNumber);
                     setResultCode(1);
