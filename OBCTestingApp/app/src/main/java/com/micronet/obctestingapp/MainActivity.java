@@ -6,6 +6,7 @@ import android.os.Bundle;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "OBCTestingApp";
+    public static GPS gps = null;
 
     /**
      * Start the app and then the app will do nothing until there are broadcasts for certain tests.
@@ -17,6 +18,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Start GPS listening
+        gps = new GPS(this.getApplicationContext());
     }
 
 }

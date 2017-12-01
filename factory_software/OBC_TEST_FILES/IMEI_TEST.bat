@@ -22,8 +22,8 @@ rem echo ------------------------------------
 rem echo                IMEI test            
 rem echo ------------------------------------
 
-if defined tempIMEI set imei=%tempIMEI%
-if defined tempIMEI goto _test
+rem if defined tempIMEI set imei=%tempIMEI%
+rem if defined tempIMEI goto _test
 
 echo.
 set "xprvar="
@@ -114,10 +114,11 @@ rem Write result to summary file
 rem Get and parse the serial number
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SERIAL> %serial_name%
 set "xprvar="
-for /F "skip=1 delims=" %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
-echo %xprvar% > %serial_name%
-set /p Result=<%serial_name%
-set serialNum=%Result:~37,8%
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SERIAL> %serial_name%
+rem Parse second line of result on double quotes to get serial number whether it is 7 or 8 digits long.
+set "xprvar="
+for /F delims^=^"^ tokens^=2^ skip^=1 %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
+set serialNum=%xprvar%
 
 rem Write Serial and IMEI to SerialIMEI.csv
 @echo %serialNum%,%trueIMEI% >> testResults\%list_name%.csv

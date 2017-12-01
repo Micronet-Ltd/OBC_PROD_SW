@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
-import java.io.IOException;
-
 /**
  * Created by austin.oneil on 6/21/2017.
  */

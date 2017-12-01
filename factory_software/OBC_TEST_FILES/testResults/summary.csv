@@ -1,1 +1,2 @@
-date, serial, imei, imei barcode, serial barcode, mcu ver, fpga ver, os ver, version, led, sdcard, ASU, cellular, wifiRSSI, wifi, can_bus, swc, j1708, com port, nfc, help, audio, temperature, readRTC, Accelerometer, GPIO, Wiggle, Supercap, All tests,
+date, serial, imei, imei barcode, serial barcode, mcu ver, fpga ver, os ver, version, led, sdcard, ASU, cellular, wifiRSSI, wifi, can_bus, swc, j1708, com port, nfc, help, audio, temperature, readRTC, Accelerometer, GPIO, Wiggle, Supercap, All tests, 
+Wed 11/29/,5506a61a,'354833080080381,pass,pass,a.2.3.0,0x41000003,TREQr_5_0.1.6.0_20170815.1707,fail,pass,fail,18,pass,84,fail,fail,0,22,22,22,22,22,22,22,22,22,22,22,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,

@@ -22,11 +22,6 @@ for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
  if %%i EQU GoodWifiRSSI set /A lowerBound=%%j
 )
 
-
-
-rem echo %lowerBound%
-
-
 rem echo ------------------------------------
 rem echo               WiFi test            
 rem echo ------------------------------------
@@ -35,6 +30,7 @@ rem echo ------------------------------------
 set IMEIstring=%trueIMEI:~9,6%
 netsh wlan show networks mode=bssid | find /N "TREQr_5_%IMEIstring%" > %temp_result%
 set /p lineNumber=<%temp_result%
+rem it is possible that the line number is longer than two characters or might even be only one
 set /a lineNumber=%lineNumber:~1,2% > nul 2>&1
 rem echo %lineNumber%
 

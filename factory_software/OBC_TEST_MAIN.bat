@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.28
+set test_script_version=1.2.29
 set ERRORLEVEL=0
 
 cls
@@ -24,25 +24,25 @@ rem Select the test type from the dat file
 call :test_type_selection
 
 rem Get IMEI and make sure it is the right length before you use it to create connection.
-echo.
+rem echo.
 set imeiLen=
 set tempIMEI=
-set /p tempIMEI=Scan IMEI: 
-call :strLen imeiLen tempIMEI
-if not "%imeiLen%"=="15" echo Invalid length IMEI entered, should be 15 characters. Check device IMEI. Exiting... & cd ..
-if not "%imeiLen%"=="15" exit /b
-set imeiLen=
-set imeiEnd=%tempIMEI:~9,6%
+rem set /p tempIMEI=Scan IMEI: 
+rem call :strLen imeiLen tempIMEI
+rem if not "%imeiLen%"=="15" echo Invalid length IMEI entered, should be 15 characters. Check device IMEI. Exiting... & cd ..
+rem if not "%imeiLen%"=="15" exit /b
+rem set imeiLen=
+rem set imeiEnd=%tempIMEI:~9,6%
 
 rem Set up the WIFI profile
-call WLAN_profile.bat %imeiEnd%
-IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Check device IMEI. Exiting... & cd ..
-IF %ERRORLEVEL% NEQ 0 exit /b
+rem call WLAN_profile.bat %imeiEnd%
+rem IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Check device IMEI. Exiting... & cd ..
+rem IF %ERRORLEVEL% NEQ 0 exit /b
 
 rem Try to connect to the device
-call WLAN_CONNECT.bat %imeiEnd%
-IF %ERRORLEVEL% NEQ 0 cd ..
-IF %ERRORLEVEL% NEQ 0 exit /b
+rem call WLAN_CONNECT.bat %imeiEnd%
+rem IF %ERRORLEVEL% NEQ 0 cd ..
+rem IF %ERRORLEVEL% NEQ 0 exit /b
 
 rem connect to device over hotspot
 call adb_CONNECT.bat
@@ -52,8 +52,6 @@ call :set_up_results
 
 rem install test apk files
 call install_files_test.bat
-
-echo.
 
 rem Run tests depending on test type
 if "%TEST_TYPE%"=="System" call :system_test
@@ -187,6 +185,15 @@ if %ERRORLEVEL% == 1 (
 call WIFI_TEST.bat
 if %ERRORLEVEL% == 1 (
 	set WiFi_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+call GPS_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set gps_test=fail
 	set OBC_TEST_STATUS=Fail
 	<nul set /p ".=fail," >> %summaryFile%
 ) else (
@@ -533,6 +540,7 @@ set sd_card_test=
 set cellular_test=
 set canbus_test=
 set WiFi_test=
+set gps_test=
 set swc_test=
 set j1708_test=
 set com_test=
@@ -627,6 +635,9 @@ if "%sd_card_test%" == "fail" (
 )
 if "%cellular_test%" == "fail" (
 	echo ** Cellular %xprvar%
+)
+if "%gps_test%" == "fail" (
+	echo ** GPS %xprvar%
 )
 if "%canbus_test%" == "fail" (
 	echo ** CANBus %xprvar%
