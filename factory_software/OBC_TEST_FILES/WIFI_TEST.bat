@@ -28,26 +28,24 @@ rem echo ------------------------------------
 
 :_test_loop
 set IMEIstring=%trueIMEI:~9,6%
+
+rem echo This is the WIFI we are looking for: TREQr_5_%IMEIstring%
 netsh wlan show networks mode=bssid | find /N "TREQr_5_%IMEIstring%" > %temp_result%
 set /p lineNumber=<%temp_result%
-rem it is possible that the line number is longer than two characters or might even be only one
-set /a lineNumber=%lineNumber:~1,2% > nul 2>&1
 rem echo %lineNumber%
-
-set /a lineNumber=%lineNumber%+5 
-rem echo %lineNumber%
-
+for /F "tokens=1 delims=[]" %%G in (%temp_result%) do set /A lineNumber=%%G
+rem echo This is after the loop: %lineNumber%
+set /A lineNumber=%lineNumber%+5
+rem echo After adding: %lineNumber%
+rem find /n " " finds everything and adds the line numbers to it
 netsh wlan show networks mode=bssid | find /N " " | find "[%lineNumber%]" > %temp_result%
-
 for /F "tokens=4" %%G in (%temp_result%) do set WiFiValue=%%G 
 rem echo WiFiRSSI = %WiFiValue%
 set /a WiFiValue=%WiFiValue:~0,-2%
-rem echo %WiFiValue%
+rem echo Final = %WiFiValue%
 
-if %WiFiValue% LSS %lowerBound% (
- set cell_fail=WiFiRSSI value %WiFiValue% is less than than %lowerBound%
- goto _ask_if_retry
-)
+if %WiFiValue% LSS %lowerBound% set cell_fail=WiFiRSSI value %WiFiValue% is less than than %lowerBound%
+if %WiFiValue% LSS %lowerBound% goto _ask_if_retry
 
 goto _test_pass
 

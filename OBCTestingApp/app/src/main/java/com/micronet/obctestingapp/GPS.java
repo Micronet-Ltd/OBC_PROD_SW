@@ -149,8 +149,22 @@ public class GPS implements GpsStatus.Listener {  //, LocationListener {
                 averageSNROfTopThreeSatellites /= num;
 
                 tempAverageSNROfTopSatellites = averageSNROfTopThreeSatellites;
+            }else if(averageSNRList != null){
+                // Set size to be the size of
+                num = averageSNRList.size();
+
+                Collections.sort(averageSNRList);
+
+                averageSNROfTopThreeSatellites = 0;
+
+                for(int i = 0; i < num; i++){
+                    averageSNROfTopThreeSatellites += averageSNRList.get(averageSNRList.size()-i-1);
+                }
+                averageSNROfTopThreeSatellites /= num;
+
+                tempAverageSNROfTopSatellites = averageSNROfTopThreeSatellites;
             }else{
-                tempAverageSNROfTopSatellites = -1;
+                tempAverageSNROfTopSatellites = 0;
             }
 
         }

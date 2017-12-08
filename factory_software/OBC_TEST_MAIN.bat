@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.29
+set test_script_version=1.2.31
 set ERRORLEVEL=0
 
 cls
@@ -20,29 +20,8 @@ call :language_selection
 rem Reset variable values
 call :reset_result_variables
 
-rem Select the test type from the dat file
+rem Select the test type and device type from the dat file
 call :test_type_selection
-
-rem Get IMEI and make sure it is the right length before you use it to create connection.
-rem echo.
-set imeiLen=
-set tempIMEI=
-rem set /p tempIMEI=Scan IMEI: 
-rem call :strLen imeiLen tempIMEI
-rem if not "%imeiLen%"=="15" echo Invalid length IMEI entered, should be 15 characters. Check device IMEI. Exiting... & cd ..
-rem if not "%imeiLen%"=="15" exit /b
-rem set imeiLen=
-rem set imeiEnd=%tempIMEI:~9,6%
-
-rem Set up the WIFI profile
-rem call WLAN_profile.bat %imeiEnd%
-rem IF %ERRORLEVEL% NEQ 0 echo Could not properly create profile for WLAN. Check device IMEI. Exiting... & cd ..
-rem IF %ERRORLEVEL% NEQ 0 exit /b
-
-rem Try to connect to the device
-rem call WLAN_CONNECT.bat %imeiEnd%
-rem IF %ERRORLEVEL% NEQ 0 cd ..
-rem IF %ERRORLEVEL% NEQ 0 exit /b
 
 rem connect to device over hotspot
 call adb_CONNECT.bat
@@ -227,6 +206,11 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
+if /I "%DEVICE_TYPE%"=="MTR-A002-001" goto com_test
+<nul set /p ".=N/A," >> %summaryFile%
+goto skip_com_test
+
+:com_test
 call COM_TEST.bat 
 if %ERRORLEVEL% == 1 (
 	set com_test=fail
@@ -235,6 +219,8 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+
+:skip_com_test
 
 call NFC_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
@@ -290,6 +276,8 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
+if /I "%DEVICE_TYPE%"=="MTR-A001-001" goto gpio_a001_test
+
 call GPIO_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set gpio_test=fail
@@ -298,7 +286,19 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+goto wiggle_test
 
+:gpio_a001_test
+call GPIO_TEST.bat
+if %ERRORLEVEL% == 1 (
+	set gpio_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+:wiggle_test
 call WIGGLE_TEST.bat
 if %ERRORLEVEL% == 1 (
     set wiggle_test=fail
@@ -405,7 +405,7 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
-rem Are they pluggin in speakers?
+rem Are they plugging in speakers?
 call audio_test.bat
 if %ERRORLEVEL% == 1 (
 	set audio_test=fail
@@ -516,6 +516,11 @@ for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
  if %%i EQU TEST_TYPE set TEST_TYPE=%%j
 )
 
+set /p line1= <input\DEVICE_TYPE.dat
+for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
+ if %%i EQU DEVICE_TYPE set DEVICE_TYPE=%%j
+)
+
 if /I "%TEST_TYPE%"=="System" (
 	echo Starting a system test.
 	set summaryFile=testResults\summary.csv
@@ -523,6 +528,12 @@ if /I "%TEST_TYPE%"=="System" (
 if /I "%TEST_TYPE%"=="Board" (
 	echo Starting a board test.
 	set summaryFile=testResults\boardSummary.csv
+)
+if /I "%DEVICE_TYPE%"=="MTR-A001-001" (
+	echo Device type is MTR-A001-001.
+)
+if /I "%DEVICE_TYPE%"=="MTR-A002-001" (
+	echo Device type is MTR-A002-001.
 )
 
 exit /b
@@ -582,6 +593,7 @@ echo: >>%summaryFile%
 
 rem add date and device serial number to summary file
 <nul set /p ".=%mydate%," >> %summaryFile%
+<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
 <nul set /p ".=%deviceSN%," >> %summaryFile%
 
 exit /b
@@ -635,9 +647,6 @@ if "%sd_card_test%" == "fail" (
 )
 if "%cellular_test%" == "fail" (
 	echo ** Cellular %xprvar%
-)
-if "%gps_test%" == "fail" (
-	echo ** GPS %xprvar%
 )
 if "%canbus_test%" == "fail" (
 	echo ** CANBus %xprvar%
@@ -709,6 +718,12 @@ if "%sd_card_test%" == "fail" (
 )
 if "%cellular_test%" == "fail" (
 	echo ** Cellular %xprvar%
+)
+if "%WiFi_test%" == "fail" (
+	echo ** WiFi %xprvar%
+)
+if "%gps_test%" == "fail" (
+	echo ** GPS %xprvar%
 )
 if "%canbus_test%" == "fail" (
 	echo ** CANBus %xprvar%

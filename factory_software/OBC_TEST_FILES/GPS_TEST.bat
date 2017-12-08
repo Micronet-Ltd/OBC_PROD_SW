@@ -29,13 +29,13 @@ for /f "tokens=1,2 delims=:" %%i in (input\GPS_INPUT.dat) do (
  if "%%i" == "TimeToFirstFix" set /A timeToFirstFixLowerBound=%%j
 )
 
-echo %satellitesUsedInFixLowerBound%
-echo %averageSNROfTopSatellitesLowerBound%
-echo %numOfSatellitesToIncludeInAverage%
-echo %numberOfTestRetries%
-echo %timeToFirstFixLowerBound%
+rem echo %satellitesUsedInFixLowerBound%
+rem echo %averageSNROfTopSatellitesLowerBound%
+rem echo %numOfSatellitesToIncludeInAverage%
+rem echo %numberOfTestRetries%
+rem echo %timeToFirstFixLowerBound%
 
-pause
+rem pause
 
 :_test
 rem Send broadcast to receive gps test info
@@ -47,11 +47,11 @@ for /F delims^=^"^ tokens^=2^ skip^=1 %%i in (tmp.txt) do if not defined xprvar 
 
 if exist %temp_file% del %temp_file%
 
-echo %xprvar%
+rem echo %xprvar%
 
 echo %xprvar% > %temp_file%
 
-pause
+rem pause
 
 set satellites=
 set satellitesUsedInFix=
@@ -67,13 +67,13 @@ for /F "delims=,: tokens=2,4,6,8,10" %%i in (tmp.txt) do (
  set /A averageSNROfTopSatellites=%%m >nul 2>&1
 )
 
-echo Satellites: %satellites%
-echo Satellites used in fix: %satellitesUsedInFix%
-echo Time to first fix: %timeToFirstFix%
-echo Average SNR used in fix: %averageSNRUsedInFix%
-echo Average SNR of top %numOfSatellitesToIncludeInAverage% satellites used in fix: %averageSNROfTopSatellites%
+rem echo Satellites: %satellites%
+rem echo Satellites used in fix: %satellitesUsedInFix%
+rem echo Time to first fix: %timeToFirstFix%
+rem echo Average SNR used in fix: %averageSNRUsedInFix%
+rem echo Average SNR of top %numOfSatellitesToIncludeInAverage% satellites used in fix: %averageSNROfTopSatellites%
 
-pause
+rem pause
 
 rem Check GPS values
 if %satellitesUsedInFix% LSS %satellitesUsedInFixLowerBound% goto _test_fail
@@ -83,17 +83,27 @@ goto _test_pass
 rem   ############## TEST STATUS ############
 :_test_fail
 set ERRORLEVEL=1
+
+set satellitesInFixString=
+set averageSNROfTopSatellitesString=
+if %satellitesUsedInFix% LSS %satellitesUsedInFixLowerBound% set satellitesInFixString=Saw %satellitesUsedInFix% satellites used in fix but needed %satellitesUsedInFixLowerBound%,
+if %averageSNROfTopSatellites% LSS %averageSNROfTopSatellitesLowerBound% set averageSNROfTopSatellitesString=Average SNR not high enough: got %averageSNROfTopSatellites% but needed %averageSNROfTopSatellitesLowerBound%
+
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** GPS %xprvar% 
-@echo GPS test - fail >> testResults\%result_file_name%.txt
+echo ** GPS %xprvar% %satellitesInFixString% %averageSNROfTopSatellitesString%
+@echo GPS test - fail %satellitesInFixString% %averageSNROfTopSatellitesString% >> testResults\%result_file_name%.txt
+<nul set /p ".=%averageSNROfTopSatellites%," >> %summaryFile%
+<nul set /p ".=%satellitesUsedInFix%," >> %summaryFile%
 goto _end_of_file
 
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** GPS %xprvar% 
-@echo GPS test - passed >> testResults\%result_file_name%.txt
+echo ** GPS %xprvar% : Average SNR: %averageSNROfTopSatellites%, Satellites used in fix: %satellitesUsedInFix%
+@echo GPS test - passed : Average SNR: %averageSNROfTopSatellites%, Satellites used in fix: %satellitesUsedInFix% >> testResults\%result_file_name%.txt
+<nul set /p ".=%averageSNROfTopSatellites%," >> %summaryFile%
+<nul set /p ".=%satellitesUsedInFix%," >> %summaryFile%
 
 :_end_of_file
 if exist %temp_file% del %temp_file%
