@@ -136,7 +136,9 @@ rem echo no duplicates found, continuing
 goto :_end_of_file
 
 :_ask_if_continue
-echo.&set /p option=Are you retesting a previously tested device? [Y/N] 
+set "xprvar="
+for /F "skip=38 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _continue
 if /I "%option%"=="N" goto _exit
 echo Invalid option
@@ -147,7 +149,9 @@ echo Continuing testing.
 goto :_end_of_file
 
 :_exit
-echo  ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
+set "xprvar="
+for /F "skip=39 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar%
 echo Exiting test ...
 set ERRORLEVEL=2
 goto :_end_of_file

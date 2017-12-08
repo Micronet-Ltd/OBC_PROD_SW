@@ -36,3 +36,5 @@ GPIO ����ʧ��. �Ƿ���Ҫ����һ�Σ�[Y/N]:
 Cellular test failed. Would you like to retry [Y/N]
 Wiggle Test - Tap the device
 WiFi test failed. Would you like to retry [Y/N]
+Are you retesting a previously tested device? [Y/N] 
+ ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
