@@ -18,8 +18,6 @@ rem echo ------------------------------------
 rem echo             GPS test                
 rem echo ------------------------------------
 
-echo.
-
 rem Read in GPS Input data
 for /f "tokens=1,2 delims=:" %%i in (input\GPS_INPUT.dat) do (
  if "%%i" == "SatellitesUsedInFixLowerBound" set /A satellitesUsedInFixLowerBound=%%j
@@ -37,7 +35,7 @@ rem echo %timeToFirstFixLowerBound%
 
 rem pause
 
-:_test
+:_test_loop
 rem Send broadcast to receive gps test info
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_GPS_RESULT --ei NumOfAverageSatellites %numOfSatellitesToIncludeInAverage% > %temp_file%
 
@@ -76,9 +74,20 @@ rem echo Average SNR of top %numOfSatellitesToIncludeInAverage% satellites used 
 rem pause
 
 rem Check GPS values
-if %satellitesUsedInFix% LSS %satellitesUsedInFixLowerBound% goto _test_fail
-if %averageSNROfTopSatellites% LSS %averageSNROfTopSatellitesLowerBound% goto _test_fail
+if %satellitesUsedInFix% LSS %satellitesUsedInFixLowerBound% goto _ask_if_retry
+if %averageSNROfTopSatellites% LSS %averageSNROfTopSatellitesLowerBound% goto _ask_if_retry
 goto _test_pass
+
+:_ask_if_retry
+set "xprvar="
+for /F "skip=10 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+set "xprvar2="
+for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar2 set "xprvar2=%%i"
+echo.&set /p option=GPS %xprvar2%. %xprvar%
+if /I "%option%"=="Y" goto _test_loop
+if /I "%option%"=="N" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
 rem   ############## TEST STATUS ############
 :_test_fail
