@@ -1,40 +1,40 @@
-ï¿½ï¿½É¨ï¿½ï¿½IMEIï¿½Å£ï¿½ 
- ** IMEIï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ Ó¦ï¿½ï¿½Îª !Result:~37,15! Êµï¿½ï¿½Îª !imei!
-** IMEIï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ !imei!
-ï¿½ï¿½É¨ï¿½ï¿½S/Nï¿½Å£ï¿½ 
- ** S/N ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ Ó¦ï¿½ï¿½Îª !pm_serial! Êµï¿½ï¿½Îª !read_in_serial!
-** S/N ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ !pm_serial!
-ï¿½Ç·ï¿½3ï¿½ï¿½LEDï¿½Æ¾ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½[Y/N]?
- ** LED ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
-** LED ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
-SDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½SDï¿½ï¿½
-ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½[Y/N]ï¿½ï¿½
-SDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½SDï¿½ï¿½ï¿½ï¿½ï¿½ß²ï¿½ï¿½ï¿½Ð´ï¿½ï¿½
-Canbus ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]ï¿½ï¿½
-SWC ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-J1708 ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-COM ï¿½Ë¿Ú²ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-NFC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½ï¿½ï¿½
-NFC ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
- ** NFC ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
-** NFC ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
-ï¿½ë°´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
- ** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
-ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½[Y/N]ï¿½ï¿½
-ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½[Y/N]ï¿½ï¿½
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½[Y/N]ï¿½ï¿½
-ï¿½Î¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-GPIO ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½. ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½[Y/N]:
-ï¿½Ø±Õµï¿½Ô´ï¿½Ïµï¿½ó°´µï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
-ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
-ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
-Ê§ï¿½ÜµÄ²ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô²é¿´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ÜµÄ£ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
-ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
-Cellular test failed. Would you like to retry [Y/N]
-Wiggle Test - Tap the device
-WiFi test failed. Would you like to retry [Y/N]
-Are you retesting a previously tested device? [Y/N] 
- ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
+É¨ÃèIMEI£º
+** IMEI²âÊÔ-Ê§°Ü£¬Ô¤ÆÚ!Result:~37,15! ½á¹û£º!imei!
+** IMEI²âÊÔÍ¨¹ý£¡IMEI£¡
+É¨ÃèÐòÁÐºÅ£º
+**´®ºÅ²âÊÔ-Ê§°Ü£¬ Ô¤ÆÚ£¡pm_serial£¡½á¹û£º!read_in_serial£¡
+**´®ºÅ²âÊÔÍ¨¹ý£¡pm_serial£¡
+Äã¿´µ½3¸öLED·¢°×¹â£¬ÇÒÁÁ¶ÈÏàÍ¬ÁËÂð£¿[ y£¯n ]£¿
+**LED²âÊÔÊ§°Ü
+** LED²âÊÔ-Í¨¹ý
+SD¿¨´íÎó£ºÕÒ²»µ½SD¿¨
+ÄúÏëÖØ¸´Ò»ÏÂ²âÊÔÂð£¿[ y£¯n ]
+SD¿¨´íÎó£ºÕÒ²»µ½SD¿¨»òÐ´Èë´íÎó
+CAN×ÜÏß²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+SWC²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+J1708²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+COM¶Ë¿Ú²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+NFC²âÊÔ-ÓÃNFC¿¨½ÓÃþ´ý²â»úÉè±¸
+NFC²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+** NFC²âÊÔÊ§°Ü
+** NFC²âÊÔÍ¨¹ý
+°´ÏÂÉè±¸ÉÏµÄ°ïÖú¼ü
+**°ïÖú¼ü²âÊÔ-Í¨¹ý
+**°ïÖú¼ü²âÊÔÊ§°Ü
+ÄãÌýµ½ÓÒ±ßÀ®°ÈµÄÉùÒôÁËÂð[ y£¯n ]£¿
+ÄãÌýµ½×ó±ßÀ®°ÈµÄÉùÒôÁËÂð[ y£¯n ]£¿
+ÒôÆµ²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+ÄúÏëÖØ¸´Ò»ÏÂ²âÊÔÂð[ y£¯n ]£¿
+¼ÓËÙ¶È¼Æ²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+GPIO²âÊÔÊ§°Ü¡£ÄúÒªÖØÊÔÂð£¿[ y£¯n ]£º
+¹Ø±ÕµçÔ´-µ±µçÔ´¶Ï¿ªºó°´ÈÎÒâ¼ü¡­
+²âÊÔÍ¨¹ý
+²âÊÔÊ§°Ü
+²âÊÔÊ§°ÜµÄ£¨¼ì²éÃ¿¸ö²âÊÔ½á¹ûÎÄ¼þ£¬¿´¿´ËüÃÇÊÇÈçºÎÊ§°ÜµÄ£©£º
+²âÊÔÊ§°Ü
+²âÊÔÍ¨¹ý
+·äÎÑ²âÊÔÊ§°Ü¡£ÒªÖØÊÔÂð£¿[Y/N]
+°Ú¶¯²âÊÔ-ÇáÇÃÉè±¸
+ÎÞÏß²âÊÔÊ§°Ü¡£ÒªÖØÊÔÂð£¿[Y/N]
+ÄãÔÙ²âÊÔµ±Ç°µÄÉè±¸Âð£¿[ y£¯n ]
+**´íÎó£º¿ÉÄÜÖØ¸´£¬¼ì²ésummary.csv£¬ ¿´µ½ÔÚÄÄÀïÖØ¸´¡£

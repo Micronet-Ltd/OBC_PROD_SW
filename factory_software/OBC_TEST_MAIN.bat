@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.35
+set test_script_version=1.2.36
 set ERRORLEVEL=0
 
 cls
@@ -531,13 +531,13 @@ if /I "%TEST_TYPE%"=="Board" (
 	set summaryFile=testResults\boardSummary.csv
 )
 rem if /I "%DEVICE_TYPE%"=="MTR-A001-001" (
-	rem echo Device type is MTR-A001-001.
+rem echo Device type is MTR-A001-001.
 rem )
 rem if /I "%DEVICE_TYPE%"=="MTR-A002-001" (
-	rem echo Device type is MTR-A002-001.
+rem echo Device type is MTR-A002-001.
 rem )
 rem if /I "%DEVICE_TYPE%"=="MTR-A003-001" (
-	rem echo Device type is MTR-A003-001.
+rem echo Device type is MTR-A003-001.
 rem )
 
 exit /b
