@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.34
+set test_script_version=1.2.35
 set ERRORLEVEL=0
 
 cls
@@ -207,6 +207,7 @@ if %ERRORLEVEL% == 1 (
 )
 
 if /I "%DEVICE_TYPE%"=="MTR-A002-001" goto com_test
+if /I "%DEVICE_TYPE%"=="MTR-A003-001" goto com_test
 <nul set /p ".=N/A," >> %summaryFile%
 goto skip_com_test
 
@@ -529,12 +530,15 @@ if /I "%TEST_TYPE%"=="Board" (
 	echo Starting a board test.
 	set summaryFile=testResults\boardSummary.csv
 )
-if /I "%DEVICE_TYPE%"=="MTR-A001-001" (
-	echo Device type is MTR-A001-001.
-)
-if /I "%DEVICE_TYPE%"=="MTR-A002-001" (
-	echo Device type is MTR-A002-001.
-)
+rem if /I "%DEVICE_TYPE%"=="MTR-A001-001" (
+	rem echo Device type is MTR-A001-001.
+rem )
+rem if /I "%DEVICE_TYPE%"=="MTR-A002-001" (
+	rem echo Device type is MTR-A002-001.
+rem )
+rem if /I "%DEVICE_TYPE%"=="MTR-A003-001" (
+	rem echo Device type is MTR-A003-001.
+rem )
 
 exit /b
 

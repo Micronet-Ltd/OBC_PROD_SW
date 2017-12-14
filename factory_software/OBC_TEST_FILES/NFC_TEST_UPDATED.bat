@@ -36,7 +36,7 @@ set /p Result=<%file_name%
 if %Result:~35,2% == 8 goto _Delete_File
 if %Result:~35,2% == 14 goto _Delete_File
 if %Result:~35,2% == 16 goto _Delete_File
-if %loop_cnt% LSS 80 goto _test
+if %loop_cnt% LSS 120 goto _test
 goto _ask_if_retry
 
 rem If the code reaches here that means that the text file was never generated before the timeout.
