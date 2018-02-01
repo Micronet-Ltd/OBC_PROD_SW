@@ -1,15 +1,12 @@
 @echo off
 
 rem ************************************************************
-rem ************************ MAIN TEST *************************
+rem ************************ MAIN TEST under-dash *************************
 rem ************************************************************
-set test_script_version=1.2.36
+set test_script_version=1.2.37
 set ERRORLEVEL=0
 
-cls
-echo ---------------------------------------------------
-echo  starting test, test script version is : %test_script_version%           
-echo ---------------------------------------------------
+
 
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
@@ -22,6 +19,12 @@ call :reset_result_variables
 
 rem Select the test type and device type from the dat file
 call :test_type_selection
+
+cls
+echo ---------------------------------------------------
+echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_TYPE%
+echo ---------------------------------------------------
+
 
 rem connect to device over hotspot
 call adb_CONNECT.bat
@@ -151,7 +154,10 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
-
+rem The following 3 lines add by Avner to skip the cellular test.
+<nul set /p ".=N/A," >> %summaryFile%
+<nul set /p ".=N/A," >> %summaryFile%
+goto _skip_cellular_test
 call Cellular.bat
 if %ERRORLEVEL% == 1 (
 	set cellular_test=fail
@@ -160,6 +166,8 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+
+:_skip_cellular_test
 
 call WIFI_TEST.bat
 if %ERRORLEVEL% == 1 (
@@ -205,7 +213,7 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
-
+if /I "%DEVICE_TYPE%"=="MTR-A01X-00X" goto com_test
 if /I "%DEVICE_TYPE%"=="MTR-A002-001" goto com_test
 if /I "%DEVICE_TYPE%"=="MTR-A003-001" goto com_test
 <nul set /p ".=N/A," >> %summaryFile%
@@ -223,6 +231,11 @@ if %ERRORLEVEL% == 1 (
 
 :skip_com_test
 
+rem The following 4 lines add by Avner to skip the nfc test for under-dash devies.
+if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _nfc_test
+<nul set /p ".=N/A," >> %summaryFile%
+goto _skip_nfc_test
+:_nfc_test
 call NFC_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set nfc_test=fail
@@ -231,6 +244,14 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+:_skip_nfc_test
+
+
+rem The following 4 lines add by Avner to skip the nfc test for under-dash devies.
+if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test
+<nul set /p ".=N/A," >> %summaryFile%
+goto _skip_help_key_test
+:_help_key_test
 
 call HELP_KEY_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
@@ -240,6 +261,8 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+:_skip_help_key_test
+
 
 call audio_test.bat
 if %ERRORLEVEL% == 1 (
