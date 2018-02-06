@@ -553,15 +553,6 @@ if /I "%TEST_TYPE%"=="Board" (
 	echo Starting a board test.
 	set summaryFile=testResults\boardSummary.csv
 )
-rem if /I "%DEVICE_TYPE%"=="MTR-A001-001" (
-rem echo Device type is MTR-A001-001.
-rem )
-rem if /I "%DEVICE_TYPE%"=="MTR-A002-001" (
-rem echo Device type is MTR-A002-001.
-rem )
-rem if /I "%DEVICE_TYPE%"=="MTR-A003-001" (
-rem echo Device type is MTR-A003-001.
-rem )
 
 exit /b
 

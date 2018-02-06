@@ -48,7 +48,7 @@ if exist %file_name% del %file_name%
 
 
 if %key_test% == 0 goto _test_value_1_init
-if %loop_cnt% LSS 500 goto _test_value_0_button_pressed
+if %loop_cnt% LSS 300 goto _test_value_0_button_pressed
 
 rem Increment loop count
 set /a total_loop_count=%total_loop_count%+1

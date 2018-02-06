@@ -96,7 +96,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 2
-        if(checkInputValue(2, 4000, 5500)){
+        if(checkInputValue(2, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -110,7 +110,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 4
-        if(checkInputValue(4, 4000, 5500)){
+        if(checkInputValue(4, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -124,7 +124,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 6
-        if(checkInputValue(6, 4000, 5500)){
+        if(checkInputValue(6, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");

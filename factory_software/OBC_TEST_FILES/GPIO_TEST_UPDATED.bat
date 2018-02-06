@@ -64,19 +64,19 @@ if "%data:~1,1%" == "F" (
 	set input1_fail="Input 1 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~2,1%" == "F" (
-	set input2_fail="Input 2 voltage was not in the range of 4000 to 5000 mv",
+	set input2_fail="Input 2 voltage was not in the range of 4500 to 5200 mv",
 )
 if "%data:~3,1%" == "F" (
 	set input3_fail="Input 3 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~4,1%" == "F" (
-	set input4_fail="Input 4 voltage was not in the range of 4000 to 5000 mv",
+	set input4_fail="Input 4 voltage was not in the range of 4500 to 5200 mv",
 )
 if "%data:~5,1%" == "F" (
 	set input5_fail="Input 5 voltage was not in the range of 9000 to 14000 mv",
 )
 if "%data:~6,1%" == "F" (
-	set input6_fail="Input 6 voltage was not in the range of 4000 to 5000 mv",
+	set input6_fail="Input 6 voltage was not in the range of 4500 to 5200 mv",
 )
 if "%data:~7,1%" == "F" (
 	set input7_fail="Input 7 voltage was not in the range of 9000 to 14000 mv",
