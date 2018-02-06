@@ -96,248 +96,144 @@ rem ************************************************************
 :system_test
 rem Function used to run all tests used in the system test
 
+rem ******************** IMEI Test ********************
 call IMEI_TEST.bat
 if %ERRORLEVEL% == 2 (
 	echo Exiting from main test file...
 	<nul set /p ".=fail," >> %summaryFile%
 ) 
 if %ERRORLEVEL% == 2 exit /b
-if %ERRORLEVEL% == 1 (
-	set imei_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
+call :handle_test_result imei_test
 set tempIMEI=
 
-rem check that serial on barcode is the same as serial of the device
-call SERIAL_TEST.bat 
-if %ERRORLEVEL% == 1 (
-	set serial_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
 
+rem ******************** Serial Test ********************
+call SERIAL_TEST.bat 
+call :handle_test_result serial_test
 rem Reset variable values
 set mydate=
 set deviceSN=
 
+
+rem ******************** Version Test ********************
 call VERSION_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set version_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result version_test
 
+
+rem ******************** LED Test ********************
 call LED_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set led_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result led_test
 
+
+rem ******************** SD Card Test ********************
 call sd-card_test_updated.bat
-if %ERRORLEVEL% == 1 (
-	set sd_card_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result sd_card_test
+
+
+rem ******************** Cellular Test ********************
 rem The following 3 lines add by Avner to skip the cellular test.
 <nul set /p ".=N/A," >> %summaryFile%
 <nul set /p ".=N/A," >> %summaryFile%
 goto _skip_cellular_test
 call Cellular.bat
-if %ERRORLEVEL% == 1 (
-	set cellular_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
+call :handle_test_result cellular_test
 :_skip_cellular_test
 
+
+rem ******************** WIFI Test ********************
 call WIFI_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set WiFi_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result WiFi_test
 
+
+rem ******************** GPS Test ********************
 call GPS_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set gps_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result gps_test
 
+
+rem ******************** CANBus Test ********************
 call CANBus_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set canbus_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result canbus_test
 
+
+rem ******************** SWC Test ********************
 call SWC_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set swc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result swc_test
 
+
+rem ******************** J1708 Test ********************
 call J1708_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set j1708_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-if /I "%DEVICE_TYPE%"=="MTR-A01X-00X" goto com_test
-if /I "%DEVICE_TYPE%"=="MTR-A002-001" goto com_test
-if /I "%DEVICE_TYPE%"=="MTR-A003-001" goto com_test
+call :handle_test_result j1708_test
+
+
+rem ******************** COM Test ********************
+if /I "%DEVICE_TYPE%" NEQ "MTR-A001-001" goto com_test
 <nul set /p ".=N/A," >> %summaryFile%
 goto skip_com_test
-
 :com_test
-call COM_TEST.bat 
-if %ERRORLEVEL% == 1 (
-	set com_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
+call COM_TEST.bat
+call :handle_test_result com_test
 :skip_com_test
 
-rem The following 4 lines add by Avner to skip the nfc test for under-dash devies.
+
+rem ******************** NFC Test ********************
 if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _nfc_test
 <nul set /p ".=N/A," >> %summaryFile%
 goto _skip_nfc_test
 :_nfc_test
 call NFC_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set nfc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result nfc_test
 :_skip_nfc_test
 
 
-rem The following 4 lines add by Avner to skip the nfc test for under-dash devies.
+rem ******************** Help Key Test ********************
 if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test
 <nul set /p ".=N/A," >> %summaryFile%
 goto _skip_help_key_test
 :_help_key_test
-
 call HELP_KEY_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set help_key_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result help_key_test
 :_skip_help_key_test
 
 
+rem ******************** Audio Test ********************
 call audio_test.bat
-if %ERRORLEVEL% == 1 (
-	set audio_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result audio_test
 
+
+rem ******************** Temp Test ********************
 call Temperature_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set temperature_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result temperature_test
 
+
+rem ******************** Read RTC Test ********************
 call ReadRTC_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set read_rtc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result read_rtc_test
 
+
+rem ******************** Accelerometer Test ********************
 call Accelerometer_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set accelerometer_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result accelerometer_test
 
+
+rem ******************** GPIO Test ********************
 if /I "%DEVICE_TYPE%"=="MTR-A001-001" goto gpio_a001_test
-
 call GPIO_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set gpio_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result gpio_test
 goto wiggle_test
-
 :gpio_a001_test
 call GPIO_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set gpio_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result gpio_test
 
+
+rem ******************** Wiggle Test ********************
 :wiggle_test
 call WIGGLE_TEST.bat
-if %ERRORLEVEL% == 1 (
-    set wiggle_test=fail
-    set OBC_TEST_STATUS=Fail
-    <nul set /p ".=fail," >> %summaryFile%
-) else (
-    <nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result wiggle_test
 
+
+rem ******************** Supercap Test ********************
 call SUPERCAP_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set supercap_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result supercap_test
 
 exit /b
 
@@ -347,147 +243,85 @@ rem ******************* BOARD TEST Function ********************
 rem ************************************************************
 :board_test
 rem Runs all the tests that are used to test the board test
-
 rem Reset variable values
 set mydate=
 set deviceSN=
 
 rem Only mcu/fpga
+rem ******************** Version Test ********************
 call VERSION_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set version_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result version_test
 
+
+rem ******************** LED Test ********************
 call LED_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set led_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result led_test
 
+
+rem ******************** CANBus Test ********************
 call CANBus_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set canbus_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result canbus_test
 
+rem ******************** SWC Test ********************
 call SWC_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set swc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result swc_test
 
+rem ******************** J1708 Test ********************
 call J1708_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set j1708_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result j1708_test
 
 rem Depends on the board.
+rem ******************** COM Test ********************
 call COM_TEST.bat 
-if %ERRORLEVEL% == 1 (
-	set com_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result com_test
 
+
+rem ******************** Help Key Test ********************
 rem If under-dash device then skip help key test in board test.
 if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test_board
 <nul set /p ".=N/A," >> %summaryFile%
 goto _skip_help_key_test_board
 :_help_key_test_board
-
 call HELP_KEY_TEST_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set help_key_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result help_key_test
 :_skip_help_key_test_board
 
+
 rem Are they plugging in speakers?
+rem ******************** Audio Test ********************
 call audio_test.bat
-if %ERRORLEVEL% == 1 (
-	set audio_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result audio_test
 
+
+rem ******************** Temperature Test ********************
 call Temperature_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set temperature_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result temperature_test
 
+
+rem ******************** Read RTC Test ********************
 call ReadRTC_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set read_rtc_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result read_rtc_test
 
+
+rem ******************** Accelerometer Test ********************
 call Accelerometer_UPDATED.bat
-if %ERRORLEVEL% == 1 (
-	set accelerometer_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result accelerometer_test
 
+
+rem ******************** GPIO Test ********************
 call GPIO_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set gpio_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result gpio_test
 
+
+rem ******************** Wiggle Test ********************
 call WIGGLE_TEST.bat
-if %ERRORLEVEL% == 1 (
-    set wiggle_test=fail
-    set OBC_TEST_STATUS=Fail
-    <nul set /p ".=fail," >> %summaryFile%
-) else (
-    <nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result wiggle_test
+
 
 rem Might not work, needs to charge. Set up of test?
+rem ******************** Supercap Test ********************
 call SUPERCAP_TEST.bat
-if %ERRORLEVEL% == 1 (
-	set supercap_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
+call :handle_test_result supercap_test
 
 exit /b
 
