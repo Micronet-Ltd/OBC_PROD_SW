@@ -1,12 +1,10 @@
 @echo off
 
 rem ************************************************************
-rem ************************ MAIN TEST under-dash *************************
+rem ************************ MAIN TEST *************************
 rem ************************************************************
 set test_script_version=1.2.37
 set ERRORLEVEL=0
-
-
 
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
@@ -24,7 +22,6 @@ cls
 echo ---------------------------------------------------
 echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_TYPE%
 echo ---------------------------------------------------
-
 
 rem connect to device over hotspot
 call adb_CONNECT.bat
@@ -72,8 +69,8 @@ echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 color 47
 
-if "%TEST_TYPE%"=="System" call :display_system_failures
-if "%TEST_TYPE%"=="Board" call :display_board_failures
+rem Display failures
+call :display_failures
 
 :_end_of_tests
 set test_script_version=
@@ -83,6 +80,7 @@ set language_choice=
 set language_file=
 set TEST_TYPE=
 set summaryFile=
+set uutSerial=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
 set imeiEnd=
@@ -350,16 +348,6 @@ rem ************************************************************
 :board_test
 rem Runs all the tests that are used to test the board test
 
-rem check that serial on barcode is the same as serial of the device
-call BOARD_SERIAL_TEST.bat 
-if %ERRORLEVEL% == 1 (
-	set serial_test=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
 rem Reset variable values
 set mydate=
 set deviceSN=
@@ -420,6 +408,12 @@ if %ERRORLEVEL% == 1 (
 	<nul set /p ".=pass," >> %summaryFile%
 )
 
+rem If under-dash device then skip help key test in board test.
+if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test_board
+<nul set /p ".=N/A," >> %summaryFile%
+goto _skip_help_key_test_board
+:_help_key_test_board
+
 call HELP_KEY_TEST_UPDATED.bat
 if %ERRORLEVEL% == 1 (
 	set help_key_test=fail
@@ -428,6 +422,7 @@ if %ERRORLEVEL% == 1 (
 ) else (
 	<nul set /p ".=pass," >> %summaryFile%
 )
+:_skip_help_key_test_board
 
 rem Are they plugging in speakers?
 call audio_test.bat
@@ -495,6 +490,20 @@ if %ERRORLEVEL% == 1 (
 )
 
 exit /b
+
+
+rem ************************************************************
+rem ************** Handle Test Result Function *****************
+rem ************************************************************
+:handle_test_result <test_var>
+if %ERRORLEVEL% == 1 (
+	echo The test_var is: %1
+	set %1=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
 
 rem ************************************************************
 rem ************** Launguage Selection Function ****************
@@ -611,8 +620,18 @@ echo: >>%summaryFile%
 
 rem add date and device serial number to summary file
 <nul set /p ".=%mydate%," >> %summaryFile%
-<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
-<nul set /p ".=%deviceSN%," >> %summaryFile%
+rem need to skip these in board test and instead do the uut serial
+
+if /I "%TEST_TYPE%"=="System" (
+	<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
+	<nul set /p ".=%deviceSN%," >> %summaryFile%
+)
+if /I "%TEST_TYPE%"=="Board" (
+	<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
+	set /p uutSerial=Scan the uut Serial Number: 
+	<nul set /p ".=%uutSerial%," >> %summaryFile%
+	echo.
+)
 
 exit /b
 
@@ -639,77 +658,9 @@ rem ************************************************************
 )
 
 rem ************************************************************
-rem ****************** Display Board Failures ******************
+rem ***************** Display Failures ******************
 rem ************************************************************
-:display_board_failures
-rem Display failures from the board test
-
-echo.
-set "xprvar="
-for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo %xprvar%
-set "xprvar="
-for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-rem Check which tests failed and print which ones did fail
-if "%serial_test%" == "fail" (
-	echo ** Serial %xprvar%
-)
-if "%version_test%" == "fail" (
-	echo ** Version %xprvar%
-)
-if "%led_test%" == "fail" (
-	echo ** LED %xprvar%
-)
-if "%sd_card_test%" == "fail" (
-	echo ** SD Card %xprvar%
-)
-if "%cellular_test%" == "fail" (
-	echo ** Cellular %xprvar%
-)
-if "%canbus_test%" == "fail" (
-	echo ** CANBus %xprvar%
-)
-if "%swc_test%" == "fail" (
-	echo ** SWC %xprvar%
-)
-if "%j1708_test%" == "fail" (
-	echo ** J1708 %xprvar%
-)
-if "%com_test%" == "fail" (
-	echo ** Com Port %xprvar%
-)
-if "%help_key_test%" == "fail" (
-	echo ** Help Key %xprvar%
-)
-if "%audio_test%" == "fail" (
-	echo ** Audio %xprvar%
-)
-if "%temperature_test%" == "fail" (
-	echo ** Temperature %xprvar%
-)
-if "%read_rtc_test%" == "fail" (
-	echo ** Read RTC %xprvar%
-)
-if "%accelerometer_test%" == "fail" (
-	echo ** Accelerometer %xprvar%
-)
-if "%gpio_test%" == "fail" (
-	echo ** GPIO Inputs %xprvar%
-)
-if "%wiggle_test%" == "fail" (
-    echo ** Wiggle %xprvar%
-)
-if "%supercap_test%" == "fail" (
-	echo ** Supercap %xprvar%
-)
-
-exit /b
-
-
-rem ************************************************************
-rem ***************** Display System Failures ******************
-rem ************************************************************
-:display_system_failures
+:display_failures
 rem Display failures from the system test
 
 echo.

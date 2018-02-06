@@ -74,6 +74,11 @@
                 <action android:name="com.micronet.obctestingapp.GET_GPS_RESULT"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".GetRS485ResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_RS485_RESULT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
