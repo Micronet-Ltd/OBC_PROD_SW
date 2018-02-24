@@ -340,7 +340,7 @@ if %ERRORLEVEL% == 1 (
 )
 
 rem ************************************************************
-rem ************** Launguage Selection Function ****************
+rem ************** Language Selection Function ****************
 rem ************************************************************
 :language_selection
 rem Used to selection the language from the language file
