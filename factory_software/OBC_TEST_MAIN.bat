@@ -3,11 +3,65 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.37
+set test_script_version=1.2.37_test_selection
 set ERRORLEVEL=0
 
+rem Prepare the test so it is ready to run
+call :set_up_test
+
+cls
+echo ------------------------------------------------------------------------------------------------------
+echo  starting test, test script version is : %test_script_version%, %DEVICE_TYPE%, %language_choice%
+echo ------------------------------------------------------------------------------------------------------
+
+rem connect to device over hotspot
+call adb_connect.bat
+rem Set up result files
+call :set_up_result_files
+rem install test apk files
+call install_files.bat
+
+rem Run tests depending on test type
+for /f "delims=" %%G in (input\tests\%test_file%) do (
+	call %%G_test.bat
+	call :handle_test_result %%G
+)
+
+rem Handle total test result
+call :total_test_status
+
+rem Handle test post processing
+call :end_of_test
+
+goto :eof
+
+rem **********************************************************************************
+rem ****************************  Testing Functions  *********************************
+rem **********************************************************************************
+
+rem ************** Handle Test Result Function *****************
+:handle_test_result <test_var>
+if %ERRORLEVEL% == 1 (
+	echo ******* %1 failed
+	set %1_test=fail
+	set OBC_TEST_STATUS=Fail
+	<nul set /p ".=fail," >> %summaryFile%
+) else (
+	<nul set /p ".=pass," >> %summaryFile%
+)
+
+exit /b
+
+rem **********************************************************************************
+rem **************************  Set Up Test Functions  *******************************
+rem **********************************************************************************
+
+rem ****************** Set Up Test Function ********************
+:set_up_test
+rem Set up the whole test
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
+set options_file=input\test_options.dat
 
 rem Select the language from the language file
 call :language_selection
@@ -16,27 +70,188 @@ rem Reset variable values
 call :reset_result_variables
 
 rem Select the test type and device type from the dat file
-call :test_type_selection
+call :test_selection
 
-cls
-echo ---------------------------------------------------
-echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_TYPE%
-echo ---------------------------------------------------
+exit /b
 
-rem connect to device over hotspot
-call adb_CONNECT.bat
+rem ************** Language Selection Function *****************
+:language_selection
+rem Used to selection the language from the language file
 
-rem Set up result files
-call :set_up_results
+set language_choice_file=
+set language_choice=
+set language_file=
 
-rem install test apk files
-call install_files_test.bat
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "LANGUAGE" set language_choice=%%j
+)
 
-rem Run tests depending on test type
-if "%TEST_TYPE%"=="System" call :system_test
-if "%TEST_TYPE%"=="Board" call :board_test
+if /I "%language_choice%" == "English" goto _english
+if /I "%language_choice%" == "Chinese" goto _chinese
+echo.
+echo Error: input/test_options.dat file contains invalid language value. 
+echo Should either be "English" or "Chinese". Defaulting to English.
+echo.
+goto _english
 
-:_total_test_status
+:_english
+set language_file=input/English.dat
+exit /b
+
+:_chinese
+set language_file=input/Chinese.dat
+exit /b
+
+
+rem ************** Test Selection Function *********************
+:test_selection
+rem Select test
+set TEST_FILE=
+set DEVICE_TYPE=
+set SUMMARY_FILE=
+set TEST_TYPE=
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "TEST_FILE" set TEST_FILE=%%j
+)
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "SUMMARY_FILE" set SUMMARY_FILE=%%j
+)
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "DEVICE_TYPE" set DEVICE_TYPE=%%j
+)
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "TEST_TYPE" set TEST_TYPE=%%j
+)
+
+if /I "%TEST_TYPE%"=="System" (
+	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=system_a001_tests.dat
+	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=system_tests.dat
+	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=system_tests.dat
+	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=system_ud_tests.dat
+)
+if /I "%TEST_TYPE%"=="Board" (
+	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=board_tests.dat
+	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=board_tests.dat
+	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=board_tests.dat
+	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=board_ud_tests.dat
+)
+
+exit /b
+
+rem **************** Result Variables Function *****************
+:reset_result_variables
+rem Reset result variables
+set imei_test=
+set serial_test=
+set version_test=
+set led_test=
+set sd_card_test=
+set canbus_test=
+set wifi_test=
+set swc_test=
+set j1708_test=
+set com_test=
+set nfc_test=
+set help_key_test=
+set audio_test=
+set temperature_test=
+set rtc_test=
+set accelerometer_test=
+set gpio_test=
+set wiggle_test=
+set supercap_test=
+
+exit /b
+
+rem *************** Set Up Result Files Function ***************
+:set_up_result_files
+rem Set up result files depending on test type and board type
+set summaryFile=
+
+rem Get serial number
+set result_file_name=tmp.txt
+..\adb shell getprop ro.serialno > %result_file_name%
+set /p deviceSN=<%result_file_name%
+set mydate=%DATE:~0,10%
+
+if /I "%TEST_TYPE%"=="System" (
+	rem if system test then set summary file to serial number
+	set result_file_name=%deviceSN%
+)
+if /I "%TEST_TYPE%"=="Board" (
+	rem if board test then set summary file to uut serial
+	set /p uutSerial=Scan the uut Serial Number: 
+	set result_file_name=%uutSerial%
+)
+if /I "%TEST_TYPE%"=="Other" (
+	rem if other test then set summary file to serial number
+	set result_file_name=%deviceSN%
+)
+
+if /I "%TEST_TYPE%"=="System" (
+	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set summaryFile=testResults\system_a001_summary.csv
+	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set summaryFile=testResults\system_summary.csv
+	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set summaryFile=testResults\system_summary.csv
+	if /I "%DEVICE_TYPE%"=="UD" set summaryFile=testResults\system_ud_summary.csv
+	
+	@echo. >> testResults\%result_file_name%.txt
+	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
+	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
+)
+if /I "%TEST_TYPE%"=="Board" (
+	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set summaryFile=testResults\board_summary.csv
+	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set summaryFile=testResults\board_summary.csv
+	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set summaryFile=testResults\board_summary.csv
+	if /I "%DEVICE_TYPE%"=="UD" set summaryFile=testResults\board_ud_summary.csv
+	
+	@echo. >> testResults\%result_file_name%.txt
+	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo A8 SN : %deviceSN%  >> testResults\%result_file_name%.txt
+	@echo UUT SN : %uutSerial%  >> testResults\%result_file_name%.txt
+	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
+)
+if /I "%TEST_TYPE%"=="Other" (
+	set summaryFile=%SUMMARY_FILE%
+	
+	@echo. >> testResults\%result_file_name%.txt
+	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
+	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
+)
+
+rem add new line to summary file
+echo: >>%summaryFile%
+
+rem add date and device serial number to summary file
+<nul set /p ".=%mydate%," >> %summaryFile%
+<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" (
+	<nul set /p ".=%deviceSN%," >> %summaryFile%
+)
+if /I "%TEST_TYPE%"=="Board" (
+	<nul set /p ".=%deviceSN%," >> %summaryFile%
+	<nul set /p ".=%uutSerial%," >> %summaryFile%
+)
+if /I "%TEST_TYPE%"=="Other" (
+	<nul set /p ".=%deviceSN%," >> %summaryFile%
+)
+
+echo.
+
+exit /b
+
+rem **********************************************************************************
+rem **************************  Test Finished Functions  *****************************
+rem **********************************************************************************
+
+rem ******************* Total Test Status **********************
+:total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
 	<nul set /p ".=fail," >> %summaryFile%
@@ -55,7 +270,7 @@ echo **************************************
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
-goto _end_of_tests
+exit /b
 
 :_test_failed
 echo.
@@ -72,428 +287,9 @@ color 47
 rem Display failures
 call :display_failures
 
-:_end_of_tests
-set test_script_version=
-set OBC_TEST_STATUS=
-set language_choice_file=
-set language_choice=
-set language_file=
-set TEST_TYPE=
-set summaryFile=
-set uutSerial=
-..\adb disconnect
-Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
-set imeiEnd=
-cd ..
-timeout /t 2 /NOBREAK > nul
-color 07
-goto :eof
-
-
-rem ************************************************************
-rem ******************* SYSTEM TEST Function *******************
-rem ************************************************************
-:system_test
-rem Function used to run all tests used in the system test
-
-rem ******************** IMEI Test ********************
-call IMEI_TEST.bat
-if %ERRORLEVEL% == 2 (
-	echo Exiting from main test file...
-	<nul set /p ".=fail," >> %summaryFile%
-) 
-if %ERRORLEVEL% == 2 exit /b
-call :handle_test_result imei_test
-set tempIMEI=
-
-
-rem ******************** Serial Test ********************
-call SERIAL_TEST.bat 
-call :handle_test_result serial_test
-rem Reset variable values
-set mydate=
-set deviceSN=
-
-
-rem ******************** Version Test ********************
-call VERSION_TEST.bat
-call :handle_test_result version_test
-
-
-rem ******************** LED Test ********************
-call LED_TEST.bat
-call :handle_test_result led_test
-
-
-rem ******************** SD Card Test ********************
-call sd-card_test_updated.bat
-call :handle_test_result sd_card_test
-
-
-rem ******************** Cellular Test ********************
-rem The following 3 lines add by Avner to skip the cellular test.
-<nul set /p ".=N/A," >> %summaryFile%
-<nul set /p ".=N/A," >> %summaryFile%
-goto _skip_cellular_test
-call Cellular.bat
-call :handle_test_result cellular_test
-:_skip_cellular_test
-
-
-rem ******************** WIFI Test ********************
-call WIFI_TEST.bat
-call :handle_test_result WiFi_test
-
-
-rem ******************** GPS Test ********************
-call GPS_TEST.bat
-call :handle_test_result gps_test
-
-
-rem ******************** CANBus Test ********************
-call CANBus_UPDATED.bat
-call :handle_test_result canbus_test
-
-
-rem ******************** SWC Test ********************
-call SWC_TEST_UPDATED.bat
-call :handle_test_result swc_test
-
-
-rem ******************** J1708 Test ********************
-call J1708_TEST_UPDATED.bat
-call :handle_test_result j1708_test
-
-
-rem ******************** COM Test ********************
-if /I "%DEVICE_TYPE%" NEQ "MTR-A001-001" goto com_test
-<nul set /p ".=N/A," >> %summaryFile%
-goto skip_com_test
-:com_test
-call COM_TEST.bat
-call :handle_test_result com_test
-:skip_com_test
-
-
-rem ******************** NFC Test ********************
-if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _nfc_test
-<nul set /p ".=N/A," >> %summaryFile%
-goto _skip_nfc_test
-:_nfc_test
-call NFC_TEST_UPDATED.bat
-call :handle_test_result nfc_test
-:_skip_nfc_test
-
-
-rem ******************** Help Key Test ********************
-if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test
-<nul set /p ".=N/A," >> %summaryFile%
-goto _skip_help_key_test
-:_help_key_test
-call HELP_KEY_TEST_UPDATED.bat
-call :handle_test_result help_key_test
-:_skip_help_key_test
-
-
-rem ******************** Audio Test ********************
-call audio_test.bat
-call :handle_test_result audio_test
-
-
-rem ******************** Temp Test ********************
-call Temperature_TEST.bat
-call :handle_test_result temperature_test
-
-
-rem ******************** Read RTC Test ********************
-call ReadRTC_TEST.bat
-call :handle_test_result read_rtc_test
-
-
-rem ******************** Accelerometer Test ********************
-call Accelerometer_UPDATED.bat
-call :handle_test_result accelerometer_test
-
-
-rem ******************** GPIO Test ********************
-if /I "%DEVICE_TYPE%"=="MTR-A001-001" goto gpio_a001_test
-call GPIO_TEST_UPDATED.bat
-call :handle_test_result gpio_test
-goto wiggle_test
-:gpio_a001_test
-call GPIO_TEST.bat
-call :handle_test_result gpio_test
-
-
-rem ******************** Wiggle Test ********************
-:wiggle_test
-call WIGGLE_TEST.bat
-call :handle_test_result wiggle_test
-
-
-rem ******************** Supercap Test ********************
-call SUPERCAP_TEST.bat
-call :handle_test_result supercap_test
-
 exit /b
 
-
-rem ************************************************************
-rem ******************* BOARD TEST Function ********************
-rem ************************************************************
-:board_test
-rem Runs all the tests that are used to test the board test
-rem Reset variable values
-set mydate=
-set deviceSN=
-
-rem Only mcu/fpga
-rem ******************** Version Test ********************
-call VERSION_TEST.bat
-call :handle_test_result version_test
-
-
-rem ******************** LED Test ********************
-call LED_TEST.bat
-call :handle_test_result led_test
-
-
-rem ******************** CANBus Test ********************
-call CANBus_UPDATED.bat
-call :handle_test_result canbus_test
-
-rem ******************** SWC Test ********************
-call SWC_TEST_UPDATED.bat
-call :handle_test_result swc_test
-
-rem ******************** J1708 Test ********************
-call J1708_TEST_UPDATED.bat
-call :handle_test_result j1708_test
-
-rem Depends on the board.
-rem ******************** COM Test ********************
-call COM_TEST.bat 
-call :handle_test_result com_test
-
-
-rem ******************** Help Key Test ********************
-rem If under-dash device then skip help key test in board test.
-if /I "%DEVICE_TYPE%" NEQ "MTR-A01X-00X" goto _help_key_test_board
-<nul set /p ".=N/A," >> %summaryFile%
-goto _skip_help_key_test_board
-:_help_key_test_board
-call HELP_KEY_TEST_UPDATED.bat
-call :handle_test_result help_key_test
-:_skip_help_key_test_board
-
-
-rem Are they plugging in speakers?
-rem ******************** Audio Test ********************
-call audio_test.bat
-call :handle_test_result audio_test
-
-
-rem ******************** Temperature Test ********************
-call Temperature_TEST.bat
-call :handle_test_result temperature_test
-
-
-rem ******************** Read RTC Test ********************
-call ReadRTC_TEST.bat
-call :handle_test_result read_rtc_test
-
-
-rem ******************** Accelerometer Test ********************
-call Accelerometer_UPDATED.bat
-call :handle_test_result accelerometer_test
-
-
-rem ******************** GPIO Test ********************
-call GPIO_TEST.bat
-call :handle_test_result gpio_test
-
-
-rem ******************** Wiggle Test ********************
-call WIGGLE_TEST.bat
-call :handle_test_result wiggle_test
-
-
-rem Might not work, needs to charge. Set up of test?
-rem ******************** Supercap Test ********************
-call SUPERCAP_TEST.bat
-call :handle_test_result supercap_test
-
-exit /b
-
-
-rem ************************************************************
-rem ************** Handle Test Result Function *****************
-rem ************************************************************
-:handle_test_result <test_var>
-if %ERRORLEVEL% == 1 (
-	echo The test_var is: %1
-	set %1=fail
-	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
-) else (
-	<nul set /p ".=pass," >> %summaryFile%
-)
-
-rem ************************************************************
-rem ************** Language Selection Function ****************
-rem ************************************************************
-:language_selection
-rem Used to selection the language from the language file
-
-set language_choice_file=
-set language_choice=
-set language_file=
-
-set language_choice_file=input/language.dat
-
-set /p language_choice=<%language_choice_file%
-set language_choice=%language_choice%
-
-if /I "%language_choice%" == "English" goto _english
-if /I "%language_choice%" == "Chinese" goto _chinese
-echo.
-echo Error: input/language.dat file contains invalid value. 
-echo Should either be "English" or "Chinese"
-echo Defaulting to English
-echo.
-goto _english
-
-:_english
-set language_file=input/English.txt
-exit /b
-
-:_chinese
-set language_file=input/Chinese.txt
-exit /b
-
-
-rem ************************************************************
-rem ************** Test Type Selection Function ****************
-rem ************************************************************
-:test_type_selection
-rem Check whether this is a board test or a system test and set variable
-
-set /p line1= <input\TEST_TYPE.dat
-for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
- if %%i EQU TEST_TYPE set TEST_TYPE=%%j
-)
-
-set /p line1= <input\DEVICE_TYPE.dat
-for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
- if %%i EQU DEVICE_TYPE set DEVICE_TYPE=%%j
-)
-
-if /I "%TEST_TYPE%"=="System" (
-	echo Starting a system test.
-	set summaryFile=testResults\summary.csv
-)
-if /I "%TEST_TYPE%"=="Board" (
-	echo Starting a board test.
-	set summaryFile=testResults\boardSummary.csv
-)
-
-exit /b
-
-rem ************************************************************
-rem **************** Result Variables Function *****************
-rem ************************************************************
-:reset_result_variables
-rem Reset result variables
-set imei_test=
-set serial_test=
-set version_test=
-set led_test=
-set sd_card_test=
-set cellular_test=
-set canbus_test=
-set WiFi_test=
-set gps_test=
-set swc_test=
-set j1708_test=
-set com_test=
-set nfc_test=
-set help_key_test=
-set audio_test=
-set temperature_test=
-set read_rtc_test=
-set accelerometer_test=
-set gpio_test=
-set wiggle_test=
-set supercap_test=
-
-exit /b
-
-rem ************************************************************
-rem *************** Set Up Result Files Function ***************
-rem ************************************************************
-:set_up_results
-rem Set up result files
-
-rem Get serial number
-set result_file_name=tmp.txt
-..\adb shell getprop ro.serialno > %result_file_name%
-set /p deviceSN=<%result_file_name%
-
-rem Set result file name to serial number
-set mydate=%DATE:~0,10%
-set result_file_name=%deviceSN%
-
-rem start writing to individual device file
-@echo. >> testResults\%result_file_name%.txt
-@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
-@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
-@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
-
-rem add new line to summary file
-echo: >>%summaryFile%
-
-rem add date and device serial number to summary file
-<nul set /p ".=%mydate%," >> %summaryFile%
-rem need to skip these in board test and instead do the uut serial
-
-if /I "%TEST_TYPE%"=="System" (
-	<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
-	<nul set /p ".=%deviceSN%," >> %summaryFile%
-)
-if /I "%TEST_TYPE%"=="Board" (
-	<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
-	set /p uutSerial=Scan the uut Serial Number: 
-	<nul set /p ".=%uutSerial%," >> %summaryFile%
-	echo.
-)
-
-exit /b
-
-
-rem ************************************************************
-rem ******************* strLen TEST Function *******************
-rem ************************************************************
-:strlen <resultVar> <stringVar>
-(   
-    setlocal EnableDelayedExpansion
-    set "s=!%~2!#"
-    set "len=0"
-    for %%P in (4096 2048 1024 512 256 128 64 32 16 8 4 2 1) do (
-        if "!s:~%%P,1!" NEQ "" ( 
-            set /a "len+=%%P"
-            set "s=!s:~%%P!"
-        )
-    )
-)
-( 
-    endlocal
-    set "%~1=%len%"
-    exit /b
-)
-
-rem ************************************************************
-rem ***************** Display Failures ******************
-rem ************************************************************
+rem ******************** Display Failures **********************
 :display_failures
 rem Display failures from the system test
 
@@ -519,14 +315,8 @@ if "%led_test%" == "fail" (
 if "%sd_card_test%" == "fail" (
 	echo ** SD Card %xprvar%
 )
-if "%cellular_test%" == "fail" (
-	echo ** Cellular %xprvar%
-)
-if "%WiFi_test%" == "fail" (
+if "%wifi_test%" == "fail" (
 	echo ** WiFi %xprvar%
-)
-if "%gps_test%" == "fail" (
-	echo ** GPS %xprvar%
 )
 if "%canbus_test%" == "fail" (
 	echo ** CANBus %xprvar%
@@ -552,7 +342,7 @@ if "%audio_test%" == "fail" (
 if "%temperature_test%" == "fail" (
 	echo ** Temperature %xprvar%
 )
-if "%read_rtc_test%" == "fail" (
+if "%rtc_test%" == "fail" (
 	echo ** Read RTC %xprvar%
 )
 if "%accelerometer_test%" == "fail" (
@@ -561,11 +351,33 @@ if "%accelerometer_test%" == "fail" (
 if "%gpio_test%" == "fail" (
 	echo ** GPIO %xprvar%
 )
+if "%gpio_inputs_test%" == "fail" (
+	echo ** GPIO Inputs %xprvar%
+)
 if "%wiggle_test%" == "fail" (
     echo ** Wiggle %xprvar%
 )
 if "%supercap_test%" == "fail" (
 	echo ** Supercap %xprvar%
 )
+
+exit /b
+
+rem ******************** Display Failures **********************
+:end_of_test
+set test_script_version=
+set OBC_TEST_STATUS=
+set language_choice_file=
+set language_choice=
+set language_file=
+set TEST_TYPE=
+set summaryFile=
+set uutSerial=
+..\adb disconnect
+Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
+set imeiEnd=
+cd ..
+timeout /t 2 /NOBREAK > nul
+color 07
 
 exit /b

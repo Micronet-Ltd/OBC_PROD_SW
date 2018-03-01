@@ -15,11 +15,10 @@ set loop_count=0
 if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
+if not defined language_file set language_file=input/English.dat
 
-set /p line1= <input\wifi_input.dat
-for /f "tokens=1,2 delims=:" %%i in ("%line1%") do (
- if %%i EQU GoodWifiRSSI set /A lowerBound=%%j
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "GoodWifiRSSI" set lowerBound=%%j
 )
 
 rem echo ------------------------------------
@@ -65,7 +64,7 @@ set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** WiFi %xprvar% %cell_fail%
 @echo WiFi test - failed %cell_fail% >> testResults\%result_file_name%.txt
-<nul set /p ".=%WiFiValue%," >> testResults\summary.csv
+<nul set /p ".=%WiFiValue%," >> %summaryFile%
 goto :_end_of_file
 
 rem   ############## TEST STATUS ############
@@ -74,7 +73,7 @@ set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** WiFi %xprvar% WiFi RSSI = %WiFiValue%
 @echo WiFi test - passed >> testResults\%result_file_name%.txt
-<nul set /p ".=%WiFiValue%," >> testResults\summary.csv
+<nul set /p ".=%WiFiValue%," >> %summaryFile%
 goto _end_of_file
 
 

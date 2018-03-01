@@ -1,0 +1,13 @@
+version
+led
+canbus
+swc
+j1708
+com
+audio
+temperature
+rtc
+accelerometer
+gpio_inputs
+wiggle
+supercap

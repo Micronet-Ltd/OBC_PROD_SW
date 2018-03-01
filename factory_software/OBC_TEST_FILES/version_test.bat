@@ -6,23 +6,22 @@ rem echo ------------------------------------
 rem echo              VERSION TEST            
 rem echo ------------------------------------
 
-set mcu_version_file_name=input\mcu_version.dat
 set fpga_version_file_name=input\fpga_version.dat
 set os_version_file_name=input\os_version.dat
 set version_file_name=version_file.txt
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
-
-if not exist %mcu_version_file_name%  goto _test_error_no_mcu_version
-if not exist %fpga_version_file_name% goto _test_error_no_fpga_version
-if not exist %os_version_file_name% goto _test_error_no_os_version
+if not defined language_file set language_file=input/English.dat
 
 :_check_MCU_version
 ..\adb shell mctl api 0200 > %version_file_name%
 set /p version=<%version_file_name%
 set version="%version:~28,7%"
-set /p mcu_version=<%mcu_version_file_name%
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "MCU_VERSION" set mcu_version=%%j
+)
+
 set mcu_version="%mcu_version%"
 rem echo MCU  VERSION retirvied : %version%
 rem echo MCU  VERSION input     : %mcu_version%
@@ -36,7 +35,11 @@ del %version_file_name%
 ..\adb shell mctl api 0201 > %version_file_name%
 set /p version=<%version_file_name%
 set version="%version:~9,10%"
-set /p fpga_version=<%fpga_version_file_name%
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "FPGA_VERSION" set fpga_version=%%j
+)
+
 set fpga_version="%fpga_version%"
 rem echo FPGA VERSION retirvied : %version%
 rem echo FPGA VERSION input     : %fpga_version%
@@ -50,7 +53,11 @@ if not %version% == %fpga_version% goto _test_error_wrong_fpga_version
 del %version_file_name%
 ..\adb shell getprop ro.build.display.id > %version_file_name%
 set /p version=<%version_file_name%
-set /p os_version=<%os_version_file_name%
+
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "OS_VERSION" set os_version=%%j
+)
+
 rem echo OS VERSION retirvied : -%version%-
 rem echo OS VERSION input     : -%os_version%-
 

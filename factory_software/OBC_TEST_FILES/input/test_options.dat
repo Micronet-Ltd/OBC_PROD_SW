@@ -1,0 +1,21 @@
+All settings are case-insensitive.
+*Test Type* can be "System", "Board", or "Other".
+*Device Type* can be "MTR-A001-001", "MTR-A002-001", "MTR-A003-001", or "UD" (Under Dash).
+*Language* can be "English" or "Chinese".
+
+--- Test Setup ---
+TEST_TYPE:System
+DEVICE_TYPE:MTR-A003-001
+LANGUAGE:English
+
+--- Version Test ---
+FPGA_VERSION:0x41000003
+MCU_VERSION:a.2.3.0
+OS_VERSION:TREQr_5_0.1.6.0_20170815.1707
+
+--- Wifi Test ---
+GoodWifiRSSI:94
+
+---"Other" Files. These test/summary files are only used if Test Type is set to "Other" ---
+TEST_FILE:system_tests.dat
+SUMMARY_FILE:summary.csv

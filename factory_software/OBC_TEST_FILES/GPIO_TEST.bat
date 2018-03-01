@@ -1,110 +1,129 @@
 @echo off
 
-:_start_test
 set ERRORLEVEL=0
 
-set file_name=tmp.txt
-if exist %file_name% del %file_name%
+set temp_result=tmp.txt
+set success=1
+set data=
+set ignition_fail=
+set input1_fail=
+set input2_fail=
+set input3_fail=
+set input4_fail=
+set input5_fail=
+set input6_fail=
+set input7_fail=
+set output0_fail=
+set output1_fail=
+set output2_fail=
+set output3_fail=
+if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
+if not defined language_file set language_file=input/English.dat
 
 rem echo ------------------------------------
-rem echo                GPIO Test            
+rem echo               GPIO test            
 rem echo ------------------------------------
 
+:_test_loop
+rem For testing, Output 0 is connected to Input 1 and 5, Output 1 is connected to Input 2 and 6, Output 2 is connected
+rem to Input 3 and 7, and Output 4 is connected to Input 7. 
+rem
+rem Result code 0 = app isn't installed or started, 1 = success, 2 = fail and result data will contain which ones failed
+rem In the case that one of the GPIO tests fail a "F" will be placed in result data instead of "P"
 
-:_test_GPIO1
-..\adb shell mctl api 020401 > %file_name%
-set /p input1=<%file_name%
-set /a input1=%input1:~24,5%
-rem @echo input1=%input1%
-if %input1% LSS 9000 set ERRORLEVEL=1
-if %input1% GTR  13000 set ERRORLEVEL=1
+rem Send broadcast to run test and get result
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_GPIO_RESULT> %temp_result%
+rem Get the second line with the results
+set "xprvar="
+for /F "skip=1 delims=" %%i in (tmp.txt) do if not defined xprvar set "xprvar=%%i"
+echo %xprvar% > %temp_result%
+set /p Result=<%temp_result%
 
-:_test_GPIO2
-..\adb shell mctl api 020402 > %file_name%
-set /p  input2=<%file_name%
-set /a input2=%input2:~24,5%>nul
-rem @echo input2=%input2%
-if %input2% LSS 4500 set ERRORLEVEL=1
-if %input2% GTR 5200 set ERRORLEVEL=1
+rem Data should be twelve letters total
+set data=%Result:~37,12%
 
-:_test_GPIO3
-..\adb shell mctl api 020403 > %file_name%
-set /p  input3=<%file_name%
-set /a input3=%input3:~24,5%>nul
-rem @echo input3=%input3%
-if %input3% LSS 9000 set ERRORLEVEL=1
-if %input3% GTR  13000 set ERRORLEVEL=1
+if "%Result:~28,1%" == "%success%" goto _test_pass
+goto _ask_if_retry
 
-:_test_GPIO4
-..\adb shell mctl api 020404 > %file_name%
-set /p  input4=<%file_name%
-set /a input4=%input4:~24,5%>nul
-rem @echo input4=%input4%
-if %input4% LSS 4500 set ERRORLEVEL=1
-if %input4% GTR 5200 set ERRORLEVEL=1
+set Result=
+rem Don't show while it is repeating
+goto _test_loop
 
-:_test_GPIO5
-..\adb shell mctl api 020405 > %file_name%
-set /p  input5=<%file_name%
-set /a input5=%input5:~24,5%>nul
-rem @echo input5=%input5%
-if %input5% LSS 9000 set ERRORLEVEL=1
-if %input5% GTR  13000 set ERRORLEVEL=1
+:_test_fail
+set ERRORLEVEL=1
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo  ** GPIO %xprvar% 
+rem If one of the GPIO tests failed then write that to the test result file
+if "%data:~0,1%" == "F" (
+	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
+)
+if "%data:~1,1%" == "F" (
+	set input1_fail="Input 1 voltage was not in the range of 9000 to 14000 mv",
+)
+if "%data:~2,1%" == "F" (
+	set input2_fail="Input 2 voltage was not in the range of 4500 to 5200 mv",
+)
+if "%data:~3,1%" == "F" (
+	set input3_fail="Input 3 voltage was not in the range of 9000 to 14000 mv",
+)
+if "%data:~4,1%" == "F" (
+	set input4_fail="Input 4 voltage was not in the range of 4500 to 5200 mv",
+)
+if "%data:~5,1%" == "F" (
+	set input5_fail="Input 5 voltage was not in the range of 9000 to 14000 mv",
+)
+if "%data:~6,1%" == "F" (
+	set input6_fail="Input 6 voltage was not in the range of 4500 to 5200 mv",
+)
+if "%data:~7,1%" == "F" (
+	set input7_fail="Input 7 voltage was not in the range of 9000 to 14000 mv",
+)
+if "%data:~8,1%" == "F" (
+	set output0_fail="Input 1 and 5 voltages not in correct range when when Output 0 set high and/or low",
+)
+if "%data:~9,1%" == "F" (
+	set output1_fail="Input 2 and 6 voltages not in correct range when when Output 1 set high and/or low",
+)
+if "%data:~10,1%" == "F" (
+	set output2_fail="Input 3 and 7 voltages not in correct range when when Output 2 set high and/or low",
+)
+if "%data:~11,1%" == "F" (
+	set output3_fail="Input 4 voltage not in correct range when when Output 3 set high and/or low",
+)
+@echo GPIO test - failed %ignition_fail% %input1_fail% %input2_fail% %input3_fail% %input4_fail% %input5_fail% %input6_fail% %input7_fail% %output0_fail% %output1_fail% %output2_fail% %output3_fail% >> testResults\%result_file_name%.txt
+goto :_end_of_file
 
-
-:_test_GPIO6
-..\adb shell mctl api 020406 > %file_name%
-set /p  input6=<%file_name%
-set /a input6=%input6:~24,5%>nul
-rem @echo input6=%input6%
-if %input6% LSS 4500 set ERRORLEVEL=1
-if %input6% GTR 5200 set ERRORLEVEL=1
-
-:_test_GPIO7
-..\adb shell mctl api 020407 > %file_name%
-set /p  input7=<%file_name%
-set /a input7=%input7:~24,5%>nul
-rem @echo input7=%input7%
-if %input7% LSS 9000 set ERRORLEVEL=1
-if %input7% GTR  13000 set ERRORLEVEL=1
-
-:_test_Ignition
-..\adb shell mctl api 020400 > %file_name%
-set /p  Ignition=<%file_name%
-set /a Ignition=%Ignition:~24,5%>nul
-rem @echo Ignition=%Ignition%
-if %Ignition% LSS 4500 set ERRORLEVEL=1
-if %Ignition% GTR 13200 set ERRORLEVEL=1
-
-if %ERRORLEVEL% == 1 goto _error_found
-
-echo ** GPIO test - passed
-@echo GPIO test - passed input1=%input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition%  >> testResults\%result_file_name%.txt
+rem   ############## TEST STATUS ############
+:_test_pass
+set "xprvar="
+for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo ** GPIO %xprvar%
+@echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
-:_error_found
-echo.
-echo ** GPIO test - failed input1=%input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition%
-@echo GPIO test - failed input1 = %input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition% >> testResults\%result_file_name%.txt
+:_ask_if_retry
+set "xprvar="
+for /F "skip=28 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+echo.&set /p option=%xprvar%
+if /I "%option%"=="y" goto _test_loop
+if /I "%option%"=="n" goto _test_fail
+echo Invalid option
+goto _ask_if_retry
 
-set choice=
-echo.&set /p choice=Would you like to repeat the test [Y/N] ?
-if /I %choice% == Y goto _start_test
 
 :_end_of_file
 rem Uninstall app
 ..\adb uninstall com.micronet.obctestingapp > nul
-if exist %file_name% del %file_name%
-set file_name= 
-set input1= 
-set input2= 
-set input3= 
-set input4= 
-set input5= 
-set input6= 
-set input7= 
-set Ignition=
-set choice=
+if exist %temp_result% del %temp_result%
+set Result= 
+set success= 
+set temp_result=
+set data=
+set gpinputs_fail=
+set gpo0_fail=
+set gpo1_fail=
+set gpo2_fail=
+set gpo3_fail=

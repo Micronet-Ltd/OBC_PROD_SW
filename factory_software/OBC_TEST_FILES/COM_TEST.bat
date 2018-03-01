@@ -12,7 +12,7 @@ set com4_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
+if not defined language_file set language_file=input/English.dat
 
 rem echo ------------------------------------
 rem echo               Com Ports test            

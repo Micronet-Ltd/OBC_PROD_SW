@@ -1,0 +1,3 @@
+date, device type, serial, imei, imei barcode, serial barcode, mcu ver, fpga ver, os ver, version, led, sdcard, wifiRSSI, wifi, can_bus, swc, j1708, com port, nfc, help, audio, temperature, readRTC, Accelerometer, GPIO, Wiggle, Supercap, All tests,  
+Thu 03/01/,MTR-A003-001,5506a61a,fail,fail,a.2.3.0,0x41000003,TREQr_5_0.1.6.0_20170815.1707,pass,pass,fail,fail,pass,pass,pass,pass,fail,pass,pass,pass,pass,pass,pass,pass,pass,fail, 
+Thu 03/01/,MTR-A003-001,5506a61a,'354833080080381,fail,fail,a.2.3.0,0x41000003,TREQr_5_0.1.6.0_20170815.1707,pass,pass,fail,92,fail,pass,pass,pass,pass,fail,pass,pass,pass,pass,pass,pass,pass,pass,fail,

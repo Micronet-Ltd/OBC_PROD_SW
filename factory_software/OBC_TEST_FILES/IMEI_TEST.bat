@@ -17,7 +17,7 @@ if exist %file_name% del %file_name%
 if exist %serial_name% del %serial_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
+if not defined language_file set language_file=input/English.dat
 
 rem echo ------------------------------------
 rem echo                IMEI test            
@@ -68,8 +68,8 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed %imei% matching device but tac is not correct, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
-<nul set /p ".=," >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> %summaryFile%
+<nul set /p ".=," >> %summaryFile%
 goto :_write_serial_imei
 
 :_test_fail_matching
@@ -82,8 +82,8 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, tac is correct >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
-<nul set /p ".=," >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> %summaryFile%
+<nul set /p ".=," >> %summaryFile%
 goto :_write_serial_imei
 
 :_test_fail
@@ -96,8 +96,8 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, also tac is incorrect, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
-<nul set /p ".=," >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> %summaryFile%
+<nul set /p ".=," >> %summaryFile%
 goto :_write_serial_imei
 
 rem   ############## TEST STATUS ############
@@ -110,8 +110,8 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - passed %imei% >> testResults\%result_file_name%.txt
 rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> testResults\summary.csv
-<nul set /p ".=," >> testResults\summary.csv
+<nul set /p ".='%Result:~37,15%" >> %summaryFile%
+<nul set /p ".=," >> %summaryFile%
 
 :_write_serial_imei
 rem Get and parse the serial number
@@ -174,7 +174,7 @@ goto :eof
 :duplicate <resultVar> <serialNum> <imei>
 rem echo %1 %2 %3
 
-for /F "tokens=2,3,29 delims=," %%A in (testResults\summary.csv) do (
+for /F "tokens=2,3,29 delims=," %%A in (%summaryFile%) do (
     rem @echo %%A %%B %%C
     if /I "%2"=="%%A" if /I "%passedVar%"=="%%C" (
         set %1=1
