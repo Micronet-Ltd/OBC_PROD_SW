@@ -27,8 +27,9 @@ rem echo MCU  VERSION retirvied : %version%
 rem echo MCU  VERSION input     : %mcu_version%
 if not %version% == %mcu_version% goto _test_error_wrong_mcu_version
 @echo MCU version O.K : %mcu_version%  >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results mcu_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results mcu_ver '%version%'
 
 :_check_FPGA_version
 del %version_file_name%
@@ -46,8 +47,9 @@ rem echo FPGA VERSION input     : %fpga_version%
 
 if not %version% == %fpga_version% goto _test_error_wrong_fpga_version
 @echo FPGA version O.K : %fpga_version%  >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results fpga_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results fpga_ver '%version%'
 
 :_check_OS_version
 del %version_file_name%
@@ -63,8 +65,10 @@ rem echo OS VERSION input     : -%os_version%-
 
 if not %version% == %os_version% goto _test_error_wrong_os_version
 @echo OS version O.K : %os_version%  >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results os_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results os_ver '%version%'
+
 if %ERRORLEVEL% == 1 goto _end_of_test
 
 rem   ############## TEST STATUS ############
@@ -104,8 +108,9 @@ set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
 @echo MCU version - failed : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results mcu_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results mcu_ver '%version%'
 goto _check_FPGA_version
 
 :_test_error_wrong_fpga_version
@@ -114,8 +119,10 @@ set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** FPGA  version %xprvar% : expected %fpga_version% got %version%. Burn correct FPGA version.
 @echo FPGA version - failed : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results fpga_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results fpga_ver '%version%'
+
 goto _check_OS_version
 
 :_test_error_wrong_os_version
@@ -124,8 +131,10 @@ set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** OS version %xprvar% : expected %os_version% got %version%. Burn correct OS version.
 @echo OS version - failed : expected  %os_version%  got %version%. Burn correct OS version. >> testResults\%result_file_name%.txt
-<nul set /p ".=%version%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+
+if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results os_ver '%version%'
+if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results os_ver '%version%'
+
 goto _end_of_test
 
 :_end_of_test

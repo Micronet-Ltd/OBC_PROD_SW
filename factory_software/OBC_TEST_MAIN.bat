@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.37_test_selection
+set test_script_version=1.2.37_test_selection_db
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
@@ -43,11 +43,17 @@ rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
 if %ERRORLEVEL% == 1 (
 	echo ******* %1 failed
-	set %1_test=fail
 	set OBC_TEST_STATUS=Fail
-	<nul set /p ".=fail," >> %summaryFile%
+	set %1_test=fail
+	
+	setlocal EnableDelayedExpansion
+	set %1_test=fail
+	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results %1_test 0
+	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results %1_test 0
+	endlocal
 ) else (
-	<nul set /p ".=pass," >> %summaryFile%
+	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results %1_test 1
+	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results %1_test 1
 )
 
 exit /b
@@ -172,6 +178,9 @@ rem *************** Set Up Result Files Function ***************
 rem Set up result files depending on test type and board type
 set summaryFile=
 
+rem Make sure DB is set up
+call create_tables.bat
+
 rem Get serial number
 set result_file_name=tmp.txt
 ..\adb shell getprop ro.serialno > %result_file_name%
@@ -186,28 +195,28 @@ if /I "%TEST_TYPE%"=="Board" (
 	rem if board test then set summary file to uut serial
 	set /p uutSerial=Scan the uut Serial Number: 
 	set result_file_name=%uutSerial%
-)
-if /I "%TEST_TYPE%"=="Other" (
-	rem if other test then set summary file to serial number
-	set result_file_name=%deviceSN%
+	echo.
 )
 
 if /I "%TEST_TYPE%"=="System" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set summaryFile=testResults\system_a001_summary.csv
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set summaryFile=testResults\system_summary.csv
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set summaryFile=testResults\system_summary.csv
-	if /I "%DEVICE_TYPE%"=="UD" set summaryFile=testResults\system_ud_summary.csv
+	rem Insert new result
+	call insert_result.bat system_results '%test_script_version%' '%DEVICE_TYPE%'
 	
+	rem Update serial
+	call update_last_result.bat system_results serial '%deviceSN%'
+
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
 	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
 if /I "%TEST_TYPE%"=="Board" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set summaryFile=testResults\board_summary.csv
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set summaryFile=testResults\board_summary.csv
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set summaryFile=testResults\board_summary.csv
-	if /I "%DEVICE_TYPE%"=="UD" set summaryFile=testResults\board_ud_summary.csv
+	rem Insert new result
+	call insert_result.bat board_results '%test_script_version%' '%DEVICE_TYPE%'
+	
+	rem Update tester serial and uut serial
+	call update_last_result.bat board_results a8_serial '%deviceSN%'
+	call update_last_result.bat board_results uut_serial '%uutSerial%'
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -215,34 +224,6 @@ if /I "%TEST_TYPE%"=="Board" (
 	@echo UUT SN : %uutSerial%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
-if /I "%TEST_TYPE%"=="Other" (
-	set summaryFile=%SUMMARY_FILE%
-	
-	@echo. >> testResults\%result_file_name%.txt
-	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
-	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
-	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
-)
-
-rem add new line to summary file
-echo: >>%summaryFile%
-
-rem add date and device serial number to summary file
-<nul set /p ".=%mydate%," >> %summaryFile%
-<nul set /p ".=%DEVICE_TYPE%," >> %summaryFile%
-
-if /I "%TEST_TYPE%"=="System" (
-	<nul set /p ".=%deviceSN%," >> %summaryFile%
-)
-if /I "%TEST_TYPE%"=="Board" (
-	<nul set /p ".=%deviceSN%," >> %summaryFile%
-	<nul set /p ".=%uutSerial%," >> %summaryFile%
-)
-if /I "%TEST_TYPE%"=="Other" (
-	<nul set /p ".=%deviceSN%," >> %summaryFile%
-)
-
-echo.
 
 exit /b
 
@@ -254,9 +235,11 @@ rem ******************* Total Test Status **********************
 :total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
-	<nul set /p ".=fail," >> %summaryFile%
+	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results all_tests 0
+	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results all_tests 0
 ) else (
-	<nul set /p ".=pass," >> %summaryFile%
+	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results all_tests 1
+	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results all_tests 1
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed

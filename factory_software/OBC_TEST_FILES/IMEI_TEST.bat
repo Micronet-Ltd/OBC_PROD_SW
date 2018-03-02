@@ -67,9 +67,8 @@ echo IMEI %xprvar% matching device but tac is not correct, should be "%tac%", "%
 endlocal
 rem Write result to individual device file
 @echo IMEI test - failed %imei% matching device but tac is not correct, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
-rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+rem Write result to database
+call update_last_result.bat system_results imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 :_test_fail_matching
@@ -81,9 +80,8 @@ echo %xprvar%
 endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, tac is correct >> testResults\%result_file_name%.txt
-rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+rem Write result to database
+call update_last_result.bat system_results imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 :_test_fail
@@ -95,9 +93,8 @@ echo %xprvar%, also tac is incorrect, should be "%tac%", "%tac2%", or "%tac3%"
 endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, also tac is incorrect, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
-rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+rem Write result to database
+call update_last_result.bat system_results imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 rem   ############## TEST STATUS ############
@@ -109,9 +106,8 @@ echo %xprvar%
 endlocal
 rem Write result to individual device file
 @echo IMEI test - passed %imei% >> testResults\%result_file_name%.txt
-rem Write result to summary file
-<nul set /p ".='%Result:~37,15%" >> %summaryFile%
-<nul set /p ".=," >> %summaryFile%
+rem Write result to database
+call update_last_result.bat system_results imei '%Result:~37,15%'
 
 :_write_serial_imei
 rem Get and parse the serial number
@@ -128,7 +124,7 @@ rem Check for possible duplicate Serial/IMEI
 set tempIMEI='%trueIMEI%
 set passedVar=pass
 set tempResult=0
-call :duplicate tempResult %serialNum% %tempIMEI%
+rem call :duplicate tempResult %serialNum% %tempIMEI%
 rem echo The result is %tempResult%
 
 if "%tempResult%"=="1" goto _ask_if_continue
