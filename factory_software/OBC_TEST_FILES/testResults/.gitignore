@@ -1,3 +1,6 @@
 *.txt
 *.db
 *.csv
+
+# allow
+!sqlite3.exe
