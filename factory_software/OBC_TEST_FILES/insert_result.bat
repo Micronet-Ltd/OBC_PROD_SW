@@ -10,7 +10,7 @@ set query_file=query.txt
 if exist %query_file% del %query_file%
 
 rem Update the latest
-@echo INSERT INTO %1 (test_version, device_type) VALUES (%2, %3);> %query_file%
+@echo INSERT INTO %1 DEFAULT VALUES;> %query_file%
 
 sqlite3.exe test_results.db < %query_file%
 

@@ -16,40 +16,38 @@ if not defined language_file set language_file=input/English.dat
 :_check_MCU_version
 ..\adb shell mctl api 0200 > %version_file_name%
 set /p version=<%version_file_name%
-set version="%version:~28,7%"
+set version=%version:~28,7%
 
 for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
  if /i "%%i" == "MCU_VERSION" set mcu_version=%%j
 )
 
-set mcu_version="%mcu_version%"
+set mcu_version=%mcu_version%
 rem echo MCU  VERSION retirvied : %version%
 rem echo MCU  VERSION input     : %mcu_version%
 if not %version% == %mcu_version% goto _test_error_wrong_mcu_version
 @echo MCU version O.K : %mcu_version%  >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results mcu_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results mcu_ver '%version%'
+call update_last_result.bat mcu_ver '%version%'
 
 :_check_FPGA_version
 del %version_file_name%
 ..\adb shell mctl api 0201 > %version_file_name%
 set /p version=<%version_file_name%
-set version="%version:~9,10%"
+set version=%version:~9,10%
 
 for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
  if /i "%%i" == "FPGA_VERSION" set fpga_version=%%j
 )
 
-set fpga_version="%fpga_version%"
+set fpga_version=%fpga_version%
 rem echo FPGA VERSION retirvied : %version%
 rem echo FPGA VERSION input     : %fpga_version%
 
 if not %version% == %fpga_version% goto _test_error_wrong_fpga_version
 @echo FPGA version O.K : %fpga_version%  >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results fpga_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results fpga_ver '%version%'
+call update_last_result.bat fpga_ver '%version%'
 
 :_check_OS_version
 del %version_file_name%
@@ -66,8 +64,7 @@ rem echo OS VERSION input     : -%os_version%-
 if not %version% == %os_version% goto _test_error_wrong_os_version
 @echo OS version O.K : %os_version%  >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results os_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results os_ver '%version%'
+call update_last_result.bat os_ver '%version%'
 
 if %ERRORLEVEL% == 1 goto _end_of_test
 
@@ -109,8 +106,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo ** MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
 @echo MCU version - failed : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results mcu_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results mcu_ver '%version%'
+call update_last_result.bat mcu_ver '%version%'
 goto _check_FPGA_version
 
 :_test_error_wrong_fpga_version
@@ -120,8 +116,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo ** FPGA  version %xprvar% : expected %fpga_version% got %version%. Burn correct FPGA version.
 @echo FPGA version - failed : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results fpga_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results fpga_ver '%version%'
+call update_last_result.bat fpga_ver '%version%'
 
 goto _check_OS_version
 
@@ -132,8 +127,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo ** OS version %xprvar% : expected %os_version% got %version%. Burn correct OS version.
 @echo OS version - failed : expected  %os_version%  got %version%. Burn correct OS version. >> testResults\%result_file_name%.txt
 
-if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results os_ver '%version%'
-if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results os_ver '%version%'
+call update_last_result.bat os_ver '%version%'
 
 goto _end_of_test
 

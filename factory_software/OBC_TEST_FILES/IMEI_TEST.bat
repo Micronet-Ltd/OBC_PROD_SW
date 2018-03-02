@@ -68,7 +68,7 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed %imei% matching device but tac is not correct, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
 rem Write result to database
-call update_last_result.bat system_results imei '%Result:~37,15%'
+call update_last_result.bat imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 :_test_fail_matching
@@ -81,7 +81,7 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, tac is correct >> testResults\%result_file_name%.txt
 rem Write result to database
-call update_last_result.bat system_results imei '%Result:~37,15%'
+call update_last_result.bat imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 :_test_fail
@@ -94,7 +94,7 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - failed expected %Result:~37,15% got %imei%, also tac is incorrect, should be "%tac%", "%tac2%", or "%tac3%" >> testResults\%result_file_name%.txt
 rem Write result to database
-call update_last_result.bat system_results imei '%Result:~37,15%'
+call update_last_result.bat imei '%Result:~37,15%'
 goto :_write_serial_imei
 
 rem   ############## TEST STATUS ############
@@ -107,7 +107,7 @@ endlocal
 rem Write result to individual device file
 @echo IMEI test - passed %imei% >> testResults\%result_file_name%.txt
 rem Write result to database
-call update_last_result.bat system_results imei '%Result:~37,15%'
+call update_last_result.bat imei '%Result:~37,15%'
 
 :_write_serial_imei
 rem Get and parse the serial number
@@ -118,7 +118,7 @@ for /F delims^=^"^ tokens^=2^ skip^=1 %%i in (serial_tmp.txt) do if not defined 
 set serialNum=%xprvar%
 
 rem Write Serial and IMEI to SerialIMEI.csv
-@echo %serialNum%,%trueIMEI% >> testResults\%list_name%.csv
+rem @echo %serialNum%,%trueIMEI% >> testResults\%list_name%.csv
 
 rem Check for possible duplicate Serial/IMEI
 set tempIMEI='%trueIMEI%

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,21 +19,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by scott.krstyen on 2/6/2018.
+ * Runs an automated RS485 test and returns the result.
+ *
+ * Modified by scott.krstyen on 8/17/2017.
  */
-
 public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
     private StringBuilder sb;
-    private StringBuilder resultStringBuilder;
     private StringBuilder returnString;
+    // Use these instead of ttyACM4 because then there won't be conflicts with rild
+    private File J1708_write = new File("/dev/ttyMICRONET_J1708");
+    private File J1708_read = new File("/dev/j1708");
 
-    private File Com1 = new File("/dev/ttyUSB0");
-    private File Com2 = new File("/dev/ttyUSB1");
-    private File Com3 = new File("/dev/ttyUSB2");
-    private File Com4 = new File("/dev/ttyUSB3");
+    private File RS485_read = new File("/dev/ttyUSB0");
 
     private boolean finalResult = true;
     private boolean pass;
@@ -41,40 +42,54 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
 
     private FileInputStream inputStream;
 
+    private FileDescriptor mFd;
+
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Run the automated test
-        automatedTest();
+        // Runs an automated RS485 test.
+        automatedRS485Test();
 
-        // Returns the result depending on the result from the automated test
+        // Depending on test result returns a result.
         if(finalResult){
             Log.i(TAG, "*** RS485 Test Passed ***");
             setResultCode(1);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            setResultData(returnString.toString());
         }else{
             Log.i(TAG, "*** RS485 Test Failed ***");
             setResultCode(2);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            setResultData(returnString.toString());
         }
 
     }
 
+    private native static FileDescriptor open(String path, int Baudrate);
+    private native void close();
+
     /**
-     * Automated ComPort test.
+     * Automated RS485 test.
      */
-    private void automatedTest()  {
+    public void automatedRS485Test(){
 
         Log.i(TAG, "*** RS485 Test Started ***");
 
-        // Reset final result to be used to test.
         finalResult = true;
 
         returnString = new StringBuilder();
 
-        // Com 1 and 2 will be communicating to each other and Com 3 and 4 will be as well
+        //mFd = open("/dev/ttyACM4", 115200);
+        mFd = open("/dev/ttyMICRONET_J1708", 115200);
+        close();
+
+        mFd = open("/dev/ttyUSB0", 115200);
+        close();
+
         try{
-            writeReceiveTest(Com1, Com2, "Com1Out");
+            writeReceiveTest(J1708_write, RS485_read);
 
             if(pass){
                 returnString.append("P");
@@ -82,53 +97,31 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
                 returnString.append("F");
             }
 
-            writeReceiveTest(Com2, Com1, "Com2Out");
-
-            if(pass){
-                returnString.append("P");
-            }else{
-                returnString.append("F");
-            }
-            writeReceiveTest(Com3, Com4, "Com3Out");
-
-            if(pass){
-                returnString.append("P");
-            }else{
-                returnString.append("F");
-            }
-            writeReceiveTest(Com4, Com3, "Com4Out");
-
-            if(pass){
-                returnString.append("P");
-            }else{
-                returnString.append("F");
-            }
-
-        }catch (FileNotFoundException e){
+        }catch (Exception e){
             Log.e(TAG, e.toString());
             finalResult = false;
             // Clear what is in the returnStringCurrently and set all to fail
             returnString = new StringBuilder();
-            returnString.append("FFFF");
+            returnString.append("F");
         }
     }
 
     /**
-     * Used to test sending and receiving a string from the given output com port to the
-     * given input com port. Will write to file with results for each step and also if there
+     * Used to test sending and receiving a string with J1708 (/dev/ttyACM4). Will write to file with results for each step and also if there
      * are any errors.
      * @param fileToSendOutOf
-     *      The string for the file name for the com port which you are sending out of
+     *      The file to send out of
      * @param fileToReceiveIn
-     *      The string for the file name for the com port which you are receiving in
-     * @param inputString
-     *      If "" then will use the text for the edittext, else will use to inputted string to send.
+     *      The file to receive in
      */
-    public String writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn, final String inputString) throws FileNotFoundException {
+    public String writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn) throws FileNotFoundException {
 
+        // The string that is sent
         StringBuilder sentSB = new StringBuilder();
+        // The string that is received
         StringBuilder readSB = new StringBuilder();
-        resultStringBuilder = new StringBuilder();
+
+        // Result of individual writeReceiveTest
         pass = true;
 
         inputStream = new FileInputStream(fileToReceiveIn);
@@ -150,44 +143,41 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
             // Set to whatever is inputted by the user
             outputStream = new FileOutputStream(fileToSendOutOf);
 
-            String temp = inputString;
+            // Sending "~1j1708(checksum)~"
+            byte[] bytesToSend = {(byte)0x7e,(byte)0x31,(byte)0x6a,(byte)0x31,(byte)0x37,(byte)0x30,(byte)0x38,(byte)0x0a,(byte)0x8b,(byte)0x7e};
 
-            // Code below used to add new line byte to bytesToSend
-            byte[] originalWords = temp.getBytes();
-            byte[] bytesToSend = new byte[originalWords.length + 1];
-
-            for(int i = 0; i < originalWords.length; i++){
-                bytesToSend[i] = originalWords[i];
-            }
-
-            bytesToSend[originalWords.length] = (byte) 10;
-
+            // Write bytes to /dev/ttyMICRONET_J1708
             outputStream.write(bytesToSend);
 
             // Display information
-            Log.i(TAG, "Bytes sent : " + bytesToSend.length + " out of " + fileToSendOutOf.getName() + ". String sent - \"" + temp + "\"");
+            Log.i(TAG, "Bytes sent : " + bytesToSend.length + " out of " + fileToSendOutOf.getName() + ". String sent - \"j1708\"");
             Log.i(TAG, Arrays.toString(bytesToSend));
 
-            // Add newline char so when comparison is done between string sent and received they will be the same
-            sentSB.append(temp);
-            sentSB.append('\n');
+            sentSB.append("j1708");
 
             outputStream.close();
 
         }catch (Exception e){
             Log.e(TAG, e.toString());
             finalResult = false;
-            resultStringBuilder.append("Error writing from " + fileToSendOutOf.getName() + "\n");
             pass = false;
+        }
+
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
         }
 
         // After the data has been sent now try to read the data.
         try{
             sb = new StringBuilder();
 
-            readBuffer = new byte [32];
-            char[] bufferChar = new char [32];
+            readBuffer = new byte [128];
+            char[] bufferChar = new char [128];
 
+            // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
+            // (for example if canbus wires don't send or receive the data properly).
             Callable<Integer> readTask = new Callable<Integer>() {
                 @Override
                 public Integer call() throws Exception {
@@ -210,56 +200,57 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
             }
 
             // Display resulting information
-            Log.i(TAG, "Bytes read : " + bytesRead + " in " + fileToReceiveIn.getName() + ". String received - \"" + sb.toString().substring(0, sb.toString().length()-1) + "\"");
+            Log.i(TAG, "Bytes read : " + bytesRead + " in " + fileToReceiveIn.getName() + ". String received - \"" + sb.toString() + "\"");
             Log.i(TAG, Arrays.toString(readBuffer));
 
             readSB.append(sb.toString());
 
+            executor.shutdownNow();
+
             inputStream.close();
 
         }catch (TimeoutException e){
-            Log.e(TAG, "Error reading in " + fileToReceiveIn .getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
+            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
             finalResult = false;
-            try {
-                inputStream.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            resultStringBuilder.append("Error reading in " + fileToSendOutOf.getName() + " | Read took longer than allowed time (2 seconds): " + e.toString() + "\n");
             pass = false;
-        }catch (Exception e){
-            Log.e(TAG, "Error reading in " + fileToReceiveIn .getName() + ": " + e.toString());
-            finalResult = false;
-            try {
-                inputStream.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
 
-            resultStringBuilder.append("Error reading in " + fileToSendOutOf.getName() + ": " + e.toString() + "\n");
+            try {
+                inputStream.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }catch (Exception e){
+            Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + ": " + e.toString());
+            finalResult = false;
             pass = false;
+
+            try {
+                inputStream.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
 
-        // Check to make sure that sent string is the same as the read string.
-        // Then write to the file to results.
-        if(readSB.toString().contains(sentSB.toString())){
-            resultStringBuilder.append("SUCCESS: Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " correctly.\n");
+        // Check to make sure that sent string contains j1708 characters.
+        if(readSB.toString().contains("j1708")){
+            Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
+            // (used to write to the file here, but don't need to anymore since the app uses a broadcast)
         }else {
             finalResult = false;
+            pass = false;
 
-            // Get strings without newline chars
-            StringBuilder sent = new StringBuilder(sentSB.toString().substring(0, (sentSB.toString()).length()-1));
+            StringBuilder sent = new StringBuilder(sentSB.toString());
 
             StringBuilder read = new StringBuilder("");
-            // Make sure the length of the string is greater than zero before you try to erase last char
             if(readSB.toString().length() > 0){
-                read.append(readSB.toString().substring(0, (readSB.toString()).length()-1));
+                read.append(readSB.toString());
             }
 
-            resultStringBuilder.append("FAILED: Data sent out of " + fileToSendOutOf.getName() + " was not received in " + fileToReceiveIn.getName() + " correctly. Sent - \"" + sent.toString() + "\" | Read - \"" + read.toString() + "\"\n");
             Log.e(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was not received in " + fileToReceiveIn.getName() + " correctly. Sent - \"" + sent.toString() + "\" | Read - \"" + read.toString() + "\"");
-            pass = false;
+
         }
-        return String.valueOf(resultStringBuilder);// resultStringBuilder.toString()
+
+        // Only return whether the test passed or failed.
+        return String.valueOf(pass);
     }
 }

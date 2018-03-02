@@ -48,12 +48,10 @@ if %ERRORLEVEL% == 1 (
 	
 	setlocal EnableDelayedExpansion
 	set %1_test=fail
-	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results %1_test 0
-	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results %1_test 0
+	call update_last_result.bat %1_test 0
 	endlocal
 ) else (
-	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results %1_test 1
-	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results %1_test 1
+	call update_last_result.bat %1_test 1
 )
 
 exit /b
@@ -200,10 +198,12 @@ if /I "%TEST_TYPE%"=="Board" (
 
 if /I "%TEST_TYPE%"=="System" (
 	rem Insert new result
-	call insert_result.bat system_results '%test_script_version%' '%DEVICE_TYPE%'
+	call insert_result.bat system_results
+	call update_last_result.bat test_version '%test_script_version%'
+	call update_last_result.bat device_type '%DEVICE_TYPE%'
 	
 	rem Update serial
-	call update_last_result.bat system_results serial '%deviceSN%'
+	call update_last_result.bat serial '%deviceSN%'
 
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -212,11 +212,13 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	rem Insert new result
-	call insert_result.bat board_results '%test_script_version%' '%DEVICE_TYPE%'
+	call insert_result.bat board_results
+	call update_last_result.bat test_version '%test_script_version%'
+	call update_last_result.bat device_type '%DEVICE_TYPE%'
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat board_results a8_serial '%deviceSN%'
-	call update_last_result.bat board_results uut_serial '%uutSerial%'
+	call update_last_result.bat a8_serial '%deviceSN%'
+	call update_last_result.bat uut_serial '%uutSerial%'
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -235,11 +237,9 @@ rem ******************* Total Test Status **********************
 :total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
-	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results all_tests 0
-	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results all_tests 0
+	call update_last_result.bat all_tests 0
 ) else (
-	if /I "%TEST_TYPE%"=="System" call update_last_result.bat system_results all_tests 1
-	if /I "%TEST_TYPE%"=="Board" call update_last_result.bat board_results all_tests 1
+	call update_last_result.bat all_tests 1
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed

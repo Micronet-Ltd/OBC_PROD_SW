@@ -64,7 +64,7 @@ set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** WiFi %xprvar% %cell_fail%
 @echo WiFi test - failed %cell_fail% >> testResults\%result_file_name%.txt
-call update_last_result.bat system_results wifi_rssi '%WiFiValue%'
+call update_last_result.bat wifi_rssi '%WiFiValue%'
 goto :_end_of_file
 
 rem   ############## TEST STATUS ############
@@ -73,7 +73,7 @@ set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** WiFi %xprvar% WiFi RSSI = %WiFiValue%
 @echo WiFi test - passed >> testResults\%result_file_name%.txt
-call update_last_result.bat system_results wifi_rssi '%WiFiValue%'
+call update_last_result.bat wifi_rssi '%WiFiValue%'
 goto _end_of_file
 
 
