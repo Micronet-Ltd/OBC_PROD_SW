@@ -15,7 +15,3 @@ OS_VERSION:TREQr_5_0.1.6.0_20170815.1707
 
 --- Wifi Test ---
 GoodWifiRSSI:94
-
----"Other" Files. These test/summary files are only used if Test Type is set to "Other" ---
-TEST_FILE:system_tests.dat
-SUMMARY_FILE:summary.csv

@@ -3,16 +3,16 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.37_test_selection_db
+set test_script_version=1.2.38
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
 call :set_up_test
 
 cls
-echo ------------------------------------------------------------------------------------------------------
-echo  starting test, test script version is : %test_script_version%, %DEVICE_TYPE%, %language_choice%
-echo ------------------------------------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------------------------------------
+echo  starting test, test script version is : %test_script_version%, %TEST_TYPE% %DEVICE_TYPE%, %language_choice%
+echo -----------------------------------------------------------------------------------------------------------
 
 rem connect to device over hotspot
 call adb_connect.bat
