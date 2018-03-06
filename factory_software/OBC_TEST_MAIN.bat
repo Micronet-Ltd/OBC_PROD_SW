@@ -42,7 +42,6 @@ rem ****************************************************************************
 rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
 if %ERRORLEVEL% == 1 (
-	echo ******* %1 failed
 	set OBC_TEST_STATUS=Fail
 	set %1_test=fail
 	
@@ -192,8 +191,14 @@ if /I "%TEST_TYPE%"=="System" (
 if /I "%TEST_TYPE%"=="Board" (
 	rem if board test then set summary file to uut serial
 	set /p uutSerial=Scan the uut Serial Number: 
-	set result_file_name=%uutSerial%
 	echo.
+)
+
+rem Seperate so result_file_name can update
+rem Batch can't update vars in if statement unless you use start local/end local
+if /I "%TEST_TYPE%"=="Board" (
+	rem if board test then set summary file to uut serial
+	set result_file_name=%uutSerial%
 )
 
 if /I "%TEST_TYPE%"=="System" (
@@ -359,6 +364,10 @@ set uutSerial=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
 set imeiEnd=
+cd testResults
+rem Update the csv files.
+call export_results.bat
+cd ..
 cd ..
 timeout /t 2 /NOBREAK > nul
 color 07
