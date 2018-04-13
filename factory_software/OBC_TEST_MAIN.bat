@@ -209,7 +209,7 @@ if /I "%TEST_TYPE%"=="System" (
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
 	
-	call update_last_result.bat date '%DATE:~0,10%'
+	call update_last_result.bat date "%DATE:~0,10%"
 	
 	rem Update serial
 	call update_last_result.bat serial '%deviceSN%'
@@ -225,7 +225,7 @@ if /I "%TEST_TYPE%"=="Board" (
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
 	
-	call update_last_result.bat date '%DATE:~0,10%'
+	call update_last_result.bat date "%DATE:~0,10%"
 	
 	rem Update tester serial and uut serial
 	call update_last_result.bat a8_serial '%deviceSN%'
