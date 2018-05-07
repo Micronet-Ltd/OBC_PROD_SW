@@ -4,6 +4,7 @@ version
 led
 sd_card
 wifi
+cell
 canbus
 swc
 j1708
