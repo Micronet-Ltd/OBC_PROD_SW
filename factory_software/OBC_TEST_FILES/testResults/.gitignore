@@ -4,3 +4,4 @@
 
 # allow
 !sqlite3.exe
+!query_strings/*

@@ -1,0 +1,10 @@
+.headers on
+.mode csv
+.output system_summary.csv
+SELECT * FROM system_results;
+
+.output board_summary.csv
+SELECT * FROM board_results;
+
+.output SerialIMEI.csv
+SELECT serial, imei FROM system_results;

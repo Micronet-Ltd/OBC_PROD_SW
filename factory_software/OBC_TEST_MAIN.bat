@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.1
+set test_script_version=1.2.38.2
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
@@ -20,8 +20,6 @@ rem Set up result files
 call :set_up_result_files
 rem install test apk files
 call install_files.bat
-
-if /I "%test_file%" == "" set OBC_TEST_STATUS=Fail
 
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
@@ -209,8 +207,6 @@ if /I "%TEST_TYPE%"=="System" (
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
 	
-	call update_last_result.bat date "%DATE:~0,10%"
-	
 	rem Update serial
 	call update_last_result.bat serial '%deviceSN%'
 
@@ -224,8 +220,6 @@ if /I "%TEST_TYPE%"=="Board" (
 	call insert_result.bat board_results
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
-	
-	call update_last_result.bat date "%DATE:~0,10%"
 	
 	rem Update tester serial and uut serial
 	call update_last_result.bat a8_serial '%deviceSN%'
