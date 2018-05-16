@@ -19,8 +19,19 @@ rem These turn off both speakers.
 ..\adb shell mctl api 0213001C00 > nul 
 
 :_right_speaker
+rem The propagation delay from sending broadcast message till audio is played is something 
+rem that may differ between one test to another. 
+rem When CPU plays audio, it enables both speakers. In this test the left speaker needs to 
+rem be disabled after the audio start playing.  Since it can’t be known when the exact moment 
+rem audio starts is – many speaker disable commands are sent. The amount of commands is based
+rem on practical measurements.
+ 
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT > nul
-..\adb shell mctl api 0213000601 > nul rem This turns the right speaker on.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
+..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
@@ -42,8 +53,19 @@ set RIGHTFAIL=1
 goto :_left_speaker
 
 :_left_speaker
+rem The propagation delay from sending broadcast message till audio is played is something 
+rem that may differ between one test to another. 
+rem When CPU plays audio, it enables both speakers. In this test the reight speaker needs to 
+rem be disabled after the audio start playing.  Since it can’t be known when the exact moment 
+rem audio starts is – many speaker disable commands are sent. The amount of commands is based
+rem on practical measurements.
+
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT > nul
-..\adb shell mctl api 0213001C01 > nul rem This turns the left speaker on.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
