@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.2
+set test_script_version=1.2.38.3
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
