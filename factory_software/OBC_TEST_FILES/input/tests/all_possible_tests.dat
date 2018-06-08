@@ -17,4 +17,5 @@ accelerometer
 gpio
 gpio_inputs
 wiggle
+uninstall_apps
 supercap

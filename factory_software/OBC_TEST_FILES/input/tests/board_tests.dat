@@ -11,4 +11,5 @@ rtc
 accelerometer
 gpio_inputs
 wiggle
+uninstall_apps
 supercap

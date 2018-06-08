@@ -96,8 +96,8 @@ if /I %choice% == Y goto _start_test
 
 :_end_of_file
 rem Uninstall app
-..\adb uninstall com.micronet.obctestingapp > nul
-..\adb uninstall me.davidvassallo.nfc > nul
+rem ..\adb uninstall com.micronet.obctestingapp > nul
+rem ..\adb uninstall me.davidvassallo.nfc > nul
 if exist %file_name% del %file_name%
 set file_name= 
 set input1= 

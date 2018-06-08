@@ -1,16 +1,12 @@
 All settings are case-insensitive.
-*Test Type* can be "System" or "Board".
-*Device Type* can be "MTR-A001-001", "MTR-A002-001", "MTR-A003-001", or "UD" (Under Dash).
 *Language* can be "English" or "Chinese".
 
 --- Test Setup ---
-TEST_TYPE:System
-DEVICE_TYPE:MTR-A003-001
 LANGUAGE:English
 
 --- Version Test ---
 FPGA_VERSION:0x41000003
-MCU_VERSION:a.2.6.0
+MCU_VERSION:a.2.8.0
 OS_VERSION:TREQr_5_0.1.6.0_20170815.1707
 
 --- Wifi Test ---

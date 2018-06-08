@@ -6,6 +6,11 @@ rem echo              SUPERCAP TEST
 rem echo ------------------------------------
 set sc_voltage_file_name=sc_test.txt
 set tmp_file_name=tmp.txt
+
+rem Uninstall apps
+..\adb uninstall com.micronet.obctestingapp > nul
+..\adb uninstall me.davidvassallo.nfc > nul
+
 rem If language file is not set then default to english
 if not defined language_file set language_file=input/English.dat
 

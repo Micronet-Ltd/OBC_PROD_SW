@@ -8,6 +8,7 @@ canbus
 swc
 j1708
 com
+rs485
 audio
 temperature
 rtc

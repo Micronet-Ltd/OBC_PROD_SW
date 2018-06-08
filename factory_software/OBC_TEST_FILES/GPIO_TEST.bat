@@ -116,8 +116,8 @@ goto _ask_if_retry
 
 :_end_of_file
 rem Uninstall app
-..\adb uninstall com.micronet.obctestingapp > nul
-..\adb uninstall me.davidvassallo.nfc > nul
+rem ..\adb uninstall com.micronet.obctestingapp > nul
+rem ..\adb uninstall me.davidvassallo.nfc > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.2
+set test_script_version=1.2.39_dev
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
@@ -11,7 +11,7 @@ call :set_up_test
 
 cls
 echo ----------------------------------------------------------------------------------------------------
-echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_TYPE%, %language_choice%
+echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
 echo ----------------------------------------------------------------------------------------------------
 
 rem connect to device over hotspot
@@ -70,10 +70,31 @@ rem Select the language from the language file
 call :language_selection
 
 rem Reset variable values
-call :reset_result_variables
+set imei_test=
+set serial_test=
+set version_test=
+set led_test=
+set sd_card_test=
+set canbus_test=
+set wifi_test=
+set swc_test=
+set j1708_test=
+set com_test=
+set rs485_test=
+set nfc_test=
+set help_key_test=
+set audio_test=
+set temperature_test=
+set rtc_test=
+set accelerometer_test=
+set gpio_test=
+set wiggle_test=
+set supercap_test=
 
-rem Select the test type and device type from the dat file
-call :test_selection
+rem Set the test type, device type, and test file from the parameters passed in
+set TEST_TYPE=%1
+set DEVICE_INFO=%2
+set TEST_FILE=%3
 
 exit /b
 
@@ -105,75 +126,9 @@ exit /b
 set language_file=input/Chinese.dat
 exit /b
 
-
-rem ************** Test Selection Function *********************
-:test_selection
-rem Select test
-set TEST_FILE=
-set DEVICE_TYPE=
-set SUMMARY_FILE=
-set TEST_TYPE=
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "TEST_FILE" set TEST_FILE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "SUMMARY_FILE" set SUMMARY_FILE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "DEVICE_TYPE" set DEVICE_TYPE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "TEST_TYPE" set TEST_TYPE=%%j
-)
-
-if /I "%TEST_TYPE%"=="System" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=system_a001_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=system_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=system_tests.dat
-	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=system_ud_tests.dat
-)
-if /I "%TEST_TYPE%"=="Board" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=board_ud_tests.dat
-)
-
-exit /b
-
-rem **************** Result Variables Function *****************
-:reset_result_variables
-rem Reset result variables
-set imei_test=
-set serial_test=
-set version_test=
-set led_test=
-set sd_card_test=
-set canbus_test=
-set wifi_test=
-set swc_test=
-set j1708_test=
-set com_test=
-set nfc_test=
-set help_key_test=
-set audio_test=
-set temperature_test=
-set rtc_test=
-set accelerometer_test=
-set gpio_test=
-set wiggle_test=
-set supercap_test=
-
-exit /b
-
 rem *************** Set Up Result Files Function ***************
 :set_up_result_files
 rem Set up result files depending on test type and board type
-set summaryFile=
 
 rem Make sure DB is set up
 call create_tables.bat
@@ -203,9 +158,9 @@ if /I "%TEST_TYPE%"=="Board" (
 
 if /I "%TEST_TYPE%"=="System" (
 	rem Insert new result
-	call insert_result.bat system_results
+	call insert_result.bat
 	call update_last_result.bat test_version '%test_script_version%'
-	call update_last_result.bat device_type '%DEVICE_TYPE%'
+	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update serial
 	call update_last_result.bat serial '%deviceSN%'
@@ -217,13 +172,13 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	rem Insert new result
-	call insert_result.bat board_results
+	call insert_result.bat
 	call update_last_result.bat test_version '%test_script_version%'
-	call update_last_result.bat device_type '%DEVICE_TYPE%'
+	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat a8_serial '%deviceSN%'
-	call update_last_result.bat uut_serial '%uutSerial%'
+	call update_last_result.bat serial '%deviceSN%'
+	call update_last_result.bat board_serial '%uutSerial%'
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -318,6 +273,9 @@ if "%j1708_test%" == "fail" (
 if "%com_test%" == "fail" (
 	echo ** Com Port %xprvar%
 )
+if "%rs485_test%" == "fail" (
+	echo ** RS485 %xprvar%
+)
 if "%nfc_test%" == "fail" (
 	echo ** NFC %xprvar%
 )
@@ -359,7 +317,6 @@ set language_choice_file=
 set language_choice=
 set language_file=
 set TEST_TYPE=
-set summaryFile=
 set uutSerial=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
