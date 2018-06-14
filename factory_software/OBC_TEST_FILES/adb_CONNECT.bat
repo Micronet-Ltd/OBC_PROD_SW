@@ -36,7 +36,7 @@ set /p OBC_TESTER_WLAN_CON=<%network_file_name%
 rem read the first letter of the File which its context can be either:
 rem Connection request was completed successfully.       OR
 rem There is no profile assigned to the specified interface.
-rem if the 1st letter is 'c', connection succeded or 'a' already connected, else faild
+rem if the 1st letter is 'c', connection succeded or 'a' already connected, else fail
 rem echo %OBC_TESTER_WLAN_CON%
 
 if %OBC_TESTER_WLAN_CON:~0,1% == c goto _root_loop

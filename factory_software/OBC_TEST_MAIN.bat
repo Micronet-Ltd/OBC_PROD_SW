@@ -6,10 +6,44 @@ rem ************************************************************
 set test_script_version=1.2.39_dev
 set ERRORLEVEL=0
 
+rem Make sure all parameters passed in
+set continue=
+if "%1"=="" set continue=false
+if "%2"=="" set continue=false
+if "%3"=="" set continue=false
+
+rem Make sure test type is system or board
+if /I "%1"=="System" goto _correct_test_type
+if /I "%1"=="Board" goto _correct_test_type
+set continue=false
+:_correct_test_type
+
+rem Make sure test file exists
+cd OBC_TEST_FILES\input\tests
+if exist %3 goto _test_file_exists
+set continue=false
+:_test_file_exists
+cd ..\..\..
+
+if "%continue%"=="false" (
+	echo.
+	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file]
+	echo.
+	echo *** test_type should either be "System" or "Board"
+	echo *** device_info should be the info/type of device, it can be anything because it is only logged
+	echo *** test_file should a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
+)
+if "%continue%"=="false" goto :eof 
+
+rem Set the test type, device type, and test file from the parameters passed in
+set TEST_TYPE=%1
+set DEVICE_INFO=%2
+set TEST_FILE=%3
+
 rem Prepare the test so it is ready to run
+cls
 call :set_up_test
 
-cls
 echo ----------------------------------------------------------------------------------------------------
 echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
 echo ----------------------------------------------------------------------------------------------------
@@ -41,16 +75,26 @@ rem ****************************************************************************
 
 rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
+if /I "%1"=="uninstall_apps" exit /b
+
+set column=%1
+rem echo %column%
+
+if /I "%1"=="audio_ud" set column=audio
+if /I "%1"=="led_ud" set column=led
+
+rem echo %column%
+
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STATUS=Fail
-	set %1_test=fail
+	set %column%_test=fail
 	
 	setlocal EnableDelayedExpansion
-	set %1_test=fail
-	call update_last_result.bat %1_test 0
+	set %column%_test=fail
+	call update_last_result.bat %column%_test 0
 	endlocal
 ) else (
-	call update_last_result.bat %1_test 1
+	call update_last_result.bat %column%_test 1
 )
 
 exit /b
@@ -90,11 +134,6 @@ set accelerometer_test=
 set gpio_test=
 set wiggle_test=
 set supercap_test=
-
-rem Set the test type, device type, and test file from the parameters passed in
-set TEST_TYPE=%1
-set DEVICE_INFO=%2
-set TEST_FILE=%3
 
 exit /b
 
@@ -159,11 +198,11 @@ if /I "%TEST_TYPE%"=="Board" (
 if /I "%TEST_TYPE%"=="System" (
 	rem Insert new result
 	call insert_result.bat
-	call update_last_result.bat test_version '%test_script_version%'
+	call update_last_result.bat test_version "%test_script_version%"
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update serial
-	call update_last_result.bat serial '%deviceSN%'
+	call update_last_result.bat serial "%deviceSN%"
 
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -173,12 +212,12 @@ if /I "%TEST_TYPE%"=="System" (
 if /I "%TEST_TYPE%"=="Board" (
 	rem Insert new result
 	call insert_result.bat
-	call update_last_result.bat test_version '%test_script_version%'
+	call update_last_result.bat test_version "%test_script_version%"
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat serial '%deviceSN%'
-	call update_last_result.bat board_serial '%uutSerial%'
+	call update_last_result.bat serial "%deviceSN%"
+	call update_last_result.bat board_serial "%uutSerial%"
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
@@ -186,6 +225,9 @@ if /I "%TEST_TYPE%"=="Board" (
 	@echo UUT SN : %uutSerial%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
+
+call update_last_result.bat test_type "%TEST_TYPE%"
+call update_last_result.bat test_file "%TEST_FILE%"
 
 exit /b
 

@@ -38,3 +38,5 @@ Wiggle Test - Tap the device
 WiFi test failed. Would you like to retry [Y/N]
 Are you retesting a previously tested device? [Y/N] 
  ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
+Is the LED white and bright?[Y/N] ?
+Do you hear the speaker [Y/N] ?

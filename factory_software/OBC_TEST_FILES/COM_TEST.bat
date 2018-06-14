@@ -18,6 +18,9 @@ rem echo ------------------------------------
 rem echo               Com Ports test            
 rem echo ------------------------------------
 
+rem Disable RS485
+..\adb shell "mctl api 0213041b00" > nul
+
 :_test_loop
 rem For testing, Com 1 and Com 2 are 'connected' and Com 3 and Com 4 are 'connected'
 rem Result code 0 = app isn't installed or started, 1 = success, 2 = fail and result data will contain which ones failed

@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS results (
 	dt datetime default current_timestamp,
 	test_version text,
 	test_type text,
+	test_file text,
 	device_info text,
 	serial text,
 	board_serial text,

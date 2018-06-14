@@ -12,11 +12,8 @@ rem echo ------------------------------------
 rem echo                Temperature Test            
 rem echo ------------------------------------
 
-
 :_test_get_temperature
-
 ..\adb shell mctl api 02040A > %file_name%
-
 set /p temperature=<%file_name%
 set temperature=%temperature:~25,4%
 rem @echo %temperature%
@@ -40,9 +37,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo ** Temperature %xprvar% Expected temperature 20-50c got %temperature%
 @echo Temperature  test - failed Expected temperature 20-50c got %temperature%  >> testResults\%result_file_name%.txt
 
-
 :_end_of_file
 if exist %file_name% del %file_name%
-
 set file_name= 
 set temperature= 

@@ -23,9 +23,9 @@ rem 		 1 = success,
 rem 		 2 = fail and result data will contain which ones failed,
 rem In the case that it fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "P"
-rem The "P" is for tx out of Can1 and a successful response rx in Can1
+rem The "P" is for tx out of RS485 and a successful response rx in RS485
 rem So if there is a failure then the resulting data would look like "F":
-rem The "F" means tx out of Can1 and not a succesful response rx in Can1
+rem The "F" means tx out of RS485 and not a succesful response rx in RS485
 
 rem Enable RS485
 ..\adb shell "mctl api 0213041b01" > nul
@@ -77,8 +77,8 @@ goto _end_of_file
 
 
 :_end_of_file
-rem Uninstall app
-rem ..\adb uninstall com.micronet.obctestingapp > nul
+rem Disable RS485
+..\adb shell "mctl api 0213041b00" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 
