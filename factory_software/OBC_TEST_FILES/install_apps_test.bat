@@ -15,3 +15,5 @@ rem invoke the nfc test application
 ..\adb shell "am start  -n 'me.davidvassallo.nfc/me.davidvassallo.nfc.MainActivity' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER" >nul 2>&1
 
 timeout /T 3 /NOBREAK > nul
+
+echo ** Apps Installed

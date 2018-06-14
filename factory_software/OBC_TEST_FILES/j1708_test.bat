@@ -28,8 +28,7 @@ rem The "P" is for tx out of J1708 and a successful response rx in J1708
 rem So if there is a failure then the resulting data would look like "F":
 rem The "F" means tx out of J1708 and not a succesful response rx in J1708
 
-rem Disable then enable j1708 power
-..\adb shell "mctl api 0213020000" > nul
+rem Enable j1708 power
 ..\adb shell "mctl api 0213020001" > nul
 
 rem Send broadcast to run test and get result
@@ -79,6 +78,8 @@ goto _end_of_file
 
 
 :_end_of_file
+rem Disable j1708
+rem ..\adb shell "mctl api 0213020000" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

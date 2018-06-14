@@ -79,6 +79,9 @@ goto _end_of_file
 :_end_of_file
 rem Disable RS485
 ..\adb shell "mctl api 0213041b00" > nul
+rem Reconfigure port tty flags. This is done to make sure the com test works after this.
+..\adb shell "busybox stty -F /dev/ttyUSB1 500:5:cbd:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0" > nul
+..\adb shell "busybox stty -F /dev/ttyUSB1 9600" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

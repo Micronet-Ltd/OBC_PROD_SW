@@ -4,4 +4,4 @@
 SELECT * FROM results;
 
 .output SerialIMEI.csv
-SELECT serial, imei FROM results;
+SELECT serial, imei FROM results WHERE test_type="System";

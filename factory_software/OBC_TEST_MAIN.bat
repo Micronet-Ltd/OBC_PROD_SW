@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39_dev
+set test_script_version=1.2.39-dev
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
@@ -30,8 +30,8 @@ if "%continue%"=="false" (
 	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file]
 	echo.
 	echo *** test_type should either be "System" or "Board"
-	echo *** device_info should be the info/type of device, it can be anything because it is only logged
-	echo *** test_file should a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
+	echo *** device_info should be the info/type of device, ex. "UnderDash"
+	echo *** test_file should be a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
 )
 if "%continue%"=="false" goto :eof 
 
@@ -52,8 +52,6 @@ rem connect to device over hotspot
 call adb_connect.bat
 rem Set up result files
 call :set_up_result_files
-rem install test apk files
-call install_files.bat
 
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
@@ -75,6 +73,7 @@ rem ****************************************************************************
 
 rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
+if /I "%1"=="install_apps" exit /b
 if /I "%1"=="uninstall_apps" exit /b
 
 set column=%1

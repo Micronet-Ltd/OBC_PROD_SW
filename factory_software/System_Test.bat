@@ -1,3 +1,1 @@
-@echo off
-
-call OBC_TEST_MAIN.bat System MTR-A001-001 system_tests.dat
+call OBC_TEST_MAIN.bat System MTR-A002-001 system_tests.dat
