@@ -29,7 +29,7 @@ rem So if there is a failure then the resulting data would look like "F":
 rem The "F" means tx out of J1708 and not a succesful response rx in J1708
 
 rem Enable j1708 power
-..\adb shell "mctl api 0213020001" > nul
+..\adb shell "mctl api 02fc01" > nul
 
 rem Send broadcast to run test and get result
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_J1708_RESULT> %temp_result%
@@ -79,7 +79,7 @@ goto _end_of_file
 
 :_end_of_file
 rem Disable j1708
-rem ..\adb shell "mctl api 0213020000" > nul
+..\adb shell "mctl api 02fc00" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

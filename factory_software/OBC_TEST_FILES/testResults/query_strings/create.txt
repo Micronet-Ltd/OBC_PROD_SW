@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS results (
 	sd_card_test boolean,
 	wifi_rssi text,
 	wifi_test boolean,
+	cell_asu text,
+	cell_test boolean,
 	canbus_test boolean,
 	swc_test boolean,
 	j1708_test boolean,

@@ -1,1 +1,1 @@
-call OBC_TEST_MAIN.bat Board SmartCradle board_sc_tests.dat
+call OBC_TEST_MAIN.bat Board SmartCradle board_smart_cradle_tests.dat
