@@ -49,7 +49,7 @@ goto _ask_if_retry
 
 :_ask_if_retry
 set "xprvar="
-for /F "skip=14 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+for /F "skip=42 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _test_loop
 if /I "%option%"=="N" goto _test_fail

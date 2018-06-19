@@ -120,6 +120,7 @@ set led_test=
 set sd_card_test=
 set canbus_test=
 set wifi_test=
+set cell_test=
 set swc_test=
 set j1708_test=
 set com_test=
@@ -301,6 +302,9 @@ if "%sd_card_test%" == "fail" (
 )
 if "%wifi_test%" == "fail" (
 	echo ** WiFi %xprvar%
+)
+if "%cell_test%" == "fail" (
+	echo ** Cell %xprvar%
 )
 if "%canbus_test%" == "fail" (
 	echo ** CANBus %xprvar%
