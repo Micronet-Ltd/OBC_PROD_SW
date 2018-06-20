@@ -30,7 +30,7 @@
   * Led_ud and audio_ud are tests that only use one led and one speaker.
 
 Here are some example test files:
-![alt text](http://192.168.1.234:8080/blob/software%2FTests%2FOBC_PROD_SW.git/v.1.2.39/example_tests.JPG "Examples of 'test.dat' files")
+![Examples of 'test.dat' files](http://192.168.1.234:8080/raw/software/Tests/OBC_PROD_SW.git/v.1.2.39/example_tests.JPG "Examples of 'test.dat' files")
  
 ### How to use this new setup
 To use this new setup, create a new .bat file in the same folder as the OBC_TEST_MAIN.bat file and run the batch file. You can also run these directly from the command line. Here are some examples:
