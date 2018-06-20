@@ -20,7 +20,7 @@
   * Test_file should be a test .dat file in OBC_TEST_FILES/input/tests folder, ex. “system_tests.dat”
     * The test file you use determines all the tests that will be run. 
 
-### Creating/Editing test files.
+### Creating/Editing test .dat files.
   * Test .dat files are located in OBC_TEST_FILES/input/tests.
   * All possible tests are located in that folder in “all_possible_tests.dat”.
   * To edit .dat files, just delete lines or add other tests in.
@@ -49,3 +49,11 @@ The settings file is still the same and is located still at OBC_TEST_FILES/input
 
 ### Result Files
 Result files are still located at OBC_TEST_FILES/testResults. Individual test results are stored in the form of “[SerialNumber].txt”, ex. “4ca55e12.txt”. SerialIMEI.csv stores serial numbers and imei’s of devices tested. Summary.csv is exported from the database and stores all the test results. test_results.db contains all the test results and can be viewed with http://inloop.github.io/sqlite-viewer/. 
+
+### Creating/Adding New Tests
+There are a few steps that you must take to create/add a new test. Here are the steps:
+  1. Create a name for the test. For example, if you are creating a test that tests ignition, then the test batch file should be named "ignition_test.bat". **Test batch files must always end with "_test.bat".** That is because that is how the test files are called from the .dat test files. For example, when the test sees "audio" in .dat test file then it appends "_test.bat" to it and tries to call that batch file.
+  2. Rename or delete the current database that you already have. This is done to avoid conflicts when creating a new database.
+  3. Change the database create string to include a new column that stores whether the test passed or failed. For example, with the ignition test, you open create.txt located in \factory_software\OBC_TEST_FILES\testResults\query_strings\ and add a line with "ignition_test boolean," in the place where you want to be located. When the test sees "ignition" in the .dat file then it will run the ignition test batch file and store the result into "ignition_test", so it appends "_test" to it when it stores in the database. **Note that if the test sees a line that ends with "_ud" in the .dat test file then it will have different behavior. For example if it sees "audio_ud" then it will run "audio_ud_test.bat" but then it will remove the "_ud" and store the result in "audio_test" in the database.**  
+  4. Add "ignition" to one of the .dat test files and then run the test using the .dat test file.
+  

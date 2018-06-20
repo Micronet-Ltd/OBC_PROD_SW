@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39-dev
+set test_script_version=1.2.39-dev-1
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
@@ -113,27 +113,24 @@ rem Select the language from the language file
 call :language_selection
 
 rem Reset variable values
-set imei_test=
-set serial_test=
-set version_test=
-set led_test=
-set sd_card_test=
-set canbus_test=
-set wifi_test=
-set cell_test=
-set swc_test=
-set j1708_test=
-set com_test=
-set rs485_test=
-set nfc_test=
-set help_key_test=
-set audio_test=
-set temperature_test=
-set rtc_test=
-set accelerometer_test=
-set gpio_test=
-set wiggle_test=
-set supercap_test=
+set test=
+set temp=temp.txt
+if exist %temp% del %temp%
+
+setlocal EnableDelayedExpansion
+for /f "delims=" %%G in (input\tests\%test_file%) do (
+	set test=%%G
+	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	@echo !test!>>%temp%
+)
+endlocal
+
+for /f "delims=" %%G in (%temp%) do (
+    rem echo %%G
+	set %%G_test=
+)
+
+if exist %temp% del %temp%
 
 exit /b
 
@@ -276,7 +273,7 @@ exit /b
 
 rem ******************** Display Failures **********************
 :display_failures
-rem Display failures from the system test
+rem Display failures from the test
 
 echo.
 set "xprvar="
@@ -284,74 +281,28 @@ for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo %xprvar%
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-rem Check which tests failed and print which ones did fail
-if "%imei_test%" == "fail" (
-	echo ** IMEI %xprvar%
-)
-if "%serial_test%" == "fail" (
-	echo ** Serial %xprvar%
-)
-if "%version_test%" == "fail" (
-	echo ** Version %xprvar%
-)
-if "%led_test%" == "fail" (
-	echo ** LED %xprvar%
-)
-if "%sd_card_test%" == "fail" (
-	echo ** SD Card %xprvar%
-)
-if "%wifi_test%" == "fail" (
-	echo ** WiFi %xprvar%
-)
-if "%cell_test%" == "fail" (
-	echo ** Cell %xprvar%
-)
-if "%canbus_test%" == "fail" (
-	echo ** CANBus %xprvar%
-)
-if "%swc_test%" == "fail" (
-	echo ** SWC %xprvar%
-)
-if "%j1708_test%" == "fail" (
-	echo ** J1708 %xprvar%
-)
-if "%com_test%" == "fail" (
-	echo ** Com Port %xprvar%
-)
-if "%rs485_test%" == "fail" (
-	echo ** RS485 %xprvar%
-)
-if "%nfc_test%" == "fail" (
-	echo ** NFC %xprvar%
-)
-if "%help_key_test%" == "fail" (
-	echo ** Help Key %xprvar%
-)
-if "%audio_test%" == "fail" (
-	echo ** Audio %xprvar%
-)
-if "%temperature_test%" == "fail" (
-	echo ** Temperature %xprvar%
-)
-if "%rtc_test%" == "fail" (
-	echo ** Read RTC %xprvar%
-)
-if "%accelerometer_test%" == "fail" (
-	echo ** Accelerometer %xprvar%
-)
-if "%gpio_test%" == "fail" (
-	echo ** GPIO %xprvar%
-)
-if "%gpio_inputs_test%" == "fail" (
-	echo ** GPIO Inputs %xprvar%
-)
-if "%wiggle_test%" == "fail" (
-    echo ** Wiggle %xprvar%
-)
-if "%supercap_test%" == "fail" (
-	echo ** Supercap %xprvar%
+
+rem Check which tests did fail and print them
+for /f "delims=" %%G in (input\tests\%test_file%) do (
+	setlocal EnableDelayedExpansion
+	set test=%%G
+	
+	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	
+	set test=!test!_test
+	
+	rem echo !test!
+	
+	call :display_failures !test! !test:~0,-5!
+	endlocal
 )
 
+exit /b
+
+:display_failures <var_name> <test_name>
+rem echo %1
+rem echo !%1!
+if /I "!%1!"=="fail" echo ** %2 %xprvar%
 exit /b
 
 rem ******************** Display Failures **********************
