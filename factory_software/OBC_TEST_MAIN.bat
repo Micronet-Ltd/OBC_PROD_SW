@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39-dev-1
+set test_script_version=1.2.39-dev-2
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
@@ -79,8 +79,7 @@ if /I "%1"=="uninstall_apps" exit /b
 set column=%1
 rem echo %column%
 
-if /I "%1"=="audio_ud" set column=audio
-if /I "%1"=="led_ud" set column=led
+if /I "%column:~-3%"=="_ud" set column=%column:~0,-3%
 
 rem echo %column%
 
@@ -90,10 +89,10 @@ if %ERRORLEVEL% == 1 (
 	
 	setlocal EnableDelayedExpansion
 	set %column%_test=fail
-	call update_last_result.bat %column%_test 0
+	call update_last_result.bat %column%_test "0"
 	endlocal
 ) else (
-	call update_last_result.bat %column%_test 1
+	call update_last_result.bat %column%_test "1"
 )
 
 exit /b
@@ -185,6 +184,10 @@ if /I "%TEST_TYPE%"=="Board" (
 	echo.
 )
 
+rem Insert result and get datetime
+call insert_result.bat
+call get_datetime.bat
+
 rem Seperate so result_file_name can update
 rem Batch can't update vars in if statement unless you use start local/end local
 if /I "%TEST_TYPE%"=="Board" (
@@ -193,31 +196,27 @@ if /I "%TEST_TYPE%"=="Board" (
 )
 
 if /I "%TEST_TYPE%"=="System" (
-	rem Insert new result
-	call insert_result.bat
 	call update_last_result.bat test_version "%test_script_version%"
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update serial
-	call update_last_result.bat serial "%deviceSN%"
-
+	call update_last_result.bat serial "'%deviceSN%"
+	
 	@echo. >> testResults\%result_file_name%.txt
-	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
 if /I "%TEST_TYPE%"=="Board" (
-	rem Insert new result
-	call insert_result.bat
 	call update_last_result.bat test_version "%test_script_version%"
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat serial "%deviceSN%"
-	call update_last_result.bat board_serial "%uutSerial%"
+	call update_last_result.bat serial "'%deviceSN%"
+	call update_last_result.bat board_serial "'%uutSerial%"
 	
 	@echo. >> testResults\%result_file_name%.txt
-	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo A8 SN : %deviceSN%  >> testResults\%result_file_name%.txt
 	@echo UUT SN : %uutSerial%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
@@ -236,9 +235,9 @@ rem ******************* Total Test Status **********************
 :total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
-	call update_last_result.bat all_tests 0
+	call update_last_result.bat all_tests "0"
 ) else (
-	call update_last_result.bat all_tests 1
+	call update_last_result.bat all_tests "1"
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed

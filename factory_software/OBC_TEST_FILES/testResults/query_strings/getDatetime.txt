@@ -1,0 +1,4 @@
+.headers off
+.mode csv
+.output datetime.txt
+select dt from results WHERE test_id = (SELECT MAX(test_id) FROM results);
