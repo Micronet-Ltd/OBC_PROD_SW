@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39-dev-2
+set test_script_version=1.2.39-dev-3
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
@@ -200,7 +200,7 @@ if /I "%TEST_TYPE%"=="System" (
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update serial
-	call update_last_result.bat serial "'%deviceSN%"
+	call update_last_result.bat serial "%deviceSN%"
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
@@ -212,8 +212,8 @@ if /I "%TEST_TYPE%"=="Board" (
 	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat serial "'%deviceSN%"
-	call update_last_result.bat board_serial "'%uutSerial%"
+	call update_last_result.bat serial "%deviceSN%"
+	call update_last_result.bat board_serial "%uutSerial%"
 	
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt

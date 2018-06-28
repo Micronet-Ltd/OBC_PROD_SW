@@ -1,16 +1,11 @@
 install_apps
 version
-led_ud
+sd_card
 canbus
 swc
 j1708
 com
-rs485
 audio_ud
 temperature
-rtc
-accelerometer
 gpio_inputs
-wiggle
 uninstall_apps
-supercap
