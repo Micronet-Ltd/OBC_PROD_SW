@@ -25,6 +25,7 @@ rem echo ------------------------------------
 rem echo               WiFi test            
 rem echo ------------------------------------
 
+timeout 3 > NUL
 :_test_loop
 set IMEIstring=%trueIMEI:~9,6%
 

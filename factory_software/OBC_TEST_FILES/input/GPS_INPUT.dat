@@ -1,0 +1,5 @@
+SatellitesUsedInFixLowerBound:3
+NumberOfSatellitesToIncludeInTopAverage:1
+AverageSNROfTopSatellitesLowerBound:40
+NumberOfTestRetries:3
+TimeToFirstFix:1000

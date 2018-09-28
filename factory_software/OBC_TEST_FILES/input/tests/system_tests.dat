@@ -4,11 +4,13 @@ version
 led
 sd_card
 wifi
+nfc
+cell
+gps
 canbus
 swc
 j1708
 com
-nfc
 help_key
 audio
 temperature

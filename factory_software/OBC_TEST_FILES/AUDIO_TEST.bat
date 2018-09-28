@@ -36,6 +36,8 @@ rem on practical measurements.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 
+timeout 2 >nul
+
 :_right_speaker_validation
 set choice=
 set "xprvar="
@@ -69,6 +71,8 @@ rem on practical measurements.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
 ..\adb shell mctl api 0213000600 > nul rem This turns the right speaker off.
+
+timeout 5 >nul
 
 :_left_speaker_validation
 set choice=
