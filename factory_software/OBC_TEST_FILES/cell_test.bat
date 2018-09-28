@@ -2,14 +2,14 @@
 
 set ERRORLEVEL=0
 
-set lowerBound=10
+set lowerBound=6
 set upperBound=32
 
 set temp_result=tmp.txt
 set cell_fail=
 set asuValue=
 
-call addNewAPN.bat
+call add_new_apn.bat
 
 rem If language file is not set then default to english
 if not defined language_file set language_file=input/English.dat
@@ -18,6 +18,7 @@ rem echo ------------------------------------
 rem echo               Cellular test            
 rem echo ------------------------------------
 
+timeout 6 > NUL
 :_test_loop
 rem Delete old result
 if exist %temp_result% del %temp_result%
