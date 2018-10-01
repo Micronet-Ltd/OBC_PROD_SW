@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Start GPS listening
-//        gps = new GPS(this.getApplicationContext());
+        gps = new GPS(this.getApplicationContext());
     }
 
 }
