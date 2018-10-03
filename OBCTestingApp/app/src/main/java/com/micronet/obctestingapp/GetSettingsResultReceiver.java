@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.Telephony;
+import android.telephony.ServiceState;
+import android.telephony.SignalStrength;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -78,6 +81,7 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(csvFile, true));
 
         boolean noFailures = true;
+        returnString.append("\r\n");
 
         for(int i = 0; i < data.size(); i++){
             String parameter = data.get(i)[0];
@@ -91,10 +95,18 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
             boolean testResult = defaultValue.equals(currentValue);
 
             // Handle failures
-            if(failures.containsKey(parameter) && !testResult){
-                noFailures = false;
-                returnString.append(parameter);
-                returnString.append("\r\n");
+            if(failures.containsKey(parameter)){
+
+                // If they aren't the same then add failure to return string
+                if(!testResult){
+                    noFailures = false;
+                    String failureString = parameter + " does not have the correct setting. Default: " + defaultValue + ", Actual: " + currentValue + "\r\n";
+                    returnString.append(failureString);
+                    Log.e(TAG, parameter + ":" + currentValue + " != default:" + defaultValue);
+                }else{
+                    Log.d(TAG, parameter + ":" + currentValue + " == default:" + defaultValue);
+                }
+
             }
 
             // Write each line to file
@@ -116,8 +128,10 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
     private ArrayList<String[]> getSettingsData(){
         ArrayList<String[]> data = getGetPropData();
         ArrayList<String[]> getDatabaseData = getDatabaseData();
+        ArrayList<String[]> getTelephonyData = getTelephonyData();
 
         data.addAll(getDatabaseData);
+        data.addAll(getTelephonyData);
 
         return data;
     }
@@ -136,6 +150,34 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
                 arr[1] = arr[1].replaceAll("[\\[\\]]", "").replace(",", " ");
 
                 strArr.add(arr);
+            }
+            process.destroy();
+        } catch (IOException e) {
+            Log.e(this.toString(), e.getMessage());
+        } catch (Exception e) {
+            Log.e(this.toString(), e.getMessage());
+        }
+
+
+        return strArr;
+    }
+
+    // Parse telephony data into usable form
+    private ArrayList<String[]> getTelephonyData() {
+
+        ArrayList<String[]> strArr = new ArrayList<>();
+        String line;
+        try {
+            Process process = new ProcessBuilder().command("/system/bin/dumpsys telephony.registry").redirectErrorStream(true).start();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] arr = line.split("=", 1);
+                arr[0] = arr[0].trim();
+
+                if(arr[0].equals("mServiceState") || arr[0].equals("mSignalStrength")
+                        || arr[0].equals("mDataConnectionState") || arr[0].equals("mDataConnectionPossible")){
+                    strArr.add(arr);
+                }
             }
             process.destroy();
         } catch (IOException e) {
@@ -206,11 +248,14 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
     private void loadDefaults(){
         defaults = new HashMap<>();
 
-        // Read in defaults for getprop
-        populateDefaults(R.raw.defaults);
+        // Read in getprop_defaults for getprop
+        populateDefaults(R.raw.getprop_defaults);
 
-        // Read in defaults for settings database
+        // Read in getprop_defaults for settings database
         populateDefaults(R.raw.settings_defaults);
+
+        // Read in telephony_defaults for telephony
+        populateDefaults(R.raw.telephony_defaults);
     }
 
     private void populateDefaults(int resource) {
@@ -219,14 +264,17 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 // Different parsing depending on file
-                if(resource == R.raw.defaults){
+                if(resource == R.raw.getprop_defaults){
                     String[] arr = line.split(":\\s");
                     arr[0] = arr[0].replaceAll("[\\[\\]]", "").replace(",", " ");
                     arr[1] = arr[1].replaceAll("[\\[\\]]", "").replace(",", " ");
                     defaults.put(arr[0], arr[1]);
-                }else{
+                }else if(resource == R.raw.settings_defaults){
                     String[] arr = line.split(",", 2);
                     arr[1] = arr[1].replace(",", " ");
+                    defaults.put(arr[0], arr[1]);
+                }else{ // Telephony
+                    String[] arr = line.split(",", 2);
                     defaults.put(arr[0], arr[1]);
                 }
             }
