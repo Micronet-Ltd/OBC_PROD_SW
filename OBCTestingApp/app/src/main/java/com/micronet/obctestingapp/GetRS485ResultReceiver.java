@@ -51,18 +51,23 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Runs an automated RS485 test.
-        automatedRS485Test();
+        if (MainActivity.testToolLock.isUnlocked()) {
+            // Runs an automated RS485 test.
+            automatedRS485Test();
 
-        // Depending on test result returns a result.
-        if(finalResult){
-            Log.i(TAG, "*** RS485 Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+            // Depending on test result returns a result.
+            if(finalResult){
+                Log.i(TAG, "*** RS485 Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** RS485 Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
         }else{
-            Log.i(TAG, "*** RS485 Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
 
     }

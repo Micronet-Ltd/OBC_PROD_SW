@@ -45,18 +45,23 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Run the automated test
-        automatedTest();
+        if (MainActivity.testToolLock.isUnlocked()) {
+            // Run the automated test
+            automatedTest();
 
-        // Returns the result depending on the result from the automated test
-        if(finalResult){
-            Log.i(TAG, "*** Com Port Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            // Returns the result depending on the result from the automated test
+            if(finalResult){
+                Log.i(TAG, "*** Com Port Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            }else{
+                Log.i(TAG, "*** Com Port Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            }
         }else{
-            Log.i(TAG, "*** Com Port Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
 
     }

@@ -79,6 +79,18 @@
                 <action android:name="com.micronet.obctestingapp.GET_SETTINGS_RESULT"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".CheckUnlockHashReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.CHECK_UNLOCK_HASH"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetUnlockHashReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_UNLOCK_HASH"/>
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>

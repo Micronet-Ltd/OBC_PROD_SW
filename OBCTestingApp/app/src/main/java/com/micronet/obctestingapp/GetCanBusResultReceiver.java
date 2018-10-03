@@ -50,18 +50,24 @@ public class GetCanBusResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Run test
-        automatedCanBusTest();
 
-        // Return result depending on test result
-        if(finalResult){
-            Log.i(TAG, "*** CANBus Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+        if (MainActivity.testToolLock.isUnlocked()) {
+            // Run test
+            automatedCanBusTest();
+
+            // Return result depending on test result
+            if(finalResult){
+                Log.i(TAG, "*** CANBus Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** CANBus Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
         }else{
-            Log.i(TAG, "*** CANBus Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
 
 

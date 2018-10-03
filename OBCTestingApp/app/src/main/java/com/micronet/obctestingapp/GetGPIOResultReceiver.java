@@ -36,21 +36,26 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Initialize MControl
-        mControl = new MControl();
+        if (MainActivity.testToolLock.isUnlocked()) {
+            // Initialize MControl
+            mControl = new MControl();
 
-        // Start automated GPIO test
-        automatedGPIOTest();
+            // Start automated GPIO test
+            automatedGPIOTest();
 
-        // Return result depending on finalResult
-        if(finalResult){
-            Log.i(TAG, "*** GPIO Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+            // Return result depending on finalResult
+            if(finalResult){
+                Log.i(TAG, "*** GPIO Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** GPIO Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
         }else{
-            Log.i(TAG, "*** GPIO Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
     }
 

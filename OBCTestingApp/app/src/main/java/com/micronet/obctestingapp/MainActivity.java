@@ -7,6 +7,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "OBCTestingApp";
     public static GPS gps = null;
+    public static TestToolLock testToolLock = new TestToolLock();
 
     /**
      * Start the app and then the app will do nothing until there are broadcasts for certain tests.

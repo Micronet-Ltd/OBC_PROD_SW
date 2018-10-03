@@ -21,6 +21,8 @@ call :set_up_result_files
 rem install test apk files
 call install_files.bat
 
+call unlock.bat
+
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
 	call %%G_test.bat
