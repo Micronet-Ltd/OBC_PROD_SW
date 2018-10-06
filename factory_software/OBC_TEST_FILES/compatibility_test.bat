@@ -31,7 +31,7 @@ echo %xprvar:"=% > %result_file%
 set /p Result=<%result_file%
 
 rem Store result files and save
-..\adb pull "data/data/com.micronet.obctestingapp/files/settings.csv" "testResults\settings\%result_file_name%-%date%.csv" > nul 2>&1
+..\adb pull "data/data/com.micronet.obctestingapp/files/settings.csv" "testResults\settings\%result_file_name%-%date:/=-%.csv" > nul 2>&1
 
 set result=%Result:~28,1%
 if "%result%" == "1" goto _test_pass

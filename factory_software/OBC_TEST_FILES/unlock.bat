@@ -14,7 +14,7 @@ if exist %temp_result% del %temp_result%
 @Set sizeout=%sizeout: =%
 rem @Echo Total Size in (BYTES) :%sizeout%
 rem ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_UNLOCK_HASH  --es "fileSize" %sizeout%
-..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fileSize" %sizeout% --es "hash" 54359574 > %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fileSize" %sizeout% --es "hash" 54359578 > %temp_result%
 
 rem Get result code
 set "xprvar="
