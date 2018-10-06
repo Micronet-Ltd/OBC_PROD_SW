@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.Telephony;
 import android.telephony.ServiceState;
 import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -104,13 +105,12 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
                 // If they aren't the same then add failure to return string
                 if(!testResult){
                     noFailures = false;
-                    String failureString = parameter + " does not have the correct setting. Default: " + defaultValue + ", Actual: " + currentValue + "\r\n";
+                    String failureString = "Parameter " + parameter + " is set differently than default. Default: " + defaultValue + ", Actual: " + currentValue + "\r\n";
                     returnString.append(failureString);
                     Log.e(TAG, parameter + ":" + currentValue + " != default:" + defaultValue);
                 }else{
                     Log.d(TAG, parameter + ":" + currentValue + " == default:" + defaultValue);
                 }
-
             }
 
             // Write each line to file
@@ -170,26 +170,14 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
     private ArrayList<String[]> getTelephonyData() {
 
         ArrayList<String[]> strArr = new ArrayList<>();
-        String line;
-        try {
-            Process process = new ProcessBuilder().command("/system/bin/dumpsys telephony.registry").redirectErrorStream(true).start();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = bufferedReader.readLine()) != null) {
-                String[] arr = line.split("=", 1);
-                arr[0] = arr[0].trim();
 
-                if(arr[0].equals("mServiceState") || arr[0].equals("mSignalStrength")
-                        || arr[0].equals("mDataConnectionState") || arr[0].equals("mDataConnectionPossible")){
-                    strArr.add(arr);
-                }
-            }
-            process.destroy();
-        } catch (IOException e) {
-            Log.e(this.toString(), e.getMessage());
-        } catch (Exception e) {
-            Log.e(this.toString(), e.getMessage());
+        TelephonyManager telephonyManager = (TelephonyManager) receiverContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (telephonyManager != null){
+            strArr.add(new String[]{"data_connection_state", String.valueOf(telephonyManager.getDataState())});
+            strArr.add(new String[]{"network_operator", telephonyManager.getNetworkOperator()});
+            strArr.add(new String[]{"sim_state", String.valueOf(telephonyManager.getSimState())});
         }
-
 
         return strArr;
     }

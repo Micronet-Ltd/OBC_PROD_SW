@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.3
+set test_script_version=1.2.38.3.1
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
@@ -20,7 +20,7 @@ rem Set up result files
 call :set_up_result_files
 rem install test apk files
 call install_files.bat
-
+rem verify that scripts haven't been altered
 call unlock.bat
 
 rem Run tests depending on test type
@@ -46,7 +46,7 @@ rem ************** Handle Test Result Function *****************
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STATUS=Fail
 	set %1_test=fail
-	
+
 	setlocal EnableDelayedExpansion
 	set %1_test=fail
 	call update_last_result.bat %1_test 0
@@ -94,7 +94,7 @@ for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
 if /I "%language_choice%" == "English" goto _english
 if /I "%language_choice%" == "Chinese" goto _chinese
 echo.
-echo Error: input/test_options.dat file contains invalid language value. 
+echo Error: input/test_options.dat file contains invalid language value.
 echo Should either be "English" or "Chinese". Defaulting to English.
 echo.
 goto _english
@@ -150,9 +150,12 @@ exit /b
 rem **************** Result Variables Function *****************
 :reset_result_variables
 rem Reset result variables
+set compatibility_test=
 set imei_test=
 set serial_test=
 set version_test=
+set cellular_test=
+set gps_test=
 set led_test=
 set sd_card_test=
 set canbus_test=
@@ -192,7 +195,7 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	rem if board test then set summary file to uut serial
-	set /p uutSerial=Scan the uut Serial Number: 
+	set /p uutSerial=Scan the uut Serial Number:
 	echo.
 )
 
@@ -208,7 +211,7 @@ if /I "%TEST_TYPE%"=="System" (
 	call insert_result.bat system_results
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
-	
+
 	rem Update serial
 	call update_last_result.bat serial '%deviceSN%'
 
@@ -222,11 +225,11 @@ if /I "%TEST_TYPE%"=="Board" (
 	call insert_result.bat board_results
 	call update_last_result.bat test_version '%test_script_version%'
 	call update_last_result.bat device_type '%DEVICE_TYPE%'
-	
+
 	rem Update tester serial and uut serial
 	call update_last_result.bat a8_serial '%deviceSN%'
 	call update_last_result.bat uut_serial '%uutSerial%'
-	
+
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
 	@echo A8 SN : %deviceSN%  >> testResults\%result_file_name%.txt
@@ -290,6 +293,9 @@ echo %xprvar%
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 rem Check which tests failed and print which ones did fail
+if "%compatibility_test%" == "fail" (
+	echo ** Compatibility %xprvar%
+)
 if "%imei_test%" == "fail" (
 	echo ** IMEI %xprvar%
 )
@@ -298,6 +304,12 @@ if "%serial_test%" == "fail" (
 )
 if "%version_test%" == "fail" (
 	echo ** Version %xprvar%
+)
+if "%cellular_test%" == "fail" (
+	echo ** Cellular %xprvar%
+)
+if "%gps_test%" == "fail" (
+	echo ** GPS %xprvar%
 )
 if "%led_test%" == "fail" (
 	echo ** LED %xprvar%

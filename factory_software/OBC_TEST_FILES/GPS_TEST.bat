@@ -86,7 +86,7 @@ goto _test_pass
 rem   ############## TEST STATUS ############
 :_ask_if_retry
 echo.
-set /p option=%cell_fail%, would you like to retry [Y/N]:
+set /p option=GPS test failed, would you like to retry [Y/N]:
 if /I "%option%"=="Y" goto _test
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option
@@ -97,14 +97,14 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo ** GPS %xprvar%
-rem @echo GPS test - fail >> testResults\%result_file_name%.txt
+@echo GPS test - fail >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** GPS %xprvar% 
-rem @echo GPS test - passed >> testResults\%result_file_name%.txt
+echo ** GPS %xprvar%
+@echo GPS test - passed >> testResults\%result_file_name%.txt
 
 :_end_of_file
 if exist %temp_file% del %temp_file%

@@ -1,4 +1,3 @@
-mServiceState,0 0 home AT&T AT&T 310410  UMTS HSPAP CSS not supported -1 -1 RoamInd=-1 DefRoamInd=-1 EmergOnly=false
-mSignalStrength,SignalStrength: 20 0 -120 -160 -120 -1 -1 99 2147483647 2147483647 2147483647 2147483647 2147483647 gsm|lte
-mDataConnectionState,2
-mDataConnectionPossible,true
+sim_state,5
+network_operator,310410
+data_connection_state,2
