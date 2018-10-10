@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 set temp_result=tmp.txt
 if exist %temp_result% del %temp_result%
@@ -6,15 +6,13 @@ if exist %temp_result% del %temp_result%
 @For /F "tokens=*" %%a IN ('"dir /s /a /-c "*.bat"| find "bytes" | find /v "free""') do @Set summaryout=%%a
 ::@Echo %summaryout%
 
-@For /f "tokens=1,2 delims=)" %%a in ("%summaryout%") do @set filesout=%%a&set sizeout=%%b
+@For /f "tokens=1,2 delims=)" %%a in ("%summaryout%") do @set filesout=%%a&set so=%%b
 
-@Set sizeout=%sizeout:bytes=%
-::@Echo %sizeout%
+@Set so=%so:bytes=%
+::@Echo %so%
 
-@Set sizeout=%sizeout: =%
-rem @Echo Total Size in (BYTES) :%sizeout%
-rem ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_UNLOCK_HASH  --es "fileSize" %sizeout%
-..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fileSize" %sizeout% --es "hash" 54359578 > %temp_result%
+@Set so=%so: =%
+..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fs" %so% --es "h" 54359578 > %temp_result%
 
 rem Get result code
 set "xprvar="

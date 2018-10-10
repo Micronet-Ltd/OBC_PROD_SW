@@ -11,7 +11,7 @@ public class GetUnlockHashReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent){
         super.onReceive(context, intent);
-        String fileSize = intent.getStringExtra("fileSize");
+        String fileSize = intent.getStringExtra("fs");
         TestToolLock testToolLock = new TestToolLock();
         setResultData(testToolLock.calculateHash(fileSize));
     }

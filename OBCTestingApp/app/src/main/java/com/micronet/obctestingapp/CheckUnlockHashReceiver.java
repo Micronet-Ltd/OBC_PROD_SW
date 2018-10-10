@@ -11,8 +11,8 @@ public class CheckUnlockHashReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent){
         super.onReceive(context, intent);
-        String fileSize = intent.getStringExtra("fileSize");
-        String hash = intent.getStringExtra("hash");
+        String fileSize = intent.getStringExtra("fs");
+        String hash = intent.getStringExtra("h");
         Log.i(TAG, "*** Hash onReceive *** fileSize=" + fileSize + ", hash=" + hash);
 
         try{
