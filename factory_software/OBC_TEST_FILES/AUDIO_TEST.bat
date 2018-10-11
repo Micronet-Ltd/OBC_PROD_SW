@@ -36,7 +36,7 @@ rem on practical measurements.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 ..\adb shell mctl api 0213001C00 > nul rem This turns the left speaker off.
 
-timeout 2 >nul
+timeout 3 >nul
 
 :_right_speaker_validation
 set choice=

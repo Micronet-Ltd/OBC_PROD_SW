@@ -15,5 +15,3 @@ data_roaming0
 mock_location
 bluetooth_addr_valid
 shutdown_timeout
-network_operator
-data_connection_state

@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 set temp_result=tmp.txt
 if exist %temp_result% del %temp_result%
@@ -12,7 +12,7 @@ if exist %temp_result% del %temp_result%
 ::@Echo %so%
 
 @Set so=%so: =%
-..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fs" %so% --es "h" 54359578 > %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fs" %so% --es "h" 54361531 > %temp_result%
 
 rem Get result code
 set "xprvar="
@@ -23,7 +23,8 @@ set /p unlocked=<%temp_result%
 set unlocked=%unlocked:~28,1%
 
 rem Make sure files are correct size
-if "%unlocked%" == "2" echo Testing scripts have been altered. Cannot run test. Exiting... & goto _exit_test
+if "%unlocked%" == "2" echo. & echo ** Error: testing scripts have been altered. Cannot run test. Exiting... & goto _exit_test
+if "%unlocked%" == "0" echo. & echo ** Error: testing apps not installed/started successfully. Please retry. Exiting... & goto _exit_test
 
 if exist %temp_result% del %temp_result%
 goto :eof

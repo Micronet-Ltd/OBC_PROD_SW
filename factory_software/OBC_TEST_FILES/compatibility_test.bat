@@ -31,7 +31,11 @@ echo %xprvar:"=% > %result_file%
 set /p Result=<%result_file%
 
 rem Store result files and save
-..\adb pull "data/data/com.micronet.obctestingapp/files/settings.csv" "testResults\settings\%result_file_name%-%date:/=-%.csv" > nul 2>&1
+set resultTime=%time:~0,-3%
+set resultTime=%resultTime::=-%
+set resultDate=%date:~4%
+set resultDate=%resultDate:/=-%
+..\adb pull "data/data/com.micronet.obctestingapp/files/settings.csv" "testResults\settings\%result_file_name% %resultDate% %resultTime%.csv" > nul 2>&1
 
 set result=%Result:~28,1%
 if "%result%" == "1" goto _test_pass
@@ -56,7 +60,7 @@ for /F "skip=2 delims=" %%i in (tmp.txt) do (
 endlocal
 echo.
 
-echo This unit needs to be reflashed.
+echo ** Fix errors and rerun test. Exiting...
 
 :_exit_test
 call :halt 2> nul

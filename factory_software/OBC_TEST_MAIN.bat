@@ -3,7 +3,7 @@
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.3.2
+set test_script_version=1.2.38.3.3
 set ERRORLEVEL=0
 
 rem Prepare the test so it is ready to run
@@ -22,6 +22,8 @@ rem install test apk files
 call install_files.bat
 rem verify that scripts haven't been altered
 call unlock.bat
+rem update the APN
+call addNewAPN.bat
 
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
@@ -154,7 +156,7 @@ set compatibility_test=
 set imei_test=
 set serial_test=
 set version_test=
-set cellular_test=
+set cell_test=
 set gps_test=
 set led_test=
 set sd_card_test=
@@ -305,7 +307,7 @@ if "%serial_test%" == "fail" (
 if "%version_test%" == "fail" (
 	echo ** Version %xprvar%
 )
-if "%cellular_test%" == "fail" (
+if "%cell_test%" == "fail" (
 	echo ** Cellular %xprvar%
 )
 if "%gps_test%" == "fail" (

@@ -13,5 +13,17 @@ FPGA_VERSION:0x41000003
 MCU_VERSION:a.2.6.0
 OS_VERSION:TREQr_5_0.1.6.0_20170815.1707
 
+--- Compatibility Test ---
+PackageName:inthinc
+
 --- Wifi Test ---
 GoodWifiRSSI:94
+
+--- APN ---
+Leave user and password blank on the right side of the colon if you don't want a user and password set for this apn.
+name:ATT WAP
+apn:broadband
+mcc:310
+mnc:410
+user:
+password:
