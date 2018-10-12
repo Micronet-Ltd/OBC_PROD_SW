@@ -55,7 +55,8 @@ goto _test_loop
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** GPIO %xprvar% 
+call color.bat 0c "** "
+echo GPIO %xprvar% 
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
@@ -100,7 +101,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** GPIO %xprvar%
+call color.bat 0a "** "
+echo GPIO %xprvar%
 @echo GPIO test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

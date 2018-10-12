@@ -46,7 +46,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Accelerometer %xprvar%
+call color.bat 0c "** "
+echo Accelerometer %xprvar%
 rem If Accelerometer test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set accel_fail="Invalid accelerometer %Result:~31%",
@@ -58,7 +59,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Accelerometer %xprvar%
+call color.bat 0a "** "
+echo Accelerometer %xprvar%
 @echo Accelerometer test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

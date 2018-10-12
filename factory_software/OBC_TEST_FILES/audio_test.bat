@@ -40,7 +40,9 @@ rem on practical measurements.
 set choice=
 set "xprvar="
 for /F "skip=23 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo.&set /p choice=%xprvar%
+echo.
+call color.bat 0b "-> "
+set /p choice=%xprvar%
 if /I %choice% == Y goto _left_speaker
 if /I %choice% == N goto _right_test_fail
 echo Invalid option
@@ -74,7 +76,9 @@ rem on practical measurements.
 set choice=
 set "xprvar="
 for /F "skip=24 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo.&set /p choice=%xprvar%
+echo.
+call color.bat 0b "-> "
+set /p choice=%xprvar%
 if /I %choice% == Y goto _evaluate
 if /I %choice% == N goto _left_test_fail
 echo Invalid option
@@ -103,7 +107,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Audio %xprvar%
+call color.bat 0c "** "
+echo Audio %xprvar%
 @echo Audio test - failed >> testResults\%result_file_name%.txt
 
 goto _end_of_file
@@ -117,7 +122,8 @@ goto _start_test
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Audio %xprvar%
+call color.bat 0a "** "
+echo Audio %xprvar%
 @echo Audio test - passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file

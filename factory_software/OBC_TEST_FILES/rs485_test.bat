@@ -60,7 +60,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** RS485 %xprvar%
+call color.bat 0c "** "
+echo RS485 %xprvar%
 if "%data:~0,1%" == "F" (
 	set rs485_fail="RS485 failed: did not send/receive characters back correctly",
 )
@@ -71,7 +72,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** RS485 %xprvar%
+call color.bat 0a "** "
+echo RS485 %xprvar%
 @echo RS485 test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

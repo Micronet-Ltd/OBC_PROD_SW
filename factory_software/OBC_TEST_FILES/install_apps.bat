@@ -4,6 +4,9 @@ rem echo ------------------------------------
 rem echo          INSTALLING FILES            
 rem echo ------------------------------------
 
+echo.
+echo Installing testing apps...
+
 rem Install application
 ..\adb install -r INSTALL_FILES\obc_testing_app.apk >nul 2>&1
 rem Start main activity
@@ -16,4 +19,4 @@ rem invoke the nfc test application
 
 timeout /T 3 /NOBREAK > nul
 
-echo ** Apps Installed
+call color.bat 0a "** " & echo Apps installed

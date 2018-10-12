@@ -20,6 +20,7 @@ echo.
 rem echo ***************************************
 set "xprvar="
 for /F "skip=16 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0b "-> "
 echo %xprvar%
 
 rem This loop count is used to wait a certain amount of time for user input
@@ -57,6 +58,7 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=18 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
 echo %xprvar%
 @echo NFC test - failed >> testResults\%result_file_name%.txt
 rem Try to delete file just in case
@@ -78,7 +80,8 @@ goto _full_test
 
 :_delete_failed
 set ERRORLEVEL=1
-echo ** NFC delete - failed (%Result%)
+call color.bat 0c "** "
+echo NFC delete - failed (%Result%)
 @echo NFC delete failed  >> testResults\%result_file_name%.txt
 goto _uninstall_apk
 
@@ -94,6 +97,7 @@ rem   ############## TEST STATUS ############
 rem echo.
 set "xprvar="
 for /F "skip=19 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0a "** "
 echo %xprvar%
 @echo NFC test - passed  >> testResults\%result_file_name%.txt
 goto _end_of_file

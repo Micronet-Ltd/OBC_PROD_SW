@@ -60,7 +60,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** J1708 %xprvar%
+call color.bat 0c "** "
+echo J1708 %xprvar%
 rem If J1708 test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set j1708_fail="J1708 failed: did not receive j1708 chars back",
@@ -72,7 +73,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** J1708 %xprvar%
+call color.bat 0a "** "
+echo J1708 %xprvar%
 @echo J1708 test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

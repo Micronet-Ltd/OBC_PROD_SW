@@ -43,7 +43,8 @@ goto _no_sd_card
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** SD-Card %xprvar%
+call color.bat 0c "** "
+echo SD-Card %xprvar%
 @echo SD-Card test - failed can't find SD card. (%Result%)>> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -78,7 +79,8 @@ goto _unexpected_size_prompt
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** SD-card %xprvar%
+call color.bat 0c "** "
+echo SD-card %xprvar%
 @echo SD-card test - failed - SD card not found or didn't get the expected size >> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -99,14 +101,16 @@ goto _test_start
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** SD-card %xprvar%
+call color.bat 0c "** "
+echo SD-card %xprvar%
 @echo SD-card delete failed  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_Test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** SD-card %xprvar%
+call color.bat 0a "** "
+echo SD-card %xprvar%
 @echo SD-card test passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

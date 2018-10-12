@@ -62,7 +62,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** WiFi %xprvar% %cell_fail%
+call color.bat 0c "** "
+echo WiFi %xprvar% %cell_fail%
 @echo WiFi test - failed %cell_fail% >> testResults\%result_file_name%.txt
 call update_last_result.bat wifi_rssi '%WiFiValue%'
 goto :_end_of_file
@@ -71,7 +72,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** WiFi %xprvar% WiFi RSSI = %WiFiValue%
+call color.bat 0a "** "
+echo WiFi %xprvar% WiFi RSSI = %WiFiValue%
 @echo WiFi test - passed >> testResults\%result_file_name%.txt
 call update_last_result.bat wifi_rssi '%WiFiValue%'
 goto _end_of_file

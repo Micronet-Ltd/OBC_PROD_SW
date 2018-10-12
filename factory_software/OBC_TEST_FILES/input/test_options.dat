@@ -10,3 +10,22 @@ OS_VERSION:TREQr_5_0.1.12.0_20180430.1455
 
 --- Wifi Test ---
 GoodWifiRSSI:94
+
+--- APN ---
+Leave user and password blank on the right side of the colon if you don't want a user and password set for this apn.
+name:ATT WAP
+apn:broadband
+mcc:310
+mnc:410
+user:
+password:
+
+--- GPS Test ---
+SatellitesUsedInFixLowerBound:3
+NumberOfSatellitesToIncludeInTopAverage:1
+AverageSNROfTopSatellitesLowerBound:40
+NumberOfTestRetries:3
+TimeToFirstFix:1000
+
+--- Compatibility Test ---
+PackageName:inthinc

@@ -1,1 +1,0 @@
-call OBC_TEST_MAIN.bat Board NBOARD869V3C board_ud_tests.dat

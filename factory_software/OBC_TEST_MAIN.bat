@@ -1,9 +1,12 @@
 @echo off
+setlocal
+cls
+color 0f
 
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39-dev-3
+set test_script_version=pre_1.2.39-dev-4
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
@@ -11,6 +14,7 @@ set continue=
 if "%1"=="" set continue=false
 if "%2"=="" set continue=false
 if "%3"=="" set continue=false
+if "%4"=="" set continue=false
 
 rem Make sure test type is system or board
 if /I "%1"=="System" goto _correct_test_type
@@ -25,13 +29,24 @@ set continue=false
 :_test_file_exists
 cd ..\..\..
 
+rem Make sure test purpose is production or rma
+if /I "%4"=="Production" goto _correct_test_info
+if /I "%4"=="RMA" goto _correct_test_info
+set continue=false
+:_correct_test_info
+
 if "%continue%"=="false" (
 	echo.
-	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file]
+	call OBC_TEST_FILES\color.bat 0c "Error: incorrect parameters passed in." & echo. 
 	echo.
-	echo *** test_type should either be "System" or "Board"
-	echo *** device_info should be the info/type of device, ex. "UnderDash"
-	echo *** test_file should be a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
+	echo Consider using the Test_Setup.bat script to create the Run_Test.bat file.
+	echo.
+	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file] [test_info]
+	echo.
+	echo    - test_type should either be "System" or "Board"
+	echo    - device_info should be the info/type of device, ex. "UnderDash"
+	echo    - test_file should be a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
+	echo    - test_info should either be "Production" or "RMA"
 )
 if "%continue%"=="false" goto :eof 
 
@@ -39,25 +54,44 @@ rem Set the test type, device type, and test file from the parameters passed in
 set TEST_TYPE=%1
 set DEVICE_INFO=%2
 set TEST_FILE=%3
+set TEST_INFO=%4
 
 rem Prepare the test so it is ready to run
 cls
 call :set_up_test
 
-echo ----------------------------------------------------------------------------------------------------
-echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
-echo ----------------------------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
+echo  %TEST_INFO% Test Tool: %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
+echo --------------------------------------------------------------------------------
 
 rem connect to device over hotspot
 call adb_connect.bat
+
 rem Set up result files
 call :set_up_result_files
 
+rem Install Apps
+call install_apps.bat
+
+rem Verify that scripts haven't been altered
+call unlock.bat
+
+rem update the APN if RMA test
+if "%TEST_INFO%"=="RMA" call add_new_apn.bat
+
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
+	if /I "%%G"=="supercap" (
+		call uninstall_apps.bat
+		set apps_uninstalled=True
+	)
+	
 	call %%G_test.bat
 	call :handle_test_result %%G
 )
+
+rem If supercap test was never called then uninstall apps now
+if /I "%apps_uninstalled%"=="False" call uninstall_apps.bat
 
 rem Handle total test result
 call :total_test_status
@@ -73,9 +107,6 @@ rem ****************************************************************************
 
 rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
-if /I "%1"=="install_apps" exit /b
-if /I "%1"=="uninstall_apps" exit /b
-
 set column=%1
 rem echo %column%
 
@@ -107,6 +138,7 @@ rem Set up the whole test
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
 set options_file=input\test_options.dat
+set apps_uninstalled=False
 
 rem Select the language from the language file
 call :language_selection
@@ -241,13 +273,13 @@ if "%OBC_TEST_STATUS%" == "Fail" (
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
-color 20
+rem color 20
 echo.
 set "xprvar="
 for /F "skip=30 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo **************************************
-echo ***** Entire OBC %xprvar% !!! *****
-echo **************************************
+call color.bat 0a ************************************** & echo.
+call color.bat 0a "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0a " *******" & echo.
+call color.bat 0a ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
@@ -257,13 +289,13 @@ exit /b
 echo.
 set "xprvar="
 for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo **************************************
-echo ********  OBC %xprvar% !!! ********
-echo **************************************
+call color.bat 0c ************************************** & echo.
+call color.bat 0c "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0c " *******" & echo.
+call color.bat 0c ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
-color 47
+rem color 47
 
 rem Display failures
 call :display_failures
@@ -301,7 +333,7 @@ exit /b
 :display_failures <var_name> <test_name>
 rem echo %1
 rem echo !%1!
-if /I "!%1!"=="fail" echo ** %2 %xprvar%
+if /I "!%1!"=="fail" call color.bat 0c "** " & echo %2 %xprvar%
 exit /b
 
 rem ******************** Display Failures **********************
@@ -322,6 +354,6 @@ call export_results.bat
 cd ..
 cd ..
 timeout /t 2 /NOBREAK > nul
-color 07
+rem color 07
 
 exit /b

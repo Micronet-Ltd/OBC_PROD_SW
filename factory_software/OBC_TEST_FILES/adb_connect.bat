@@ -6,6 +6,8 @@ rem echo ------------------------------------
 rem echo         adb connect to 192.168.43.1
 rem echo ------------------------------------
 
+<nul set /p =Trying to connect...
+
 rem If language file is not set then default to english
 if not defined language_file set language_file=input/English.dat
 
@@ -101,16 +103,19 @@ goto _get_root
 rem   ############## TEST STATUS ############
 :_WLAN_test_fail
 set ERRORLEVEL=1
+echo.
 echo ** adb Connect failed %OBC_TESTER_WLAN_CON%
 goto _end_of_test
 
 :_WLAN_test_fail_state
 set ERRORLEVEL=1
+echo.
 echo ** adb Connect failed - error with root or state. device state: %state%
 goto _end_of_test
 
 :_WLAN_test_pass
-echo adb Connected Passed
+echo.
+call color.bat 0a "** " & echo Connected to device
 
 :_end_of_test
 if exist %network_file_name% del %network_file_name%

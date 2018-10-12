@@ -1,12 +1,12 @@
 Scan IMEI: 
- ** IMEI test - failed expected !Result:~37,15! got !imei!
-** IMEI test - passed !imei!
+IMEI test - failed expected !Result:~37,15! got !imei!
+IMEI test - passed !imei!
 Scan Serial Number: 
- ** Serial test - failed expected !pm_serial! got !read_in_serial!
-** Serial test - passed !pm_serial!
-Do you see the 3 LEDs in white and same brightness ?[Y/N] ?
- ** LED test - failed
-** LED test - passed
+Serial test - failed expected !pm_serial! got !read_in_serial!
+Serial test - passed !pm_serial!
+Do you see the 3 LEDs in white and same brightness [Y/N] ?
+LED test - failed
+LED test - passed
 SD card error: can't find the SD card
 Would you like to repeat the test [Y/N] ?
 SD card error: can't find SD card or error writing to it
@@ -16,11 +16,11 @@ J1708 test failed. Would you like to retry? [Y/N]:
 COM port test failed. Would you like to retry? [Y/N]: 
 NFC test - Touch the device with the NFC card
 NFC test failed. Would you like to retry? [Y/N]:
- ** NFC test - failed 
-** NFC test - passed
+NFC test - failed 
+NFC test - passed
 Press Help Key on the device
-** Help Key test - passed
- ** Help Key test - failed
+Help Key test - passed
+Help Key test - failed
 Do you hear the right speaker [Y/N] ?
 Do you hear the left speaker [Y/N] ?
 Audio test failed. Would you like to retry? [Y/N]: 
@@ -31,13 +31,13 @@ Turn Device OFF - press any key when power is removed ...
 test passed
 test failed
 Failed Tests (Check individual file results to see how they failed):
-test - failed 
+test - failed
 test - passed
 Cellular test failed. Would you like to retry [Y/N]
 Wiggle Test - Tap the device
 WiFi test failed. Would you like to retry [Y/N]
 Are you retesting a previously tested device? [Y/N] 
- ** Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
+Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
 Is the LED white and bright?[Y/N] ?
 Do you hear the speaker [Y/N] ?
 RS485 test failed. Would you like to retry? [Y/N]: 

@@ -1,4 +1,3 @@
-install_apps
 version
 led
 canbus
@@ -12,5 +11,4 @@ rtc
 accelerometer
 gpio_inputs
 wiggle
-uninstall_apps
 supercap

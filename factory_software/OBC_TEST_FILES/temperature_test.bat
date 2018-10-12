@@ -25,7 +25,8 @@ if %temperature% LSS 20 goto _temperature_value_error
 if %temperature% GTR 50 goto _temperature_value_error
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Temperature %xprvar% 
+call color.bat 0a "** "
+echo Temperature %xprvar% 
 @echo Temperature test - passed  temperature is: %temperature%  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -34,7 +35,8 @@ set ERRORLEVEL=1
 rem echo.
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Temperature %xprvar% Expected temperature 20-50c got %temperature%
+call color.bat 0c "** "
+echo Temperature %xprvar% Expected temperature 20-50c got %temperature%
 @echo Temperature  test - failed Expected temperature 20-50c got %temperature%  >> testResults\%result_file_name%.txt
 
 :_end_of_file

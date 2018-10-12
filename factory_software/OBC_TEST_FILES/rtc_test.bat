@@ -22,14 +22,16 @@ if %MCUdate% GEQ "2000-00-00 00:10:00" goto _test_pass
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** RTC %xprvar%
+call color.bat 0c "** "
+echo RTC %xprvar%
 @echo RTC test - failed date supposed to be greater then "2000-00-00 00:10:00" but it %MCUdate%  >> testResults\%result_file_name%.txt
 goto _end_of_test
 
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** RTC %xprvar%
+call color.bat 0a "** "
+echo RTC %xprvar%
 @echo RTC test - passed, date is: %MCUdate% >> testResults\%result_file_name%.txt
 
 :_end_of_test

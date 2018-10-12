@@ -1,4 +1,3 @@
-install_apps
 imei
 serial
 version
@@ -17,5 +16,4 @@ rtc
 accelerometer
 gpio
 wiggle
-uninstall_apps
 supercap

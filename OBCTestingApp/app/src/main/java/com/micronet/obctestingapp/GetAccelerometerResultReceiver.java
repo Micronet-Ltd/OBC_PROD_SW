@@ -24,19 +24,23 @@ public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        automatedAccelerometerTest();
 
-        if(finalResult){
-            Log.i(TAG, "*** Acceleration Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString() + " " + Arrays.toString(acceleration));
+        if (MainActivity.testToolLock.isUnlocked()) {
+            automatedAccelerometerTest();
+
+            if(finalResult){
+                Log.i(TAG, "*** Acceleration Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString() + " " + Arrays.toString(acceleration));
+            }else{
+                Log.i(TAG, "*** Acceleration Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString() + " " + Arrays.toString(acceleration));
+            }
         }else{
-            Log.i(TAG, "*** Acceleration Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString() + " " + Arrays.toString(acceleration));
+            setResultCode(3);
+            setResultData("F app locked");
         }
-
-
     }
 
     private void automatedAccelerometerTest(){

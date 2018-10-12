@@ -1,1 +1,0 @@
-call OBC_TEST_MAIN.bat Board SmartCradle board_smart_cradle_tests.dat

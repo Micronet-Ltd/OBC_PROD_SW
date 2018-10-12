@@ -18,6 +18,7 @@ echo.
 rem Prompt user to scan in serial number
 set "xprvar="
 for /F "skip=3 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0b "-> "
 set /p read_in_serial=%xprvar%
 
 :_test
@@ -39,6 +40,7 @@ set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=4 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
 echo %xprvar%
 endlocal
 @echo Serial test - failed expected %pm_serial% got %read_in_serial% >> testResults\%result_file_name%.txt
@@ -49,6 +51,7 @@ rem   ############## TEST STATUS ############
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=5 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0a "** "
 echo %xprvar%
 endlocal
 @echo Serial test - passed %pm_serial% >> testResults\%result_file_name%.txt

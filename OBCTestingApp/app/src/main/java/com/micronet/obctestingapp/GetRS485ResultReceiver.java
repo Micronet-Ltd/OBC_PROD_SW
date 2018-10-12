@@ -66,38 +66,46 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
      */
     public void automatedRS485Test(){
 
-        Log.i(TAG, "*** RS485 Test Started ***");
+        if (MainActivity.testToolLock.isUnlocked()) {
 
-        finalResult = true;
-        returnString = new StringBuilder();
+            Log.i(TAG, "*** RS485 Test Started ***");
 
-        mFd = open("/dev/ttyUSB1", 115200);
-        close();
+            finalResult = true;
+            returnString = new StringBuilder();
 
-        try{
+            mFd = open("/dev/ttyUSB1", 115200);
+            close();
 
-            String strToSend = "123456789#";
+            try{
 
-            for(int i = 0; i < strToSend.length(); i++){
-                if(!writeReceiveTest(RS485, RS485, strToSend.substring(i, i+1))){
-                    returnString.append("F");
-                    break;
+                String strToSend = "123456789#";
+
+                for(int i = 0; i < strToSend.length(); i++){
+                    if(!writeReceiveTest(RS485, RS485, strToSend.substring(i, i+1))){
+                        returnString.append("F");
+                        break;
+                    }
+
+                    Thread.sleep(100);
                 }
 
-                Thread.sleep(100);
+                if(finalResult){
+                    returnString.append("P");
+                }
+
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+                finalResult = false;
+                // Clear what is in the set all to fail
+                returnString = new StringBuilder();
+                returnString.append("F");
             }
 
-            if(finalResult){
-                returnString.append("P");
-            }
-
-        }catch (Exception e){
-            Log.e(TAG, e.toString());
-            finalResult = false;
-            // Clear what is in the set all to fail
-            returnString = new StringBuilder();
-            returnString.append("F");
+        }else{
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
     }
 
     public boolean writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn, String byteToSend) throws FileNotFoundException {

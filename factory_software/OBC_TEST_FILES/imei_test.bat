@@ -29,6 +29,7 @@ rem if defined tempIMEI goto _test
 echo.
 set "xprvar="
 for /F "delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0b "-> "
 set /p imei=%xprvar%
 
 :_test
@@ -63,6 +64,7 @@ set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
 echo IMEI %xprvar% matching device but tac is not correct, should be "%tac%", "%tac2%", or "%tac3%"
 endlocal
 rem Write result to individual device file
@@ -76,6 +78,7 @@ set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
 echo %xprvar%
 endlocal
 rem Write result to individual device file
@@ -89,6 +92,7 @@ set ERRORLEVEL=1
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=1 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
 echo %xprvar%, also tac is incorrect, should be "%tac%", "%tac2%", or "%tac3%"
 endlocal
 rem Write result to individual device file
@@ -102,6 +106,7 @@ rem   ############## TEST STATUS ############
 setlocal EnableDelayedExpansion
 set "xprvar="
 for /F "skip=2 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0a "** "
 echo %xprvar%
 endlocal
 rem Write result to individual device file

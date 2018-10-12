@@ -9,8 +9,6 @@ set temp_result=tmp.txt
 set cell_fail=
 set asuValue=
 
-call add_new_apn.bat
-
 rem If language file is not set then default to english
 if not defined language_file set language_file=input/English.dat
 
@@ -18,7 +16,6 @@ rem echo ------------------------------------
 rem echo               Cellular test            
 rem echo ------------------------------------
 
-timeout 6 > NUL
 :_test_loop
 rem Delete old result
 if exist %temp_result% del %temp_result%
@@ -74,14 +71,16 @@ goto _ask_if_retry
 
 :_test_fail
 set ERRORLEVEL=1
-echo ** Cellular test failed: %cell_fail%
+call color.bat 0c "** "
+echo Cellular test failed: %cell_fail%
 @echo Cellular test - failed %cell_fail% >> testResults\%result_file_name%.txt
 goto :_end_of_file
 
 rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
-echo ** Cellular test passed: ASU = %asuValue%
+call color.bat 0a "** "
+echo Cellular test passed: ASU = %asuValue%
 @echo Cellular test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

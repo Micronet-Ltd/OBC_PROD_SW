@@ -22,6 +22,7 @@ echo.
 
 set "xprvar="
 for /F "skip=36 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0b "-> "
 echo %xprvar%
  
 :_test_Wiggle
@@ -50,7 +51,8 @@ goto _error_found
 :_test_passed
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Wiggle %xprvar% Count=%wiggleCount%
+call color.bat 0a "** "
+echo Wiggle %xprvar% Count=%wiggleCount%
 @echo Wiggle test - passed wiggle Count=%wiggleCount% >> testResults\%result_file_name%.txt
 goto _end_of_file
  
@@ -59,7 +61,8 @@ set ERRORLEVEL=1
 echo.
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Wiggle %xprvar% wiggle Count=%wiggleCount%
+call color.bat 0c "** "
+echo Wiggle %xprvar% wiggle Count=%wiggleCount%
  
 :_end_of_file
 rem Close wiggle

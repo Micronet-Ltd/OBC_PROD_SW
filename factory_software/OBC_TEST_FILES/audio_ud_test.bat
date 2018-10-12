@@ -37,14 +37,16 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Audio %xprvar%
+call color.bat 0c "** "
+echo Audio %xprvar%
 @echo Audio test - failed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Audio %xprvar%
+call color.bat 0a "** "
+echo Audio %xprvar%
 @echo Audio test - passed  >> testResults\%result_file_name%.txt
 
 :_end_of_file

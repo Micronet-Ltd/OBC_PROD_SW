@@ -65,7 +65,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** Com Port %xprvar%
+call color.bat 0c "** "
+echo Com Port %xprvar%
 rem If one of the Com Ports failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set com1_fail="Com 1 tx --> Com 2 rx failed",
@@ -86,7 +87,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Com Port %xprvar% 
+call color.bat 0a "** "
+echo Com Port %xprvar% 
 @echo Com Port test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

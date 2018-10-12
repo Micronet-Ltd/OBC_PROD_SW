@@ -1,4 +1,3 @@
-install_apps
 version
 sd_card
 canbus
@@ -8,4 +7,3 @@ com
 audio_ud
 temperature
 gpio_inputs
-uninstall_apps

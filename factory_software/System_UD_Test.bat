@@ -1,1 +1,0 @@
-call OBC_TEST_MAIN.bat System UnderDash system_ud_tests.dat
