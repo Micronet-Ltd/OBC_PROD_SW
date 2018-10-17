@@ -1,6 +1,7 @@
 compatibility
 version
 sd_card
+memory
 cell
 gps
 canbus

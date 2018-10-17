@@ -4,6 +4,7 @@ serial
 version
 led
 sd_card
+memory
 wifi
 cell
 gps

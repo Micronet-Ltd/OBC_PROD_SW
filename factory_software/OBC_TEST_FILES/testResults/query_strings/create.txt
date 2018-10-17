@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS rma_results (
 	version_test text default 'NA',
 	led_test text default 'NA',
 	sd_card_test text default 'NA',
+	memory_test text default 'NA',
 	wifi_rssi text default 'NA',
 	wifi_test text default 'NA',
 	cell_asu text default 'NA',
