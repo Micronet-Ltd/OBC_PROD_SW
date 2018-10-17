@@ -5,6 +5,7 @@ version
 led
 led_ud
 sd_card
+memory
 wifi
 cell
 gps

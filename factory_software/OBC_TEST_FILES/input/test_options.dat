@@ -29,3 +29,7 @@ TimeToFirstFix:1000
 
 --- Compatibility Test ---
 PackageName:inthinc
+
+--- Memory Test ---
+RAM:1
+ROM:8
