@@ -1,5 +1,6 @@
 version
 sd_card
+memory
 canbus
 swc
 j1708
