@@ -6,7 +6,7 @@ color 0f
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=pre_1.2.39-dev-4
+set test_script_version=1.2.39
 set ERRORLEVEL=0
 
 rem Make sure all parameters passed in
