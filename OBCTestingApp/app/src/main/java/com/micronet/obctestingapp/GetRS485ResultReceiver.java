@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -20,28 +22,17 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Runs an automated RS485 test and returns the result.
- *
- * Modified by scott.krstyen on 8/17/2017.
  */
 public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
-
     private StringBuilder sb;
     private StringBuilder returnString;
-    // Use these instead of ttyACM4 because then there won't be conflicts with rild
-    private File J1708_write = new File("/dev/ttyMICRONET_J1708");
-    private File J1708_read = new File("/dev/j1708");
-
-    private File RS485_read = new File("/dev/ttyUSB0");
-
+    private File RS485 = new File("/dev/ttyUSB1");
     private boolean finalResult = true;
     private boolean pass;
-
     private byte[] readBuffer;
-
     private FileInputStream inputStream;
-
     private FileDescriptor mFd;
 
     static {
@@ -75,46 +66,49 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
      */
     public void automatedRS485Test(){
 
-        Log.i(TAG, "*** RS485 Test Started ***");
+        if (MainActivity.testToolLock.isUnlocked()) {
 
-        finalResult = true;
+            Log.i(TAG, "*** RS485 Test Started ***");
 
-        returnString = new StringBuilder();
+            finalResult = true;
+            returnString = new StringBuilder();
 
-        //mFd = open("/dev/ttyACM4", 115200);
-        mFd = open("/dev/ttyMICRONET_J1708", 115200);
-        close();
+            mFd = open("/dev/ttyUSB1", 115200);
+            close();
 
-        mFd = open("/dev/ttyUSB0", 115200);
-        close();
+            try{
 
-        try{
-            writeReceiveTest(J1708_write, RS485_read);
+                String strToSend = "123456789#";
 
-            if(pass){
-                returnString.append("P");
-            }else{
+                for(int i = 0; i < strToSend.length(); i++){
+                    if(!writeReceiveTest(RS485, RS485, strToSend.substring(i, i+1))){
+                        returnString.append("F");
+                        break;
+                    }
+
+                    Thread.sleep(100);
+                }
+
+                if(finalResult){
+                    returnString.append("P");
+                }
+
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+                finalResult = false;
+                // Clear what is in the set all to fail
+                returnString = new StringBuilder();
                 returnString.append("F");
             }
 
-        }catch (Exception e){
-            Log.e(TAG, e.toString());
-            finalResult = false;
-            // Clear what is in the returnStringCurrently and set all to fail
-            returnString = new StringBuilder();
-            returnString.append("F");
+        }else{
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
     }
 
-    /**
-     * Used to test sending and receiving a string with J1708 (/dev/ttyACM4). Will write to file with results for each step and also if there
-     * are any errors.
-     * @param fileToSendOutOf
-     *      The file to send out of
-     * @param fileToReceiveIn
-     *      The file to receive in
-     */
-    public String writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn) throws FileNotFoundException {
+    public boolean writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn, String byteToSend) throws FileNotFoundException {
 
         // The string that is sent
         StringBuilder sentSB = new StringBuilder();
@@ -132,49 +126,40 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
             //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
+            inputStream.close();
         }catch (Exception e){
             Log.e(TAG, e.toString());
         }
 
         // Send the data
         try{
-            FileOutputStream outputStream;
+            FileOutputStream outputStream = new FileOutputStream(fileToSendOutOf);
 
-            // Set to whatever is inputted by the user
-            outputStream = new FileOutputStream(fileToSendOutOf);
-
-            // Sending "~1j1708(checksum)~"
-            byte[] bytesToSend = {(byte)0x7e,(byte)0x31,(byte)0x6a,(byte)0x31,(byte)0x37,(byte)0x30,(byte)0x38,(byte)0x0a,(byte)0x8b,(byte)0x7e};
-
-            // Write bytes to /dev/ttyMICRONET_J1708
-            outputStream.write(bytesToSend);
+            // Write bytes to /dev/ttyUSB1
+            outputStream.write(byteToSend.getBytes());
 
             // Display information
-            Log.i(TAG, "Bytes sent : " + bytesToSend.length + " out of " + fileToSendOutOf.getName() + ". String sent - \"j1708\"");
-            Log.i(TAG, Arrays.toString(bytesToSend));
+            Log.i(TAG, "Bytes sent : " + byteToSend.length() + " out of " + fileToSendOutOf.getName() + ". String sent - \""+byteToSend+"\"");
+            Log.i(TAG, byteToSend);
 
-            sentSB.append("j1708");
+            sentSB.append(byteToSend);
 
+            outputStream.flush();
             outputStream.close();
-
         }catch (Exception e){
             Log.e(TAG, e.toString());
             finalResult = false;
             pass = false;
         }
 
-        try{
-            Thread.sleep(1000);
-        }catch(Exception e){
-            Log.e(TAG, e.toString());
-        }
-
         // After the data has been sent now try to read the data.
         try{
+            inputStream = new FileInputStream(fileToReceiveIn);
+
             sb = new StringBuilder();
 
-            readBuffer = new byte [128];
-            char[] bufferChar = new char [128];
+            readBuffer = new byte[1];
+            char[] bufferChar = new char[1];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).
@@ -189,7 +174,7 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
 
             Future<Integer> future = executor.submit(readTask);
             // Give read two seconds to finish
-            int bytesRead = future.get(2000, TimeUnit.MILLISECONDS);
+            int bytesRead = future.get(1000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
             if(bytesRead > 0){
@@ -231,10 +216,9 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
             }
         }
 
-        // Check to make sure that sent string contains j1708 characters.
-        if(readSB.toString().contains("j1708")){
+        // Check to make sure that sent string contains the correct byte.
+        if(readSB.toString().equals(byteToSend)){
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
-            // (used to write to the file here, but don't need to anymore since the app uses a broadcast)
         }else {
             finalResult = false;
             pass = false;
@@ -247,10 +231,9 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
             }
 
             Log.e(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was not received in " + fileToReceiveIn.getName() + " correctly. Sent - \"" + sent.toString() + "\" | Read - \"" + read.toString() + "\"");
-
         }
 
         // Only return whether the test passed or failed.
-        return String.valueOf(pass);
+        return pass;
     }
 }

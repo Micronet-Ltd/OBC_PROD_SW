@@ -1,0 +1,17 @@
+gsm.sim.state
+gsm.version.baseband
+persist.sys.isHotspotEnable
+persist.sys.iswificonfigured
+ro.build.type
+service.adb.root
+airplane_mode_on
+assisted_gps_enabled
+auto_time
+auto_time_zone
+wifi_on
+bluetooth_on
+mobile_data0
+data_roaming0
+mock_location
+bluetooth_addr_valid
+shutdown_timeout

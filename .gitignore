@@ -21,3 +21,6 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Test Tool Zip file
+factory_software_v*.zip

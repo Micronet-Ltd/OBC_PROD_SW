@@ -59,7 +59,8 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** CanBus %xprvar%
+call color.bat 0c "** "
+echo  CanBus %xprvar%
 rem If one of the Can Ports failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set can0_fail="Can0 tx --> Can1 rx failed",
@@ -74,7 +75,8 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** CanBus %xprvar% 
+call color.bat 0a "** "
+echo CanBus %xprvar% 
 @echo CanBus test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 

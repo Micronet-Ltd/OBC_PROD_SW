@@ -3,6 +3,7 @@ serial
 version
 led
 sd_card
+memory
 wifi
 canbus
 swc

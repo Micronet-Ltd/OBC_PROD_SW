@@ -17,20 +17,19 @@ rem echo               J1708 test
 rem echo ------------------------------------
 
 :_test_loop
-rem For testing, Can1 (/dev/ttyACM3) is 'connected' to another board that it is communicating on
+rem For testing, J1708 is 'connected' to the tester board
 rem Result code:
 rem 		 0 = app isn't installed or started, 
 rem 		 1 = success, 
 rem 		 2 = fail and result data will contain which ones failed,
-rem In the case that one of the can ports fails to send or receive an "F" will be placed in result data instead of "P"
+rem In the case that tx fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "P"
-rem The "P" is for tx out of Can1 and a successful response rx in Can1
+rem The "P" is for tx out of J1708 and a successful response rx in J1708
 rem So if there is a failure then the resulting data would look like "F":
-rem The "F" means tx out of Can1 and not a succesful response rx in Can1
+rem The "F" means tx out of J1708 and not a succesful response rx in J1708
 
 rem Enable j1708 power
-rem Might already be enabled at this point
-..\adb shell "mctl api 0213020001" > nul
+..\adb shell "mctl api 02fc01" > nul
 
 rem Send broadcast to run test and get result
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_J1708_RESULT> %temp_result%
@@ -61,8 +60,9 @@ goto _ask_if_retry
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo  ** J1708 %xprvar%
-rem If SWC test failed then write that to the test result file
+call color.bat 0c "** "
+echo J1708 %xprvar%
+rem If J1708 test failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set j1708_fail="J1708 failed: did not receive j1708 chars back",
 )
@@ -73,14 +73,15 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** J1708 %xprvar%
+call color.bat 0a "** "
+echo J1708 %xprvar%
 @echo J1708 test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 
 :_end_of_file
-rem Uninstall app
-rem ..\adb uninstall com.micronet.obctestingapp > nul
+rem Disable j1708
+rem ..\adb shell "mctl api 02fc00" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 

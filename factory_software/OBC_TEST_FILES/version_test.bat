@@ -72,14 +72,16 @@ rem   ############## TEST STATUS ############
 :_test_pass
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** Version %xprvar% 
+call color.bat 0a "** "
+echo Version %xprvar% 
 goto _end_of_test
 
 :_test_error_no_mcu_version
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** MCU version %xprvar% : Error, no MCU version string in the input folder. Contact MICRONET for the MCU string
+call color.bat 0c "** "
+echo MCU version %xprvar% : Error, no MCU version string in the input folder. Contact MICRONET for the MCU string
 @echo MCU version - failed : There is no MCU version string in the input folder. Contact MICRONET for the MCU string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
@@ -87,7 +89,8 @@ goto _end_of_test
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** FPGA version %xprvar% : Error no FPGA version string in the input folder. Contact MICRONET for the FPGA string
+call color.bat 0c "** "
+echo FPGA version %xprvar% : Error no FPGA version string in the input folder. Contact MICRONET for the FPGA string
 @echo FPGA version - failed : There is no FPGA version string in the input folder. Contact MICRONET for the FPGA string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
@@ -95,7 +98,8 @@ goto _end_of_test
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** OS version %xprvar% : Error, no OS version string in the input folder. Contact MICRONET for the OS string 
+call color.bat 0c "** "
+echo OS version %xprvar% : Error, no OS version string in the input folder. Contact MICRONET for the OS string 
 @echo OS version - failed : There is no OS version string in the input folder. Contact MICRONET for the OS string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
@@ -103,7 +107,8 @@ goto _end_of_test
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
+call color.bat 0c "** "
+echo MCU version %xprvar% : expected %mcu_version% got %version%. Burn correct MCU version.
 @echo MCU version - failed : expected %mcu_version% got %version%. Burn correct MCU version. >> testResults\%result_file_name%.txt
 
 call update_last_result.bat mcu_ver '%version%'
@@ -113,7 +118,8 @@ goto _check_FPGA_version
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** FPGA  version %xprvar% : expected %fpga_version% got %version%. Burn correct FPGA version.
+call color.bat 0c "** "
+echo FPGA version %xprvar% : expected %fpga_version% got %version%. Burn correct FPGA version.
 @echo FPGA version - failed : expected  %fpga_version%  got %version%. Burn correct FPGA version. >> testResults\%result_file_name%.txt
 
 call update_last_result.bat fpga_ver '%version%'
@@ -124,7 +130,8 @@ goto _check_OS_version
 set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo ** OS version %xprvar% : expected %os_version% got %version%. Burn correct OS version.
+call color.bat 0c "** "
+echo OS version %xprvar% : expected %os_version% got %version%. Burn correct OS version.
 @echo OS version - failed : expected  %os_version%  got %version%. Burn correct OS version. >> testResults\%result_file_name%.txt
 
 call update_last_result.bat os_ver '%version%'

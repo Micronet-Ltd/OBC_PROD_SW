@@ -81,13 +81,15 @@ if %Ignition% GTR 13200 set ERRORLEVEL=1
 
 if %ERRORLEVEL% == 1 goto _error_found
 
-echo ** GPIO test - passed
+call color.bat 0a "** "
+echo GPIO test - passed
 @echo GPIO test - passed input1=%input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition%  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 :_error_found
 echo.
-echo ** GPIO test - failed input1=%input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition%
+call color.bat 0c "** "
+echo GPIO test - failed input1=%input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition%
 @echo GPIO test - failed input1 = %input1%, input2=%input2%, input3=%input3%, input4=%input4%, input5=%input5%, input6=%input6%, input7=%input7%, Ignition=%Ignition% >> testResults\%result_file_name%.txt
 
 set choice=
@@ -96,8 +98,8 @@ if /I %choice% == Y goto _start_test
 
 :_end_of_file
 rem Uninstall app
-..\adb uninstall com.micronet.obctestingapp > nul
-..\adb uninstall me.davidvassallo.nfc > nul
+rem ..\adb uninstall com.micronet.obctestingapp > nul
+rem ..\adb uninstall me.davidvassallo.nfc > nul
 if exist %file_name% del %file_name%
 set file_name= 
 set input1= 

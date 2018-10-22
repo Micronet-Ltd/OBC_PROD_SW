@@ -17,19 +17,29 @@ public class GetIMEIReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        TelephonyManager telephonyManager = ((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
-        String  imei;
 
-        try {
-            // Try to get IMEI
-            imei = telephonyManager.getDeviceId();
-            setResultCode(1);
-            Log.i(TAG, "IMEI: " + imei);
-        } catch (Exception e) {
-            imei = "Error";
-            setResultCode(2);
+        if (MainActivity.testToolLock.isUnlocked()) {
+
+            TelephonyManager telephonyManager = ((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
+            String  imei;
+
+            try {
+                // Try to get IMEI
+                imei = telephonyManager.getDeviceId();
+                setResultCode(1);
+                Log.i(TAG, "IMEI: " + imei);
+            } catch (Exception e) {
+                imei = "Error";
+                setResultCode(2);
+            }
+
+            setResultData(imei);
+
+        }else{
+            setResultCode(3);
+            setResultData("F app locked");
         }
 
-        setResultData(imei);
+
     }
 }

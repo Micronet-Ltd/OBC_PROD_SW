@@ -1,31 +1,97 @@
 @echo off
+setlocal
+cls
+color 0f
 
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.38.3
+set test_script_version=1.2.39
 set ERRORLEVEL=0
 
+rem Make sure all parameters passed in
+set continue=
+if "%1"=="" set continue=false
+if "%2"=="" set continue=false
+if "%3"=="" set continue=false
+if "%4"=="" set continue=false
+
+rem Make sure test type is system or board
+if /I "%1"=="System" goto _correct_test_type
+if /I "%1"=="Board" goto _correct_test_type
+set continue=false
+:_correct_test_type
+
+rem Make sure test file exists
+cd OBC_TEST_FILES\input\tests
+if exist %3 goto _test_file_exists
+set continue=false
+:_test_file_exists
+cd ..\..\..
+
+rem Make sure test purpose is production or rma
+if /I "%4"=="Production" goto _correct_test_info
+if /I "%4"=="RMA" goto _correct_test_info
+set continue=false
+:_correct_test_info
+
+if "%continue%"=="false" (
+	echo.
+	call OBC_TEST_FILES\color.bat 0c "Error: incorrect parameters passed in." & echo. 
+	echo.
+	echo Consider using the Test_Setup.bat script to create the Run_Test.bat file.
+	echo.
+	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file] [test_info]
+	echo.
+	echo    - test_type should either be "System" or "Board"
+	echo    - device_info should be the info/type of device, ex. "UnderDash"
+	echo    - test_file should be a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
+	echo    - test_info should either be "Production" or "RMA"
+)
+if "%continue%"=="false" goto :eof 
+
+rem Set the test type, device type, and test file from the parameters passed in
+set TEST_TYPE=%1
+set DEVICE_INFO=%2
+set TEST_FILE=%3
+set TEST_INFO=%4
+
 rem Prepare the test so it is ready to run
+cls
 call :set_up_test
 
-cls
-echo ----------------------------------------------------------------------------------------------------
-echo  starting test, test script version is : %test_script_version%, %TEST_TYPE%, %DEVICE_TYPE%, %language_choice%
-echo ----------------------------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
+echo  %TEST_INFO% Test Tool: %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
+echo --------------------------------------------------------------------------------
 
 rem connect to device over hotspot
 call adb_connect.bat
+
 rem Set up result files
 call :set_up_result_files
-rem install test apk files
-call install_files.bat
+
+rem Install Apps
+call install_apps.bat
+
+rem Verify that scripts haven't been altered
+call unlock.bat
+
+rem update the APN if RMA test
+if "%TEST_INFO%"=="RMA" call add_new_apn.bat
 
 rem Run tests depending on test type
 for /f "delims=" %%G in (input\tests\%test_file%) do (
+	if /I "%%G"=="supercap" (
+		call uninstall_apps.bat
+		set apps_uninstalled=True
+	)
+	
 	call %%G_test.bat
 	call :handle_test_result %%G
 )
+
+rem If supercap test was never called then uninstall apps now
+if /I "%apps_uninstalled%"=="False" call uninstall_apps.bat
 
 rem Handle total test result
 call :total_test_status
@@ -41,16 +107,23 @@ rem ****************************************************************************
 
 rem ************** Handle Test Result Function *****************
 :handle_test_result <test_var>
+set column=%1
+rem echo %column%
+
+if /I "%column:~-3%"=="_ud" set column=%column:~0,-3%
+
+rem echo %column%
+
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STATUS=Fail
-	set %1_test=fail
+	set %column%_test=fail
 	
 	setlocal EnableDelayedExpansion
-	set %1_test=fail
-	call update_last_result.bat %1_test 0
+	set %column%_test=fail
+	call update_last_result.bat %column%_test "0"
 	endlocal
 ) else (
-	call update_last_result.bat %1_test 1
+	call update_last_result.bat %column%_test "1"
 )
 
 exit /b
@@ -65,15 +138,30 @@ rem Set up the whole test
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
 set options_file=input\test_options.dat
+set apps_uninstalled=False
 
 rem Select the language from the language file
 call :language_selection
 
 rem Reset variable values
-call :reset_result_variables
+set test=
+set temp=temp.txt
+if exist %temp% del %temp%
 
-rem Select the test type and device type from the dat file
-call :test_selection
+setlocal EnableDelayedExpansion
+for /f "delims=" %%G in (input\tests\%test_file%) do (
+	set test=%%G
+	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	@echo !test!>>%temp%
+)
+endlocal
+
+for /f "delims=" %%G in (%temp%) do (
+    rem echo %%G
+	set %%G_test=
+)
+
+if exist %temp% del %temp%
 
 exit /b
 
@@ -105,75 +193,9 @@ exit /b
 set language_file=input/Chinese.dat
 exit /b
 
-
-rem ************** Test Selection Function *********************
-:test_selection
-rem Select test
-set TEST_FILE=
-set DEVICE_TYPE=
-set SUMMARY_FILE=
-set TEST_TYPE=
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "TEST_FILE" set TEST_FILE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "SUMMARY_FILE" set SUMMARY_FILE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "DEVICE_TYPE" set DEVICE_TYPE=%%j
-)
-
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "TEST_TYPE" set TEST_TYPE=%%j
-)
-
-if /I "%TEST_TYPE%"=="System" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=system_a001_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=system_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=system_tests.dat
-	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=system_ud_tests.dat
-)
-if /I "%TEST_TYPE%"=="Board" (
-	if /I "%DEVICE_TYPE%"=="MTR-A001-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A002-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="MTR-A003-001" set TEST_FILE=board_tests.dat
-	if /I "%DEVICE_TYPE%"=="UD" set TEST_FILE=board_ud_tests.dat
-)
-
-exit /b
-
-rem **************** Result Variables Function *****************
-:reset_result_variables
-rem Reset result variables
-set imei_test=
-set serial_test=
-set version_test=
-set led_test=
-set sd_card_test=
-set canbus_test=
-set wifi_test=
-set swc_test=
-set j1708_test=
-set com_test=
-set nfc_test=
-set help_key_test=
-set audio_test=
-set temperature_test=
-set rtc_test=
-set accelerometer_test=
-set gpio_test=
-set wiggle_test=
-set supercap_test=
-
-exit /b
-
 rem *************** Set Up Result Files Function ***************
 :set_up_result_files
 rem Set up result files depending on test type and board type
-set summaryFile=
 
 rem Make sure DB is set up
 call create_tables.bat
@@ -194,6 +216,10 @@ if /I "%TEST_TYPE%"=="Board" (
 	echo.
 )
 
+rem Insert result and get datetime
+call insert_result.bat
+call get_datetime.bat
+
 rem Seperate so result_file_name can update
 rem Batch can't update vars in if statement unless you use start local/end local
 if /I "%TEST_TYPE%"=="Board" (
@@ -202,35 +228,34 @@ if /I "%TEST_TYPE%"=="Board" (
 )
 
 if /I "%TEST_TYPE%"=="System" (
-	rem Insert new result
-	call insert_result.bat system_results
-	call update_last_result.bat test_version '%test_script_version%'
-	call update_last_result.bat device_type '%DEVICE_TYPE%'
+	call update_last_result.bat test_version "%test_script_version%"
+	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update serial
-	call update_last_result.bat serial '%deviceSN%'
-
+	call update_last_result.bat serial "%deviceSN%"
+	
 	@echo. >> testResults\%result_file_name%.txt
-	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
 if /I "%TEST_TYPE%"=="Board" (
-	rem Insert new result
-	call insert_result.bat board_results
-	call update_last_result.bat test_version '%test_script_version%'
-	call update_last_result.bat device_type '%DEVICE_TYPE%'
+	call update_last_result.bat test_version "%test_script_version%"
+	call update_last_result.bat device_info "%DEVICE_INFO%"
 	
 	rem Update tester serial and uut serial
-	call update_last_result.bat a8_serial '%deviceSN%'
-	call update_last_result.bat uut_serial '%uutSerial%'
+	call update_last_result.bat serial "%deviceSN%"
+	call update_last_result.bat board_serial "%uutSerial%"
 	
 	@echo. >> testResults\%result_file_name%.txt
-	@echo Test Run : %DATE:~0,10% %TIME% >> testResults\%result_file_name%.txt
+	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo A8 SN : %deviceSN%  >> testResults\%result_file_name%.txt
 	@echo UUT SN : %uutSerial%  >> testResults\%result_file_name%.txt
 	@echo test script version is : %test_script_version% >> testResults\%result_file_name%.txt
 )
+
+call update_last_result.bat test_type "%TEST_TYPE%"
+call update_last_result.bat test_file "%TEST_FILE%"
 
 exit /b
 
@@ -242,19 +267,19 @@ rem ******************* Total Test Status **********************
 :total_test_status
 rem put a field for whether all tests passed or not
 if "%OBC_TEST_STATUS%" == "Fail" (
-	call update_last_result.bat all_tests 0
+	call update_last_result.bat all_tests "0"
 ) else (
-	call update_last_result.bat all_tests 1
+	call update_last_result.bat all_tests "1"
 )
 
 if /I not %OBC_TEST_STATUS%==PASS goto _test_failed
-color 20
+rem color 20
 echo.
 set "xprvar="
 for /F "skip=30 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo **************************************
-echo ***** Entire OBC %xprvar% !!! *****
-echo **************************************
+call color.bat 0a ************************************** & echo.
+call color.bat 0a "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0a " *******" & echo.
+call color.bat 0a ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
@@ -264,13 +289,13 @@ exit /b
 echo.
 set "xprvar="
 for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo **************************************
-echo ********  OBC %xprvar% !!! ********
-echo **************************************
+call color.bat 0c ************************************** & echo.
+call color.bat 0c "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0c " *******" & echo.
+call color.bat 0c ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
 @echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
-color 47
+rem color 47
 
 rem Display failures
 call :display_failures
@@ -279,7 +304,7 @@ exit /b
 
 rem ******************** Display Failures **********************
 :display_failures
-rem Display failures from the system test
+rem Display failures from the test
 
 echo.
 set "xprvar="
@@ -287,68 +312,28 @@ for /F "skip=32 delims=" %%i in (%language_file%) do if not defined xprvar set "
 echo %xprvar%
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-rem Check which tests failed and print which ones did fail
-if "%imei_test%" == "fail" (
-	echo ** IMEI %xprvar%
-)
-if "%serial_test%" == "fail" (
-	echo ** Serial %xprvar%
-)
-if "%version_test%" == "fail" (
-	echo ** Version %xprvar%
-)
-if "%led_test%" == "fail" (
-	echo ** LED %xprvar%
-)
-if "%sd_card_test%" == "fail" (
-	echo ** SD Card %xprvar%
-)
-if "%wifi_test%" == "fail" (
-	echo ** WiFi %xprvar%
-)
-if "%canbus_test%" == "fail" (
-	echo ** CANBus %xprvar%
-)
-if "%swc_test%" == "fail" (
-	echo ** SWC %xprvar%
-)
-if "%j1708_test%" == "fail" (
-	echo ** J1708 %xprvar%
-)
-if "%com_test%" == "fail" (
-	echo ** Com Port %xprvar%
-)
-if "%nfc_test%" == "fail" (
-	echo ** NFC %xprvar%
-)
-if "%help_key_test%" == "fail" (
-	echo ** Help Key %xprvar%
-)
-if "%audio_test%" == "fail" (
-	echo ** Audio %xprvar%
-)
-if "%temperature_test%" == "fail" (
-	echo ** Temperature %xprvar%
-)
-if "%rtc_test%" == "fail" (
-	echo ** Read RTC %xprvar%
-)
-if "%accelerometer_test%" == "fail" (
-	echo ** Accelerometer %xprvar%
-)
-if "%gpio_test%" == "fail" (
-	echo ** GPIO %xprvar%
-)
-if "%gpio_inputs_test%" == "fail" (
-	echo ** GPIO Inputs %xprvar%
-)
-if "%wiggle_test%" == "fail" (
-    echo ** Wiggle %xprvar%
-)
-if "%supercap_test%" == "fail" (
-	echo ** Supercap %xprvar%
+
+rem Check which tests did fail and print them
+for /f "delims=" %%G in (input\tests\%test_file%) do (
+	setlocal EnableDelayedExpansion
+	set test=%%G
+	
+	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	
+	set test=!test!_test
+	
+	rem echo !test!
+	
+	call :display_failures !test! !test:~0,-5!
+	endlocal
 )
 
+exit /b
+
+:display_failures <var_name> <test_name>
+rem echo %1
+rem echo !%1!
+if /I "!%1!"=="fail" call color.bat 0c "** " & echo %2 %xprvar%
 exit /b
 
 rem ******************** Display Failures **********************
@@ -359,7 +344,6 @@ set language_choice_file=
 set language_choice=
 set language_file=
 set TEST_TYPE=
-set summaryFile=
 set uutSerial=
 ..\adb disconnect
 Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
@@ -370,6 +354,6 @@ call export_results.bat
 cd ..
 cd ..
 timeout /t 2 /NOBREAK > nul
-color 07
+rem color 07
 
 exit /b

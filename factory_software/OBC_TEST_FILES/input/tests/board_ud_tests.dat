@@ -1,10 +1,11 @@
 version
-led
+led_ud
 canbus
 swc
 j1708
 com
-audio
+rs485
+audio_ud
 temperature
 rtc
 accelerometer

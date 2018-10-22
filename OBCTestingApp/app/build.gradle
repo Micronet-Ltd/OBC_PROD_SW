@@ -9,8 +9,8 @@ android {
         applicationId "com.micronet.obctestingapp"
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.6"
+        versionCode 18
+        versionName "1.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
