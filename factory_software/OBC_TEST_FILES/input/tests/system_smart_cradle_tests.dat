@@ -1,0 +1,10 @@
+version
+sd_card
+memory
+canbus
+swc
+j1708
+com
+audio_ud
+temperature
+gpio_inputs

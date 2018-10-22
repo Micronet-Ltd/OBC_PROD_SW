@@ -3,11 +3,13 @@
     package="com.micronet.obctestingapp"
     android:sharedUserId="android.uid.system">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -65,6 +67,31 @@
         <receiver android:name=".GetAudioResultReceiver">
             <intent-filter>
                 <action android:name="com.micronet.obctestingapp.GET_AUDIO_RESULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetGPSResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_GPS_RESULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetRS485ResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_RS485_RESULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetSettingsResultReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_SETTINGS_RESULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".CheckUnlockHashReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.CHECK_UNLOCK_HASH"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".GetUnlockHashReceiver">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.GET_UNLOCK_HASH"/>
             </intent-filter>
         </receiver>
     </application>

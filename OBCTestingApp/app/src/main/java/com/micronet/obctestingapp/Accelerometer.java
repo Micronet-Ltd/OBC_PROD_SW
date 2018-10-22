@@ -54,7 +54,7 @@ public class Accelerometer {
                 break;
             }
 
-            if(accel_data[14] != 0 && accel_data[15] != 0) {
+            if(accel_data[14] != 0 || accel_data[15] != 0) {
                 Log.e("OBCTestingApp", "accel_data doesn't end in zeroes");
             }
 

@@ -5,13 +5,12 @@ android {
         treqr5platformkey
     }
     compileSdkVersion 22
-    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.micronet.obctestingapp"
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.5"
+        versionCode 18
+        versionName "1.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {

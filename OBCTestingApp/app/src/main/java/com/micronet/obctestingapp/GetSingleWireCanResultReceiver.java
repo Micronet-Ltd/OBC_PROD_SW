@@ -1,6 +1,5 @@
 package com.micronet.obctestingapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -48,19 +47,29 @@ public class GetSingleWireCanResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Run automated test
-        automatedSingleWireCanTest();
 
-        // Depending on test result return result
-        if(finalResult){
-            Log.i(TAG, "*** SWC Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+        if (MainActivity.testToolLock.isUnlocked()) {
+
+            // Run automated test
+            automatedSingleWireCanTest();
+
+            // Depending on test result return result
+            if(finalResult){
+                Log.i(TAG, "*** SWC Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** SWC Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
+
         }else{
-            Log.i(TAG, "*** SWC Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
+
 
     }
 

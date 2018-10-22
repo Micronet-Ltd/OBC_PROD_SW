@@ -36,22 +36,32 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Initialize MControl
-        mControl = new MControl();
 
-        // Start automated GPIO test
-        automatedGPIOTest();
+        if (MainActivity.testToolLock.isUnlocked()) {
 
-        // Return result depending on finalResult
-        if(finalResult){
-            Log.i(TAG, "*** GPIO Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+            // Initialize MControl
+            mControl = new MControl();
+
+            // Start automated GPIO test
+            automatedGPIOTest();
+
+            // Return result depending on finalResult
+            if(finalResult){
+                Log.i(TAG, "*** GPIO Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** GPIO Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
+
         }else{
-            Log.i(TAG, "*** GPIO Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
+
     }
 
     /**
@@ -96,7 +106,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 2
-        if(checkInputValue(2, 4000, 5500)){
+        if(checkInputValue(2, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -110,7 +120,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 4
-        if(checkInputValue(4, 4000, 5500)){
+        if(checkInputValue(4, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -124,7 +134,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check Input 6
-        if(checkInputValue(6, 4000, 5500)){
+        if(checkInputValue(6, 4500, 5200)){
             returnString.append("P");
         }else{
             returnString.append("F");

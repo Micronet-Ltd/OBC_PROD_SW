@@ -1,6 +1,5 @@
 package com.micronet.obctestingapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -50,19 +49,29 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Runs an automated J1708 test.
-        automatedJ1708Test();
 
-        // Depending on test result returns a result.
-        if(finalResult){
-            Log.i(TAG, "*** J1708 Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString());
+        if (MainActivity.testToolLock.isUnlocked()) {
+
+            // Runs an automated J1708 test.
+            automatedJ1708Test();
+
+            // Depending on test result returns a result.
+            if(finalResult){
+                Log.i(TAG, "*** J1708 Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString());
+            }else{
+                Log.i(TAG, "*** J1708 Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString());
+            }
+
         }else{
-            Log.i(TAG, "*** J1708 Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
+
 
     }
 

@@ -1,1 +1,7 @@
 *.txt
+*.db
+*.csv
+
+# allow
+!sqlite3.exe
+!query_strings/*

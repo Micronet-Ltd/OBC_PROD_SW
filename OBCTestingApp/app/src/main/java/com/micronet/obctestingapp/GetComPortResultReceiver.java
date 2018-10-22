@@ -1,17 +1,13 @@
 package com.micronet.obctestingapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.util.Log;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -49,19 +45,29 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        // Run the automated test
-        automatedTest();
 
-        // Returns the result depending on the result from the automated test
-        if(finalResult){
-            Log.i(TAG, "*** Com Port Test Passed ***");
-            setResultCode(1);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+        if (MainActivity.testToolLock.isUnlocked()) {
+
+            // Run the automated test
+            automatedTest();
+
+            // Returns the result depending on the result from the automated test
+            if(finalResult){
+                Log.i(TAG, "*** Com Port Test Passed ***");
+                setResultCode(1);
+                setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            }else{
+                Log.i(TAG, "*** Com Port Test Failed ***");
+                setResultCode(2);
+                setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            }
+
         }else{
-            Log.i(TAG, "*** Com Port Test Failed ***");
-            setResultCode(2);
-            setResultData(returnString.toString()); // + resultStringBuilder.toString());
+            setResultCode(3);
+            setResultData("F app locked");
         }
+
+
 
     }
 
