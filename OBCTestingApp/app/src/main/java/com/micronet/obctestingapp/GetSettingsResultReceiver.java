@@ -41,6 +41,17 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
             loadDefaults();
             loadFailures();
 
+            // If the user doesn't want to check roaming then remove it from the list of possible failures.
+            String checkRoaming = intent.getStringExtra("checkRoaming");
+            if(checkRoaming.equalsIgnoreCase("false")){
+                String removeResult = failures.remove("data_roaming0");
+                if(removeResult != null){
+                    Log.v(TAG, "Not checking data roaming.");
+                }else{
+                    Log.e(TAG, "Error removing check on data roaming.");
+                }
+            }
+
             // Run test and check if any values failed
             if (settingsTest()) {
                 setResultCode(1);

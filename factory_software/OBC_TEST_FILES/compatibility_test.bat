@@ -20,9 +20,14 @@ rem Delete customer
 call customer_app_uninstall.bat
 set /p app_uninstall=<res.txt
 
+rem Get check roaming setting
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if /i "%%i" == "checkRoaming" set checkRoaming=%%j
+)
+
 :_test_begin
 rem Run test
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SETTINGS_RESULT> %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SETTINGS_RESULT --es checkRoaming %checkRoaming%> %temp_result%
 
 rem Get result code
 set "xprvar="

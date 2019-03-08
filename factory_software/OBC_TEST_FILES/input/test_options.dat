@@ -14,7 +14,9 @@ MCU_VERSION:a.2.6.0
 OS_VERSION:TREQr_5_0.1.6.0_20170815.1707
 
 --- Compatibility Test ---
+CheckRoaming should either be "true" or "false"
 PackageName:inthinc
+checkRoaming:false
 
 --- Wifi Test ---
 GoodWifiRSSI:94
