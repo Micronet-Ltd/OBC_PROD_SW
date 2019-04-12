@@ -81,7 +81,7 @@ goto _end_of_file
 
 :_end_of_file
 rem Disable j1708
-rem ..\adb shell "mctl api 02fc00" > nul
+..\adb shell "mctl api 02fc00" > nul
 if exist %temp_result% del %temp_result%
 set Result= 
 set success= 
