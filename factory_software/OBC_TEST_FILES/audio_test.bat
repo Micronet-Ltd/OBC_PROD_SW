@@ -4,10 +4,10 @@ set ERRORLEVEL=0
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                AUDIO TEST            
+rem echo                AUDIO TEST
 rem echo ------------------------------------
 
 :_start_test
@@ -16,9 +16,9 @@ set LEFTFAIL=0
 set RIGHTFAIL=0
 
 :_right_speaker
-rem The propagation delay from sending broadcast message till audio is played is something 
-rem that may differ between one test to another. 
-rem When CPU plays audio, it enables both speakers. In this test the left speaker needs to 
+rem The propagation delay from sending broadcast message till audio is played is something
+rem that may differ between one test to another.
+rem When CPU plays audio, it enables both speakers. In this test the left speaker needs to
 rem be disabled after the audio start playing.
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 1 > nul
 
@@ -41,10 +41,10 @@ set RIGHTFAIL=1
 goto :_left_speaker
 
 :_left_speaker
-rem The propagation delay from sending broadcast message till audio is played is something 
-rem that may differ between one test to another. 
-rem When CPU plays audio, it enables both speakers. In this test the reight speaker needs to 
-rem be disabled after the audio start playing. 
+rem The propagation delay from sending broadcast message till audio is played is something
+rem that may differ between one test to another.
+rem When CPU plays audio, it enables both speakers. In this test the reight speaker needs to
+rem be disabled after the audio start playing.
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT --ei speaker 2 > nul
 
 :_left_speaker_validation
@@ -90,7 +90,7 @@ goto _end_of_file
 
 :_retest
 ..\adb shell am start -n com.android.settings/.SoundSettings Starting: Intent { cmp=com.android.settings/.SoundSettings } > nul
-timeout /T 1 /NOBREAK > nul 
+timeout /T 1 /NOBREAK > nul
 goto _start_test
 
 
@@ -109,4 +109,4 @@ rem These turn off both speakers.
 
 if exist %file_name% del %file_name%
 set choice=
-set file_name= 	
+set file_name=

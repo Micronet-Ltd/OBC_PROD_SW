@@ -4,7 +4,7 @@ set ERRORLEVEL=0
 rem -----------------------------------------------------------------------------------------------------------------------------
 rem 										MEMORY_TEST
 REM To get ROM:
-REM ROM = 1 + ((cat /sys/class/block/mmcblk0/size * 512)/(1,000,000 *1024)) = 1 + ((15269888 * 512)/ (1,000,000 * 1024)) = 8.635 
+REM ROM = 1 + ((cat /sys/class/block/mmcblk0/size * 512)/(1,000,000 *1024)) = 1 + ((15269888 * 512)/ (1,000,000 * 1024)) = 8.635
 
 REM RAM:
 REM cat proc/meminfo
@@ -15,8 +15,8 @@ REM RAM = (MemTotal + Mapped)/(1,000 * 1024) = (902344 + 181393)/(1000 * 1024) =
 rem -----------------------------------------------------------------------------------------------------------------------------
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
-if not defined options_file set options_file=input/test_options.dat
+if not defined language_file set language_file=input/languages/English.dat
+if not defined options_file set options_file=input/settings/test_options.dat
 
 set loop_count=0
 set temp_result=tmp.txt
@@ -85,4 +85,3 @@ if exist %temp_result% del %temp_result%
 set temp_result=
 set mem_total=
 set mem_mapped=
-

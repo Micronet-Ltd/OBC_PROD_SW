@@ -23,5 +23,6 @@ rtc
 accelerometer
 gpio
 gpio_inputs
+buzzer_led
 wiggle
 supercap

@@ -9,7 +9,7 @@ rem echo ------------------------------------
 <nul set /p =Trying to connect...
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 set network_file_name=wlan.txt
 set OBC_TESTER_WLAN_HOTSPOT_HEADER=TREQr_5_00

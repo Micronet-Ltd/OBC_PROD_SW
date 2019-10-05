@@ -10,17 +10,17 @@ set loop_count=0
 if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               J1708 test            
+rem echo               J1708 test
 rem echo ------------------------------------
 
 :_test_loop
 rem For testing, J1708 is 'connected' to the tester board
 rem Result code:
-rem 		 0 = app isn't installed or started, 
-rem 		 1 = success, 
+rem 		 0 = app isn't installed or started,
+rem 		 1 = success,
 rem 		 2 = fail and result data will contain which ones failed,
 rem In the case that tx fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "P"
@@ -83,8 +83,8 @@ goto _end_of_file
 rem Disable j1708
 ..\adb shell "mctl api 02fc00" > nul
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set j1708_fail=

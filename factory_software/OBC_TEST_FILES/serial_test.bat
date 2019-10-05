@@ -7,10 +7,10 @@ set list_name=SerialIMEI
 if exist %serial_name% del %serial_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo            SERIAL test              
+rem echo            SERIAL test
 rem echo ------------------------------------
 
 echo.
@@ -58,6 +58,6 @@ endlocal
 
 :_end_of_file
 if exist %serial_name% del %serial_name%
-set Result= 
-set read_in_serial= 
+set Result=
+set read_in_serial=
 set pm_serial=

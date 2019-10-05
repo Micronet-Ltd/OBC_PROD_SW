@@ -9,10 +9,10 @@ set key_test=
 set total_loop_count=0
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                HELP KEY            
+rem echo                HELP KEY
 rem echo ------------------------------------
 
 echo.
@@ -130,5 +130,5 @@ echo %xprvar% : Help Key press never detected
 
 :_end_of_file
 if exist %file_name% del %file_name%
-set file_name= 
-set loop_cnt= 
+set file_name=
+set loop_cnt=

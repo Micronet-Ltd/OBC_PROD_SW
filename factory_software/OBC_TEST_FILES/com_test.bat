@@ -12,10 +12,10 @@ set com4_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               Com Ports test            
+rem echo               Com Ports test
 rem echo ------------------------------------
 
 rem Disable RS485
@@ -88,15 +88,15 @@ rem   ############## TEST STATUS ############
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0a "** "
-echo Com Port %xprvar% 
+echo Com Port %xprvar%
 @echo Com Port test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 
 :_end_of_file
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set com1_fail=

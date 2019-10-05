@@ -12,7 +12,7 @@ if exist %temp_result% del %temp_result%
 ::@Echo %so%
 
 @Set so=%so: =%
-..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fs" %so% --es "h" 1448876532 > %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.CHECK_UNLOCK_HASH --es "fs" %so% --es "h" 1449561697 > %temp_result%
 
 rem Get result code
 set "xprvar="

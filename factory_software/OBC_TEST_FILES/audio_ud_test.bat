@@ -4,10 +4,10 @@ set ERRORLEVEL=0
 set file_name=tmp.txt
 if exist %file_name% del %file_name%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                AUDIO UD TEST            
+rem echo                AUDIO UD TEST
 rem echo ------------------------------------
 
 rem Tests the external speaker on the UD unit
@@ -52,4 +52,4 @@ echo Audio %xprvar%
 :_end_of_file
 if exist %file_name% del %file_name%
 set choice=
-set file_name= 	
+set file_name=

@@ -12,10 +12,10 @@ set temp_file=tmp.txt
 if exist %temp_file% del %temp_file%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.txt
+if not defined language_file set language_file=input/languages/English.txt
 
 rem echo ------------------------------------
-rem echo             GPS test                
+rem echo             GPS test
 rem echo ------------------------------------
 
 echo.

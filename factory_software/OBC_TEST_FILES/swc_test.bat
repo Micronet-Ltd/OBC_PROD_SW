@@ -9,17 +9,17 @@ set swc_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               SWC test            
+rem echo               SWC test
 rem echo ------------------------------------
 
 :_test_loop
 rem For testing, Can1 (/dev/ttyACM3) is 'connected' to another board that it is communicating on
 rem Result code:
-rem 		 0 = app isn't installed or started, 
-rem 		 1 = success, 
+rem 		 0 = app isn't installed or started,
+rem 		 1 = success,
 rem 		 2 = fail and result data will contain which ones failed,
 rem In the case that one of the can ports fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "P"
@@ -79,8 +79,8 @@ goto _end_of_file
 
 :_end_of_file
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set can0_fail=

@@ -6,10 +6,10 @@ set file_name=tmp.txt
 if exist %file_name% del %file_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                Temperature Test            
+rem echo                Temperature Test
 rem echo ------------------------------------
 
 :_test_get_temperature
@@ -26,7 +26,7 @@ if %temperature% GTR 50 goto _temperature_value_error
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0a "** "
-echo Temperature %xprvar% 
+echo Temperature %xprvar%
 @echo Temperature test - passed  temperature is: %temperature%  >> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -41,5 +41,5 @@ echo Temperature %xprvar% Expected temperature 20-50c got %temperature%
 
 :_end_of_file
 if exist %file_name% del %file_name%
-set file_name= 
-set temperature= 
+set file_name=
+set temperature=
