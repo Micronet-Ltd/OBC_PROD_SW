@@ -7,10 +7,10 @@ set file_name=tmp.txt
 if exist %file_name% del %file_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                GPIO Test            
+rem echo                GPIO Test
 rem echo ------------------------------------
 
 
@@ -101,13 +101,13 @@ rem Uninstall app
 rem ..\adb uninstall com.micronet.obctestingapp > nul
 rem ..\adb uninstall me.davidvassallo.nfc > nul
 if exist %file_name% del %file_name%
-set file_name= 
-set input1= 
-set input2= 
-set input3= 
-set input4= 
-set input5= 
-set input6= 
-set input7= 
+set file_name=
+set input1=
+set input2=
+set input3=
+set input4=
+set input5=
+set input6=
+set input7=
 set Ignition=
 set choice=

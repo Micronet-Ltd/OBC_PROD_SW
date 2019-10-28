@@ -8,18 +8,19 @@ set loop_count=0
 if exist %file_name% del %file_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                SD Card Test            
+rem echo                SD Card Test
 rem echo ------------------------------------
 
 
 :_test_start
 ..\adb shell ls ./storage/sdcard1/ > %file_name%
-rem Read the first 14 characters to see if get an error 
+rem Read the first 14 characters to see if get an error
 set /p Result=<%file_name%
 rem If there is no 'opendir failed' error then continue with test
+if "%Result%"=="" goto :_no_sd_card
 if not "%Result:~0,14%" == "opendir failed" goto :_Copy_file
 
 :_no_sd_card
@@ -35,7 +36,7 @@ set "xprvar="
 for /F "skip=10 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo.&set /p choice=%xprvar%
 if /I %choice% == Y goto _test_start
-if /I %choice% == N goto _test_fail_no_sd_card
+if /I %choice% == N goto _test_fail_no_sdcard
 echo Invalid option
 goto _no_sd_card
 
@@ -49,9 +50,12 @@ echo SD-Card %xprvar%
 goto _end_of_file
 
 :_Copy_file
-..\adb push .\INSTALL_FILES\sd-card_test.txt ./storage/sdcard1/ > nul 2>&1
+..\adb push .\INSTALL_FILES\sd-card_test.txt ./storage/sdcard1/>%file_name% 2>&1
+set /p Result=<%file_name%
+if "%Result:~0,14%"=="failed to copy" goto _no_sd_card
 
 :_File_size
+if exist %file_name% del %file_name%
 ..\adb shell ls -l ./storage/sdcard1/sd-card_test.txt > %file_name%
 rem Read the file size in supposed to be 888 bytes
 set /p Result=<%file_name%
@@ -116,7 +120,7 @@ goto _end_of_file
 
 :_end_of_file
 if exist %file_name% del %file_name%
-set file_name= 
-set Result= 
+set file_name=
+set Result=
 set choice=
 set loop_count=

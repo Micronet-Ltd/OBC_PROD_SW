@@ -2,8 +2,8 @@
 
 set ERRORLEVEL=0
 
-set Result= 
-set imei= 
+set Result=
+set imei=
 set pm_serial=
 set trueIMEI=
 set file_name=tmp.txt
@@ -17,10 +17,10 @@ if exist %file_name% del %file_name%
 if exist %serial_name% del %serial_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                IMEI test            
+rem echo                IMEI test
 rem echo ------------------------------------
 
 rem if defined tempIMEI set imei=%tempIMEI%
@@ -33,7 +33,7 @@ call color.bat 0b "-> "
 set /p imei=%xprvar%
 
 :_test
-rem Get IMEI to a file 
+rem Get IMEI to a file
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_IMEI> %file_name%
 
 rem Get the second line with the results

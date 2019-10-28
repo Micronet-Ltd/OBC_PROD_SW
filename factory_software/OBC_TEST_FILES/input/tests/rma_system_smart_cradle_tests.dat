@@ -11,3 +11,4 @@ com
 audio_ud
 temperature
 gpio_inputs
+buzzer_led

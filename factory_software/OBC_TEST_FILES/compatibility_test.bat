@@ -9,7 +9,7 @@ if exist %temp_result% del %temp_result%
 if exist %result_file% del %result_file%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 if not defined result_file_name set result_file_name=settings
 
 rem echo ------------------------------------

@@ -2,7 +2,7 @@
 set ERRORLEVEL=0
 
 rem echo ------------------------------------
-rem echo              SUPERCAP TEST            
+rem echo              SUPERCAP TEST
 rem echo ------------------------------------
 set sc_voltage_file_name=sc_test.txt
 set tmp_file_name=tmp.txt
@@ -12,11 +12,11 @@ rem Uninstall apps
 ..\adb uninstall me.davidvassallo.nfc > nul
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem Change the default of wi-fi off during power loss
-..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"  
-..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay" 
+..\adb shell "chmod 666 /sys/class/hwmon/hwmon1/wlan_off_delay"
+..\adb shell "echo 17000 > /sys/class/hwmon/hwmon1/wlan_off_delay"
 
 rem --------- check supercap charging  ----------------
 :_read_supercap_voltage_level
@@ -35,7 +35,7 @@ rem --------- end check supercap charging  -----------
 
 rem --------- check deivces is off ---------------------
 :_read_input_voltage_level
-rem Export the power loss output 
+rem Export the power loss output
 ..\adb shell echo 991 ^> /sys/class/gpio/export
 
 rem Read initial input power voltage
@@ -83,9 +83,9 @@ set /p power_loss=<%tmp_file_name% >nul 2>&1
 rem echo supercap discharging %sc_voltage_off%
 rem echo %power_loss%
 
-if [%power_loss%] EQU [1] goto _test_pass 
+if [%power_loss%] EQU [1] goto _test_pass
 if %loop_cnt%   GTR  50 goto _Power_loss_error
-rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing 
+rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing
 goto _SC_LOOP
 
 rem ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing
@@ -138,9 +138,9 @@ echo Supercap %xprvar%
 @echo Supercap test - passed supercap voltage : %sc_voltage%, SC off voltage = %sc_voltage_off%, Input voltage ON state = %power_in_voltage_on%, Input voltage SC state: %power_in_voltage_off% >> testResults\%result_file_name%.txt
 
 :_end_of_test
-echo                    supercap voltage : %sc_voltage%, 
-echo                    SC off voltage = %sc_voltage_off%, 
-echo                    Input voltage ON state = %power_in_voltage_on%, 
+echo                    supercap voltage : %sc_voltage%,
+echo                    SC off voltage = %sc_voltage_off%,
+echo                    Input voltage ON state = %power_in_voltage_on%,
 echo                    Input voltage SC state: %power_in_voltage_off%
 if exist %sc_voltage_file_name% del %sc_voltage_file_name%
 if exist %tmp_file_name%  del %tmp_file_name%

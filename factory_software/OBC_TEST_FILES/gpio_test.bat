@@ -20,15 +20,15 @@ set output3_fail=
 if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               GPIO test            
+rem echo               GPIO test
 rem echo ------------------------------------
 
 :_test_loop
 rem For testing, Output 0 is connected to Input 1 and 5, Output 1 is connected to Input 2 and 6, Output 2 is connected
-rem to Input 3 and 7, and Output 4 is connected to Input 7. 
+rem to Input 3 and 7, and Output 4 is connected to Input 7.
 rem
 rem Result code 0 = app isn't installed or started, 1 = success, 2 = fail and result data will contain which ones failed
 rem In the case that one of the GPIO tests fail a "F" will be placed in result data instead of "P"
@@ -56,7 +56,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0c "** "
-echo GPIO %xprvar% 
+echo GPIO %xprvar%
 rem If one of the GPIO tests failed then write that to the test result file
 if "%data:~0,1%" == "F" (
 	set ignition_fail="Ignition voltage was not in the range of 4000 to 14000 mv",
@@ -121,8 +121,8 @@ rem Uninstall app
 rem ..\adb uninstall com.micronet.obctestingapp > nul
 rem ..\adb uninstall me.davidvassallo.nfc > nul
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set gpinputs_fail=

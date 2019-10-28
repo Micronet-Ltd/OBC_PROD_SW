@@ -3,7 +3,7 @@
 set ERRORLEVEL=0
 rem echo result file name : %result_file_name%
 rem echo ------------------------------------
-rem echo              VERSION TEST            
+rem echo              VERSION TEST
 rem echo ------------------------------------
 
 set fpga_version_file_name=input\fpga_version.dat
@@ -11,22 +11,15 @@ set os_version_file_name=input\os_version.dat
 set version_file_name=version_file.txt
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 :_check_MCU_version
 ..\adb shell mctl api 0200 > %version_file_name%
 set /p version=<%version_file_name%
 set version=%version:~28,7%
 
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "MCU_VERSION" set mcu_version=%%j
-)
-
-set mcu_version=%mcu_version%
-rem echo MCU  VERSION retirvied : %version%
-rem echo MCU  VERSION input     : %mcu_version%
-if not %version% == %mcu_version% goto _test_error_wrong_mcu_version
-@echo MCU version O.K : %mcu_version%  >> testResults\%result_file_name%.txt
+if not %version% == %MCU_VERSION% goto _test_error_wrong_mcu_version
+@echo MCU version O.K : %MCU_VERSION%  >> testResults\%result_file_name%.txt
 
 call update_last_result.bat mcu_ver '%version%'
 
@@ -36,16 +29,8 @@ del %version_file_name%
 set /p version=<%version_file_name%
 set version=%version:~9,10%
 
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "FPGA_VERSION" set fpga_version=%%j
-)
-
-set fpga_version=%fpga_version%
-rem echo FPGA VERSION retirvied : %version%
-rem echo FPGA VERSION input     : %fpga_version%
-
-if not %version% == %fpga_version% goto _test_error_wrong_fpga_version
-@echo FPGA version O.K : %fpga_version%  >> testResults\%result_file_name%.txt
+if not %version% == %FPGA_VERSION% goto _test_error_wrong_fpga_version
+@echo FPGA version O.K : %FPGA_VERSION%  >> testResults\%result_file_name%.txt
 
 call update_last_result.bat fpga_ver '%version%'
 
@@ -54,17 +39,20 @@ del %version_file_name%
 ..\adb shell getprop ro.build.display.id > %version_file_name%
 set /p version=<%version_file_name%
 
-for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if /i "%%i" == "OS_VERSION" set os_version=%%j
-)
-
-rem echo OS VERSION retirvied : -%version%-
-rem echo OS VERSION input     : -%os_version%-
-
-if not %version% == %os_version% goto _test_error_wrong_os_version
-@echo OS version O.K : %os_version%  >> testResults\%result_file_name%.txt
+if not %version% == %OS_VERSION% goto _test_error_wrong_os_version
+@echo OS version O.K : %OS_VERSION%  >> testResults\%result_file_name%.txt
 
 call update_last_result.bat os_ver '%version%'
+
+:_check_build_type
+del %version_file_name%
+..\adb shell getprop ro.build.type > %version_file_name%
+set /p build=<%version_file_name%
+
+if not %build% == %BUILD_TYPE% goto _test_error_wrong_build_type
+@echo Build Type O.K : %BUILD_TYPE%  >> testResults\%result_file_name%.txt
+
+call update_last_result.bat build_type '%build%'
 
 if %ERRORLEVEL% == 1 goto _end_of_test
 
@@ -73,7 +61,7 @@ rem   ############## TEST STATUS ############
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0a "** "
-echo Version %xprvar% 
+echo Version %xprvar%
 goto _end_of_test
 
 :_test_error_no_mcu_version
@@ -99,7 +87,7 @@ set ERRORLEVEL=1
 set "xprvar="
 for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0c "** "
-echo OS version %xprvar% : Error, no OS version string in the input folder. Contact MICRONET for the OS string 
+echo OS version %xprvar% : Error, no OS version string in the input folder. Contact MICRONET for the OS string
 @echo OS version - failed : There is no OS version string in the input folder. Contact MICRONET for the OS string >> testResults\%result_file_name%.txt
 goto _end_of_test
 
@@ -136,10 +124,22 @@ echo OS version %xprvar% : expected %os_version% got %version%. Burn correct OS 
 
 call update_last_result.bat os_ver '%version%'
 
+goto _check_build_type
+
+:_test_error_wrong_build_type
+set ERRORLEVEL=1
+set "xprvar="
+for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
+call color.bat 0c "** "
+echo Build type version %xprvar% : expected %BUILD_TYPE% got %build%. Burn correct OS version.
+@echo Build type version - failed : expected  %BUILD_TYPE%  got %build%. Burn correct OS version. >> testResults\%result_file_name%.txt
+
+call update_last_result.bat build_type '%build%'
+
 goto _end_of_test
 
 :_end_of_test
-if exist %version_file_name% del %version_file_name% 
+if exist %version_file_name% del %version_file_name%
 set mcu_version_file_name=
 set fpga_version_file_name=
 set os_version_file_name=

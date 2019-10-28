@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.micronet.obctestingapp"
     android:sharedUserId="android.uid.system">
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -24,76 +17,96 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver android:name=".GetIMEIReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_IMEI"/>
+                <action android:name="com.micronet.obctestingapp.GET_IMEI" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".GetSerialReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_SERIAL"/>
+                <action android:name="com.micronet.obctestingapp.GET_SERIAL" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetComPortResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_COM_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_COM_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetCanBusResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_CAN_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_CAN_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetSingleWireCanResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_SWC_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_SWC_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetJ1708ResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_J1708_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_J1708_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetGPIOResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_GPIO_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_GPIO_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetAccelerometerResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_ACCEL_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_ACCEL_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetAudioResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_AUDIO_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_AUDIO_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetGPSResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_GPS_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_GPS_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetRS485ResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_RS485_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_RS485_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetSettingsResultReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_SETTINGS_RESULT"/>
+                <action android:name="com.micronet.obctestingapp.GET_SETTINGS_RESULT" />
             </intent-filter>
         </receiver>
         <receiver android:name=".CheckUnlockHashReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.CHECK_UNLOCK_HASH"/>
+                <action android:name="com.micronet.obctestingapp.CHECK_UNLOCK_HASH" />
             </intent-filter>
         </receiver>
         <receiver android:name=".GetUnlockHashReceiver">
             <intent-filter>
-                <action android:name="com.micronet.obctestingapp.GET_UNLOCK_HASH"/>
+                <action android:name="com.micronet.obctestingapp.GET_UNLOCK_HASH" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".ApnService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.micronet.obctestingapp.action.SET_APN" />
+            </intent-filter>
+        </service>
     </application>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
 
 </manifest>

@@ -3,10 +3,10 @@
 set ERRORLEVEL=0
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                LED TEST            
+rem echo                LED TEST
 rem echo ------------------------------------
 ..\adb shell mctl api 0206000FFFFFFF>nul
 ..\adb shell mctl api 0206010FFFFFFF>nul
@@ -45,4 +45,4 @@ echo %xprvar%
 ..\adb shell mctl api 02060000FF0000>nul
 ..\adb shell mctl api 02060100FF0000>nul
 ..\adb shell mctl api 0206020F00FF00>nul
-set choice=	
+set choice=

@@ -10,10 +10,10 @@ set loop_count=0
 if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo         Accelerometer test          
+rem echo         Accelerometer test
 rem echo ------------------------------------
 
 :_test_loop
@@ -67,8 +67,8 @@ goto _end_of_file
 
 :_end_of_file
 rem if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set loop_count=

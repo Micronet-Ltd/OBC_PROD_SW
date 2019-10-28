@@ -3,13 +3,8 @@
 --- Test Setup ---
 LANGUAGE:English
 
---- Version Test ---
-FPGA_VERSION:0x41000003
-MCU_VERSION:a.2.8.0
-OS_VERSION:TREQr_5_0.1.12.0_20180430.1455
-
 --- Wifi Test ---
-GoodWifiRSSI:94
+GoodWifiRSSI:85
 
 --- APN ---
 Leave user and password blank on the right side of the colon if you don't want a user and password set for this apn.

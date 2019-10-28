@@ -1,5 +1,4 @@
 gsm.sim.state
-gsm.version.baseband
 persist.sys.isHotspotEnable
 persist.sys.iswificonfigured
 ro.build.type

@@ -10,17 +10,17 @@ set cell_fail=
 set asuValue=
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               Cellular test            
+rem echo               Cellular test
 rem echo ------------------------------------
 
 :_test_loop
 rem Delete old result
 if exist %temp_result% del %temp_result%
 
-rem Check that sim card is inserted and recognized 
+rem Check that sim card is inserted and recognized
 ..\adb shell "dumpsys telephony.registry | grep -i signalstrength" > %temp_result%
 for /F "tokens=2" %%G in (%temp_result%) do set /A asuValue=%%G
 

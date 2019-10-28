@@ -6,62 +6,64 @@ color 0f
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.2.39
+set test_script_version=1.3.0
 set ERRORLEVEL=0
 
-rem Make sure all parameters passed in
+rem args: RMA/Production PartNo CustomerNo
+rem Make sure that all parameters are set
 set continue=
-if "%1"=="" set continue=false
-if "%2"=="" set continue=false
-if "%3"=="" set continue=false
-if "%4"=="" set continue=false
+set arg1=%1
+set arg2=%2
+set arg3=%3
+set arg4=%4
 
-rem Make sure test type is system or board
-if /I "%1"=="System" goto _correct_test_type
-if /I "%1"=="Board" goto _correct_test_type
-set continue=false
-:_correct_test_type
+call :_set_up_arguments
 
-rem Make sure test file exists
-cd OBC_TEST_FILES\input\tests
-if exist %3 goto _test_file_exists
-set continue=false
-:_test_file_exists
-cd ..\..\..
+rem Set the main variables of the test
+set TEST_INFO=%arg1%
+set PART_NUMBER=%arg2%
+set CUSTOMER_NUMBER=%arg3%
+set ADDON=%arg4%
+set "CONFIG_FILE_NAME=%arg2%_%arg4%.dat"
 
-rem Make sure test purpose is production or rma
-if /I "%4"=="Production" goto _correct_test_info
-if /I "%4"=="RMA" goto _correct_test_info
-set continue=false
-:_correct_test_info
-
-if "%continue%"=="false" (
-	echo.
-	call OBC_TEST_FILES\color.bat 0c "Error: incorrect parameters passed in." & echo. 
-	echo.
-	echo Consider using the Test_Setup.bat script to create the Run_Test.bat file.
-	echo.
-	echo Usage: OBC_TEST_MAIN.bat [test_type] [device_info] [test_file] [test_info]
-	echo.
-	echo    - test_type should either be "System" or "Board"
-	echo    - device_info should be the info/type of device, ex. "UnderDash"
-	echo    - test_file should be a test file in OBC_TEST_FILES/input/tests folder, ex. "system_tests.dat"
-	echo    - test_info should either be "Production" or "RMA"
+rem Get the test file to make sure its valid
+set TEST_FILE=unknown
+for /f "tokens=1,2 delims=:" %%i in (CUSTOMER_DEVICE_CONFIGURATION\part_numbers\%PART_NUMBER%.dat) do (
+ if /i "%%i" == "%TEST_INFO%_TEST_FILE" set TEST_FILE=%%j
 )
-if "%continue%"=="false" goto :eof 
+if "%TEST_FILE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: %TEST_INFO%_TEST_FILE not found in %PART_NUMBER% file... Please add test file to configuration. Exiting." & goto :eof
+if not exist OBC_TEST_FILES\input\tests\%TEST_FILE% call OBC_TEST_FILES\color.bat 0c "Error: Test file %TEST_FILE% not found in test folder... Please create or update configuration. Exiting." & goto :eof
 
-rem Set the test type, device type, and test file from the parameters passed in
-set TEST_TYPE=%1
-set DEVICE_INFO=%2
-set TEST_FILE=%3
-set TEST_INFO=%4
+rem Set the test type
+if /I "%TEST_INFO%"=="RMA" set "TEST_TYPE=System" & goto :_test_type_set
+if /I "%TEST_FILE:~0,5%"=="board" set "TEST_TYPE=Board" & goto :_test_type_set
+set "TEST_TYPE=System"
+:_test_type_set
+
+rem Get the customer settings config information
+set OS_VERSION=unknown
+set MCU_VERSION=unknown
+set FPGA_VERSION=unknown
+set BUILD_TYPE=unknown
+for /f "tokens=1,2 delims=:" %%i in (CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%CUSTOMER_NUMBER%\%CONFIG_FILE_NAME%) do (
+ if /i "%%i" == "OS_VERSION" set OS_VERSION=%%j
+ if /i "%%i" == "MCU_VERSION" set MCU_VERSION=%%j
+ if /i "%%i" == "FPGA_VERSION" set FPGA_VERSION=%%j
+ if /i "%%i" == "BUILD_TYPE" set BUILD_TYPE=%%j
+)
+if "%OS_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No OS version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
+if "%MCU_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No MCU version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
+if "%FPGA_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No FPGA version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
+if "%BUILD_TYPE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No BUILD TYPE found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
 
 rem Prepare the test so it is ready to run
 cls
 call :set_up_test
 
 echo --------------------------------------------------------------------------------
-echo  %TEST_INFO% Test Tool: %test_script_version%, %TEST_TYPE%, %DEVICE_INFO%, %language_choice%
+echo  %TEST_INFO% Test Tool: %test_script_version%, P/N: %PART_NUMBER%, Customer: %CUSTOMER_NUMBER%, Addon: %ADDON%, %language_choice%
+echo.
+echo  Required OS: %OS_VERSION%, MCU: %MCU_VERSION%, FPGA: %FPGA_VERSION%, OS Build Type: %BUILD_TYPE%
 echo --------------------------------------------------------------------------------
 
 rem connect to device over hotspot
@@ -85,7 +87,7 @@ for /f "delims=" %%G in (input\tests\%test_file%) do (
 		call uninstall_apps.bat
 		set apps_uninstalled=True
 	)
-	
+
 	call %%G_test.bat
 	call :handle_test_result %%G
 )
@@ -117,7 +119,7 @@ rem echo %column%
 if %ERRORLEVEL% == 1 (
 	set OBC_TEST_STATUS=Fail
 	set %column%_test=fail
-	
+
 	setlocal EnableDelayedExpansion
 	set %column%_test=fail
 	call update_last_result.bat %column%_test "0"
@@ -132,12 +134,101 @@ rem ****************************************************************************
 rem **************************  Set Up Test Functions  *******************************
 rem **********************************************************************************
 
+rem ****************** Parse/Verify Arguments ********************
+:_set_up_arguments
+
+rem Make sure arg1 is populated and verified
+set arg1Error=
+if not "%arg1%"=="" goto :_arg_1_set
+:_test_type_prompt
+call :print_header
+if "%arg1Error%"=="true" call OBC_TEST_FILES\color.bat 0c "Invalid test type. Enter either RMA or Production." & echo. & echo.
+echo What type of test is this?
+echo  1. RMA
+echo  2. Production
+echo.
+set /p arg1=Enter test type 1 or 2:
+echo.
+:_arg_1_set
+
+if /I "%arg1%"=="1" set "arg1=RMA"
+if /I "%arg1%"=="2" set "arg1=Production"
+if /I "%arg1%"=="rma" set "arg1=RMA" & goto _arg_1_verified
+if /I "%arg1%"=="production" set "arg1=Production" & goto _arg_1_verified
+set arg1Error=true
+goto :_test_type_prompt
+:_arg_1_verified
+
+rem Make sure arg2 is populated and verified
+set arg2Error=
+if not "%arg2%"=="" goto :_arg_2_set
+:_part_number_prompt
+call :print_header
+echo -Test Type: %arg1% & echo.
+if "%arg2Error%"=="true" call OBC_TEST_FILES\color.bat 0c "Part number doesn't exist in CUSTOMER_DEVICE_CONFIGURATION folder. Either create or select a valid part number." & echo. & echo.
+echo What is the part number of device are you testing?
+echo  ex. MTR-A002-001, NBOARD869V3C, ...
+echo.
+set /p arg2=Enter part number:
+echo.
+:_arg_2_set
+
+if exist CUSTOMER_DEVICE_CONFIGURATION\part_numbers\%arg2%.dat goto :_arg_2_verified
+set arg2Error=true
+goto :_part_number_prompt
+:_arg_2_verified
+
+rem Make sure arg3 is populated and verified
+set arg3Error=
+if not "%arg3%"=="" goto :_arg_3_set
+:_customer_number_prompt
+call :print_header
+echo -Test Type: %arg1%
+echo -Part Number: %arg2% & echo.
+if "%arg3Error%"=="true" call OBC_TEST_FILES\color.bat 0c "Customer number doesn't exist in CUSTOMER_DEVICE_CONFIGURATION folder. Either create or select a valid customer number." & echo. & echo.
+echo What is the customer number of device are you testing?
+echo  Format: [customer_number]-[p/n]-[config_number]
+echo  ex. 11111, 32533, 85695... Default is 00000.
+echo.
+set /p arg3=Enter customer number:
+echo.
+:_arg_3_set
+
+if exist CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%arg3% goto :_arg_3_verified
+set arg3Error=true
+goto :_customer_number_prompt
+:_arg_3_verified
+
+rem Make sure arg4 is populated and verified
+set arg4Error=
+if not "%arg4%"=="" goto :_arg_4_set
+:_addon_number_prompt
+call :print_header
+echo -Test Type: %arg1%
+echo -Part Number: %arg2%
+echo -Customer Number: %arg3% & echo.
+if "%arg4Error%"=="true" call OBC_TEST_FILES\color.bat 0c "Configuration for doesn't exist in CUSTOMER_DEVICE_CONFIGURATION folder for %configFileName%. Either create or select a valid addon number." & echo. & echo.
+echo What is the addon number? Default is 0.
+echo  ex. 0, 1, 2...
+echo.
+set /p arg4=Enter addon number:
+echo.
+:_arg_4_set
+
+set "configFileName=%arg2%_%arg4%.dat"
+if exist CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%arg3%\%configFileName% goto :_arg_4_verified
+set arg4Error=true
+goto :_addon_number_prompt
+:_arg_4_verified
+
+exit /b
+
 rem ****************** Set Up Test Function ********************
 :set_up_test
 rem Set up the whole test
 cd OBC_TEST_FILES
 set OBC_TEST_STATUS=PASS
-set options_file=input\test_options.dat
+set options_file=input\settings\test_options.dat
 set apps_uninstalled=False
 
 rem Select the language from the language file
@@ -180,17 +271,17 @@ for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
 if /I "%language_choice%" == "English" goto _english
 if /I "%language_choice%" == "Chinese" goto _chinese
 echo.
-echo Error: input/test_options.dat file contains invalid language value. 
+echo Error: input/test_options.dat file contains invalid language value.
 echo Should either be "English" or "Chinese". Defaulting to English.
 echo.
 goto _english
 
 :_english
-set language_file=input/English.dat
+set language_file=input/languages/English.dat
 exit /b
 
 :_chinese
-set language_file=input/Chinese.dat
+set language_file=input/languages/Chinese.dat
 exit /b
 
 rem *************** Set Up Result Files Function ***************
@@ -212,7 +303,7 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	rem if board test then set summary file to uut serial
-	set /p uutSerial=Scan the uut Serial Number: 
+	set /p uutSerial=Scan the uut Serial Number:
 	echo.
 )
 
@@ -229,11 +320,13 @@ if /I "%TEST_TYPE%"=="Board" (
 
 if /I "%TEST_TYPE%"=="System" (
 	call update_last_result.bat test_version "%test_script_version%"
-	call update_last_result.bat device_info "%DEVICE_INFO%"
-	
+	call update_last_result.bat part_number "%PART_NUMBER%"
+	call update_last_result.bat customer_number "%CUSTOMER_NUMBER%"
+  call update_last_result.bat addon_number "%ADDON%"
+
 	rem Update serial
 	call update_last_result.bat serial "%deviceSN%"
-	
+
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo Device SN : %deviceSN%  >> testResults\%result_file_name%.txt
@@ -241,12 +334,14 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	call update_last_result.bat test_version "%test_script_version%"
-	call update_last_result.bat device_info "%DEVICE_INFO%"
-	
+	call update_last_result.bat part_number "%PART_NUMBER%"
+	call update_last_result.bat customer_number "%CUSTOMER_NUMBER%"
+  call update_last_result.bat addon_number "%ADDON%"
+
 	rem Update tester serial and uut serial
 	call update_last_result.bat serial "%deviceSN%"
 	call update_last_result.bat board_serial "%uutSerial%"
-	
+
 	@echo. >> testResults\%result_file_name%.txt
 	@echo Test Run : %datetime:"=% >> testResults\%result_file_name%.txt
 	@echo A8 SN : %deviceSN%  >> testResults\%result_file_name%.txt
@@ -257,6 +352,15 @@ if /I "%TEST_TYPE%"=="Board" (
 call update_last_result.bat test_type "%TEST_TYPE%"
 call update_last_result.bat test_file "%TEST_FILE%"
 
+exit /b
+
+rem ********************* Test Setup ***********************
+:print_header
+cls
+echo ----------------------------------------------------
+echo                  Test %test_script_version% Setup
+echo ----------------------------------------------------
+echo.
 exit /b
 
 rem **********************************************************************************
@@ -278,10 +382,10 @@ echo.
 set "xprvar="
 for /F "skip=30 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0a ************************************** & echo.
-call color.bat 0a "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0a " *******" & echo.
+call color.bat 0a "********* " & <nul set /p =Entire %xprvar%& call color.bat 0a " *********" & echo.
 call color.bat 0a ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
-@echo ***** Entire OBC test passed !!! ***** >> testResults\%result_file_name%.txt
+@echo ******* Entire test passed !!! ******* >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
 exit /b
 
@@ -290,15 +394,18 @@ echo.
 set "xprvar="
 for /F "skip=31 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0c ************************************** & echo.
-call color.bat 0c "******* " & <nul set /p =Entire OBC %xprvar%& call color.bat 0c " *******" & echo.
+call color.bat 0c "********* " & <nul set /p =Entire %xprvar%& call color.bat 0c " *********" & echo.
 call color.bat 0c ************************************** & echo.
 @echo ************************************** >> testResults\%result_file_name%.txt
-@echo ********  OBC test failed !!! ******** >> testResults\%result_file_name%.txt
+@echo **********  test failed !!! ********** >> testResults\%result_file_name%.txt
 @echo ************************************** >> testResults\%result_file_name%.txt
 rem color 47
 
 rem Display failures
 call :display_failures
+
+rem Ask to open result files
+if "%TEST_INFO%"=="RMA" call :prompt_open_result_file
 
 exit /b
 
@@ -317,13 +424,13 @@ rem Check which tests did fail and print them
 for /f "delims=" %%G in (input\tests\%test_file%) do (
 	setlocal EnableDelayedExpansion
 	set test=%%G
-	
+
 	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
-	
+
 	set test=!test!_test
-	
+
 	rem echo !test!
-	
+
 	call :display_failures !test! !test:~0,-5!
 	endlocal
 )
@@ -334,6 +441,21 @@ exit /b
 rem echo %1
 rem echo !%1!
 if /I "!%1!"=="fail" call color.bat 0c "** " & echo %2 %xprvar%
+exit /b
+
+:prompt_open_result_file
+set "result_file=%~dp0OBC_TEST_FILES\testResults\%deviceSN%.txt"
+
+:_view_results_prompt
+set ans=
+echo.
+set /p ans=Do you want to view the result file? [Y/N]:
+
+if /I "%ans%"=="y" start notepad %result_file% & goto _valid_answer
+if /I "%ans%"=="n" goto _valid_answer
+goto :_view_results_prompt
+:_valid_answer
+
 exit /b
 
 rem ******************** Display Failures **********************

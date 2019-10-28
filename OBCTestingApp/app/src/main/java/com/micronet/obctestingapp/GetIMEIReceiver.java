@@ -1,5 +1,6 @@
 package com.micronet.obctestingapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
@@ -14,6 +15,7 @@ public class GetIMEIReceiver extends MicronetBroadcastReceiver {
 
     private final String TAG = "OBCTestingApp";
 
+    @SuppressLint("HardwareIds")
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);

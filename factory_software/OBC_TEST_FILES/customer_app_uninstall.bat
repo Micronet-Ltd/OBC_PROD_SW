@@ -7,7 +7,7 @@ SET "tempFileName2=temp_count.txt"
 SET "tempFileName3=temp_count_final.txt"
 SET "defaultSystemApp=com.inthinc.inthinccontrol"
 
-set options_file=input\test_options.dat
+set options_file=input\settings\test_options.dat
 
 rem initialize to blank
 set "packageName="

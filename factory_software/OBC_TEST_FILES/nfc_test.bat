@@ -7,16 +7,16 @@ set total_loop_cnt=0
 if exist %file_name% del %file_name%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo                NFC test            
+rem echo                NFC test
 rem echo ------------------------------------
 
 rem   ############## display message to the tester ############
 
 :_full_test
-echo. 
+echo.
 rem echo ***************************************
 set "xprvar="
 for /F "skip=16 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
@@ -48,7 +48,7 @@ goto _full_test
 :_ask_if_retry
 set "xprvar="
 for /F "skip=17 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo.&set /p option=%xprvar% 
+echo.&set /p option=%xprvar%
 if /I "%option%"=="Y" goto _full_test
 if /I "%option%"=="N" goto _test_fail
 echo Invalid option
@@ -63,7 +63,7 @@ echo %xprvar%
 @echo NFC test - failed >> testResults\%result_file_name%.txt
 rem Try to delete file just in case
 ..\adb shell rm ./sdcard/nfc.txt > nul 2>&1
-goto _uninstall_apk 
+goto _uninstall_apk
 
 
 :_Delete_File
@@ -105,6 +105,6 @@ goto _end_of_file
 
 :_end_of_file
 if exist %file_name% del %file_name%
-set file_name= 
-set loop_cnt= 
+set file_name=
+set loop_cnt=
 set total_loop_cnt=

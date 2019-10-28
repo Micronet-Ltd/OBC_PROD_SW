@@ -10,16 +10,16 @@ set rs485_fail=
 if exist %temp_result% del %temp_result%
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               RS485 test            
+rem echo               RS485 test
 rem echo ------------------------------------
 
 rem For testing, RS485 is connected to RS485 on the tester device.
 rem Result code:
-rem 		 0 = app isn't installed or started, 
-rem 		 1 = success, 
+rem 		 0 = app isn't installed or started,
+rem 		 1 = success,
 rem 		 2 = fail and result data will contain which ones failed,
 rem In the case that it fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "P"
@@ -85,8 +85,8 @@ rem Reconfigure port tty flags. This is done to make sure the com test works aft
 ..\adb shell "busybox stty -F /dev/ttyUSB1 500:5:cbd:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0" > nul
 ..\adb shell "busybox stty -F /dev/ttyUSB1 9600" > nul
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set loop_count=

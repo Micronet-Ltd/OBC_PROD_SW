@@ -4,10 +4,10 @@ set currentTime_file_name=currentTime.txt
 set ERRORLEVEL=0
 
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo              Read RTC TEST            
+rem echo              Read RTC TEST
 rem echo ------------------------------------
 
 :_get_MCU_current_time
@@ -35,4 +35,4 @@ echo RTC %xprvar%
 @echo RTC test - passed, date is: %MCUdate% >> testResults\%result_file_name%.txt
 
 :_end_of_test
-if exist %currentTime_file_name%   del %currentTime_file_name% 
+if exist %currentTime_file_name%   del %currentTime_file_name%

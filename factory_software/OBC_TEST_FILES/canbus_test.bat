@@ -10,17 +10,17 @@ set can1_fail=
 set loop_count=0
 if exist %temp_result% del %temp_result%
 rem If language file is not set then default to english
-if not defined language_file set language_file=input/English.dat
+if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               CanBus test            
+rem echo               CanBus test
 rem echo ------------------------------------
 
 :_test_loop
 rem For testing, Can0 and Can1 are 'connected'
 rem Result code:
-rem 		 0 = app isn't installed or started, 
-rem 		 1 = success, 
+rem 		 0 = app isn't installed or started,
+rem 		 1 = success,
 rem 		 2 = fail and result data will contain which ones failed,
 rem In the case that one of the can ports fails to send or receive an "F" will be placed in result data instead of "P"
 rem Example: A success result's data will look like "PP"
@@ -76,7 +76,7 @@ rem   ############## TEST STATUS ############
 set "xprvar="
 for /F "skip=34 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 call color.bat 0a "** "
-echo CanBus %xprvar% 
+echo CanBus %xprvar%
 @echo CanBus test - passed >> testResults\%result_file_name%.txt
 goto _end_of_file
 
@@ -85,8 +85,8 @@ goto _end_of_file
 rem Uninstall app
 rem ..\adb uninstall com.micronet.obctestingapp > nul
 if exist %temp_result% del %temp_result%
-set Result= 
-set success= 
+set Result=
+set success=
 set temp_result=
 set data=
 set can0_fail=
