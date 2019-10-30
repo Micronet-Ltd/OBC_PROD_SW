@@ -6,7 +6,7 @@ color 0f
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.3.0
+set test_script_version=1.3.1
 set ERRORLEVEL=0
 
 rem args: RMA/Production PartNo CustomerNo

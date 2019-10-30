@@ -10,6 +10,9 @@ rem echo ------------------------------------
 rem echo                AUDIO TEST
 rem echo ------------------------------------
 
+echo.
+echo About to perform Audio test...
+
 :_start_test
 set HASFAILED=0
 set LEFTFAIL=0

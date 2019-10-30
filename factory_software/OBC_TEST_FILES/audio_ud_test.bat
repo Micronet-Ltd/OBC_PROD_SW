@@ -10,6 +10,9 @@ rem echo ------------------------------------
 rem echo                AUDIO UD TEST
 rem echo ------------------------------------
 
+echo.
+echo About to perform Audio test...
+
 rem Tests the external speaker on the UD unit
 :_start_test
 ..\adb shell am broadcast -a com.micronet.obctestingapp.GET_AUDIO_RESULT > nul

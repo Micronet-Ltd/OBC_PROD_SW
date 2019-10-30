@@ -44,8 +44,15 @@ rem find /n " " finds everything and adds the line numbers to it
 type %wlan_output% | find /N " " | find "[%lineNumber%]" > %temp_result%
 for /F "tokens=4" %%G in (%temp_result%) do set WiFiValue=%%G
 rem echo WiFiRSSI = %WiFiValue%
-if not "%WiFiValue:~1,1%"=="%%" set /a WiFiValue=%WiFiValue:~0,2%
-if "%WiFiValue:~1,1%"=="%%" set /a WiFiValue=%WiFiValue:~0,1%
+
+rem Three digit wifi signal (100%)
+if "%WiFiValue:~3,1%"=="%%" set /a WiFiValue=%WiFiValue:~0,3% & goto :_wifi_comparison
+rem Two digit wifi signal (10-99%)
+if "%WiFiValue:~2,1%"=="%%" set /a WiFiValue=%WiFiValue:~0,2% & goto :_wifi_comparison
+rem Single digit wifi signal (1-9%)
+if "%WiFiValue:~1,1%"=="%%" set /a WiFiValue=%WiFiValue:~0,1% & goto :_wifi_comparison
+
+:_wifi_comparison
 rem echo WiFiRSSI = %WiFiValue%
 rem echo Final = %WiFiValue%
 

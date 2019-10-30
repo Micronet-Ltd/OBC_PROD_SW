@@ -21,13 +21,13 @@ NFC test - passed
 Press Help Key on the device
 Help Key test - passed
 Help Key test - failed
-Do you hear the right speaker [Y/N] ?
-Do you hear the left speaker [Y/N] ?
+Did you hear the right speaker [Y/N] ?
+Did you hear the left speaker [Y/N] ?
 Audio test failed. Would you like to retry? [Y/N]:
 Would you like to repeat the test [Y/N] ?
 Accelerometer test failed. Would you like to retry? [Y/N]:
 GPIO test failed. Would you like to retry? [Y/N]:
-Turn Device OFF - press any key when power is removed ...
+Turn Device OFF - Immediately press any key when power is removed ...
 test passed
 test failed
 Failed Tests (Check individual file results to see how they failed):
@@ -39,7 +39,7 @@ WiFi test failed. Would you like to retry [Y/N]
 Are you retesting a previously tested device? [Y/N]
 Error: Possible Duplicate - check summary.csv to see which duplicate it could be.
 Is the LED white and bright?[Y/N] ?
-Do you hear the speaker [Y/N] ?
+Did you hear the speaker [Y/N] ?
 RS485 test failed. Would you like to retry? [Y/N]:
 Did you hear the buzzer and see the LED turn red? [Y/N]:
 Buzzer Led test - failed

@@ -4,7 +4,7 @@
 LANGUAGE:English
 
 --- Wifi Test ---
-GoodWifiRSSI:85
+GoodWifiRSSI:94
 
 --- APN ---
 Leave user and password blank on the right side of the colon if you don't want a user and password set for this apn.

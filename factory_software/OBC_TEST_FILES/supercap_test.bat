@@ -54,12 +54,12 @@ call color.bat 0b "-> "
 echo %xprvar%
 pause > nul
 
-rem 2 sec delay added after the device is switched off incase the user presses any key before disconnecting power
+rem 1 sec delay added after the device is switched off in case the user presses any key before disconnecting power
 rem It also takes 2 seconds of power loss before the power loss GPIO is toggled by the MCU
-timeout /T 2 /NOBREAK > nul
+timeout /T 1 /NOBREAK > nul
 
 rem Read input power voltage after power is removed (running on supercap)
-..\adb shell mctl api 020408 2>nul rem >%sc_voltage_file_name%
+..\adb shell mctl api 020408>%sc_voltage_file_name%
 rem line structure is: GPI 8, approx voltage = VALUE mV, ret = 4
 rem need to read only the VALUE and compare to expected range
 set /p power_in_voltage_off=<%sc_voltage_file_name% >nul 2>&1
@@ -84,7 +84,7 @@ rem echo supercap discharging %sc_voltage_off%
 rem echo %power_loss%
 
 if [%power_loss%] EQU [1] goto _test_pass
-if %loop_cnt%   GTR  50 goto _Power_loss_error
+if %loop_cnt% GTR 50 goto _Power_loss_error
 rem if %sc_voltage% GTE %sc_voltage_off% goto _DisCharge_ERROR ------------------this check cancled, in this time the voltage is much more then the voltage in the beringing
 goto _SC_LOOP
 
@@ -101,7 +101,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 call color.bat 0c "** "
 echo Supercap %xprvar% initial SuperCap voltage not in range - _SC_LEVEL_ERROR
 @echo Supercap test - failed initial SuperCap voltage not in range (SC voltage = %sc_voltage%) - _SC_LEVEL_ERROR >> testResults\%result_file_name%.txt
-goto _read_input_voltage_level
+goto _end_of_test
 
 :_VIN_LEVEL_ERROR
 set ERRORLEVEL=1
@@ -110,7 +110,7 @@ for /F "skip=33 delims=" %%i in (%language_file%) do if not defined xprvar set "
 call color.bat 0c "** "
 echo Supercap %xprvar% Input voltage too high in supercap mode - _VIN_LEVEL_ERROR
 @echo Supercap test - failed Input voltage too high in supercap mode (Input voltage ON state = %power_in_voltage_on%, Input voltage SC state = %power_in_voltage_off%) - _VIN_LEVEL_ERROR >> testResults\%result_file_name%.txt
-goto _read_supercap_discharge
+goto _end_of_test
 
 :_DisCharge_ERROR
 set ERRORLEVEL=1
