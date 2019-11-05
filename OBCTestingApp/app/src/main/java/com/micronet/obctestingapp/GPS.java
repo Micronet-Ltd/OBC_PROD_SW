@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GPS implements GpsStatus.Listener {  //, LocationListener {
 
-    private final String TAG = "OBCTestingApp";
+    private final String TAG = "GPSTesting";
     private LocationManager locationManager = null;
     private final Object lock = new Object();
     private static final long INTERVAL_ONE_SECOND = 1000; // minimum time interval between location updates, in milliseconds
@@ -44,7 +44,25 @@ public class GPS implements GpsStatus.Listener {  //, LocationListener {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         locationManager.addGpsStatusListener(this);
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL_ONE_SECOND, 0, this);
+        Log.d(TAG, "Started the GPS.");
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL_ONE_SECOND, 0f, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "Latitide: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        });
     }
 
     @Override
@@ -171,24 +189,4 @@ public class GPS implements GpsStatus.Listener {  //, LocationListener {
 
         return tempAverageSNROfTopSatellites;
     }
-
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        Log.e(TAG, "Location Change -> Accuracy: " + location.getAccuracy());
-//    }
-//
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderEnabled(String provider) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String provider) {
-//
-//    }
 }

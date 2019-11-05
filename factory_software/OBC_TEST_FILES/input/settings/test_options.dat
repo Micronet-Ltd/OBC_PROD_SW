@@ -28,3 +28,9 @@ PackageName:inthinc
 --- Memory Test ---
 RAM:1
 ROM:8
+
+--- Cell Test ---
+asuLowerBound:6
+asuUpperBound:32
+asuLteLowerBound:25
+asuLteUpperBound:90

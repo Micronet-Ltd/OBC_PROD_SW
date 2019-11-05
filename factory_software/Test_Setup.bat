@@ -2,6 +2,16 @@
 cls
 color 0f
 
+set arg1=
+set arg2=
+set arg3=
+set arg4=
+
+if not "%1"=="" set arg1=%1
+if not "%2"=="" set arg2=%2
+if not "%3"=="" set arg3=%3
+if not "%4"=="" set arg4=%4
+
 rem Make sure arg1 is populated and verified
 set arg1Error=
 if not "%arg1%"=="" goto :_arg_1_set

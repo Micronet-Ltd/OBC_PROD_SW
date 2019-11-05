@@ -1,2 +1,2 @@
 PRODUCTION_TEST_FILE:system_tests.dat
-RMA_TEST_FILE:rma_system_tests.dat
+RMA_TEST_FILE:rma_system_lte_tests.dat

@@ -32,13 +32,13 @@ set /a loop_cnt = 0
 :_WLAN_LOOP
 echo | set /p=.
 set /a loop_cnt = %loop_cnt% + 1
-..\adb connect 192.168.43.1>%network_file_name%
+..\adb connect 192.168.43.1>%network_file_name% 2>nul
 set /p OBC_TESTER_WLAN_CON=<%network_file_name%
 
 rem read the first letter of the File which its context can be either:
 rem Connection request was completed successfully.       OR
 rem There is no profile assigned to the specified interface.
-rem if the 1st letter is 'c', connection succeded or 'a' already connected, else fail
+rem if the 1st letter is 'c', connection succeeded or 'a' already connected, else fail
 rem echo %OBC_TESTER_WLAN_CON%
 
 if %OBC_TESTER_WLAN_CON:~0,1% == c goto _root_loop
@@ -52,8 +52,9 @@ rem Need to make sure it is actually getting root because sometimes it is failin
 set loop_count=0
 
 :_get_root
+echo | set /p=.
 ..\adb root > nul 2>&1
-..\adb connect 192.168.43.1 > %temp_result%
+..\adb connect 192.168.43.1>%temp_result% 2>nul
 set /p root_result=<%temp_result%
 rem echo %root_result%
 rem checking this below will ensure that the device is connected before trying to run the shell command
@@ -70,11 +71,12 @@ timeout /T 1 /NOBREAK > nul
 goto _get_root
 
 :_check_if_root
+echo | set /p=.
 if exist %temp_result% del %temp_result%
 set root_result=
 
 rem check adb state. Had problem where connection passed but device was offline
-..\adb get-state > %temp_result%
+..\adb get-state>%temp_result% 2>&1
 set /p state=<%temp_result%
 rem echo %state%
 set correct_state=device
@@ -82,7 +84,7 @@ if not "%state%" == "%correct_state%" goto _retry
 
 if exist %temp_result% del %temp_result%
 timeout /T 2 /NOBREAK > nul
-..\adb shell id > %temp_result%
+..\adb shell id>%temp_result% 2>nul
 set /p root_result=<%temp_result%
 rem echo %root_result%
 
@@ -90,7 +92,6 @@ rem check id to make sure adb is root
 if "%root_result:~0,11%" == "%root_string%" goto _WLAN_test_pass
 
 :_retry
-
 set /a loop_count=%loop_count%+1
 set root_result=
 

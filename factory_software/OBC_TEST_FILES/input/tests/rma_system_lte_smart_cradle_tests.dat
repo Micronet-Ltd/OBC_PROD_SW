@@ -1,0 +1,14 @@
+compatibility
+version
+sd_card
+memory
+cell_lte
+gps
+canbus
+swc
+j1708
+com
+audio_ud
+temperature
+gpio_inputs
+buzzer_led

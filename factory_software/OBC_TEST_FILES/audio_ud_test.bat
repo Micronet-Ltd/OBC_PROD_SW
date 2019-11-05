@@ -11,7 +11,7 @@ rem echo                AUDIO UD TEST
 rem echo ------------------------------------
 
 echo.
-echo About to perform Audio test...
+echo About to perform external Audio test...
 
 rem Tests the external speaker on the UD unit
 :_start_test

@@ -6,7 +6,7 @@ color 0f
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.3.1
+set test_script_version=1.3.2
 set ERRORLEVEL=0
 
 rem args: RMA/Production PartNo CustomerNo
@@ -303,7 +303,8 @@ if /I "%TEST_TYPE%"=="System" (
 )
 if /I "%TEST_TYPE%"=="Board" (
 	rem if board test then set summary file to uut serial
-	set /p uutSerial=Scan the uut Serial Number:
+	echo.
+	set /p uutSerial=Scan the UUT Serial Number:
 	echo.
 )
 
@@ -467,7 +468,7 @@ set language_choice=
 set language_file=
 set TEST_TYPE=
 set uutSerial=
-..\adb disconnect
+..\adb disconnect > nul
 Netsh WLAN delete profile TREQr_5_%imeiEnd%>nul
 set imeiEnd=
 cd testResults

@@ -2,8 +2,8 @@
 
 set ERRORLEVEL=0
 
-set lowerBound=0
-set upperBound=0
+set /A lowerBound=0
+set /A upperBound=0
 
 set temp_result=tmp.txt
 set cell_fail=
@@ -13,23 +13,24 @@ rem If language file is not set then default to english
 if not defined language_file set language_file=input/languages/English.dat
 
 rem echo ------------------------------------
-rem echo               Cellular test
+rem echo               LTE Cellular test
 rem echo ------------------------------------
 
 rem Read in ASU boundaries
 for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
- if "%%i" == "asuLowerBound" set /A lowerBound=%%j
- if "%%i" == "asuUpperBound" set /A upperBound=%%j
+ if "%%i" == "asuLteLowerBound" set /A lowerBound=%%j
+ if "%%i" == "asuLteUpperBound" set /A upperBound=%%j
 )
 
 :_test_loop
-rem Check that sim card is inserted and recognized
+rem dBm has offset of 140 with LTE
+set /A asuValue=140
 if exist %temp_result% del %temp_result%
 ..\adb shell "dumpsys telephony.registry | grep -i signalstrength" > %temp_result%
-for /F "tokens=2" %%G in (%temp_result%) do set /A asuValue=%%G
+for /F "tokens=10" %%G in (%temp_result%) do set /A asuValue+=%%G
 
 set cell_fail=
-if %asuValue% EQU 99 set "cell_fail=ASU value is 99 (unknown)" && goto _cell_fail
+if %asuValue% EQU -2147483509 set "cell_fail=ASU value is unknown" && goto _cell_fail
 if %asuValue% LSS %lowerBound% set "cell_fail=ASU value %asuValue% is less than %lowerBound% lower boundary" && goto _cell_fail
 if %asuValue% GTR %upperBound% set "cell_fail=ASU value %asuValue% is greater than %upperBound% upper boundary" && goto _cell_fail
 
@@ -48,7 +49,7 @@ rem echo %packet_loss%
 if not "%packet_loss%"=="0%%" set cell_fail=Did not get a data connection
 if not "%cell_fail%"=="" goto _ask_if_retry
 
-rem Both ASU value in range and data connection
+rem Test passed both ASU range and sending a data connection
 goto _test_pass
 
 
