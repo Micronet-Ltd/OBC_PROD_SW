@@ -35,7 +35,7 @@ set "config_file_name=%part_number%_%addon_number%.dat"
 if "%part_number:~0,3%"=="MTR" set "config_file_name=%part_number:~4,4%_%addon_number%.dat"
 
 rem Check if this configuration file already exists
-if exist CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%customer_number%\%config_file_name% echo Error: this configuration file already exists. Delete it to create a new one. Exiting... & goto :eof
+if exist customer_numbers\%customer_number%\%config_file_name% echo Error: this configuration file already exists. Delete it to create a new one. Exiting... & goto :eof
 
 :_os_version_prompt
 call :print_header
@@ -130,9 +130,9 @@ if /I "%ans%"=="N" goto :eof
 if /I "%ans%"=="No" goto :eof
 
 :_create_configuration
-if not exist CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%customer_number% mkdir CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%customer_number%
+if not exist customer_numbers\%customer_number% mkdir customer_numbers\%customer_number%
 
-set "filename=CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%customer_number%\%config_file_name%"
+set "filename=customer_numbers\%customer_number%\%config_file_name%"
 echo OS_VERSION:%os_version%>> %filename%
 echo MCU_VERSION:%mcu_version%>> %filename%
 echo FPGA_VERSION:%fpga_version%>> %filename%

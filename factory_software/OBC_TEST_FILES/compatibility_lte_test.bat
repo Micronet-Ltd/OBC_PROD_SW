@@ -22,7 +22,7 @@ set /p app_uninstall=<res.txt
 
 :_test_begin
 rem Run test
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SETTINGS_RESULT> %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_SETTINGS_RESULT --es "preferred_network_mode" "9"> %temp_result%
 
 rem Get result code
 set "xprvar="

@@ -2,6 +2,7 @@
 
 set ERRORLEVEL=0
 
+set serial=
 set serial_name=serial_tmp.txt
 set list_name=SerialIMEI
 if exist %serial_name% del %serial_name%
@@ -29,11 +30,12 @@ rem Parse second line of result on double quotes to get serial number whether it
 set "xprvar="
 for /F delims^=^"^ tokens^=2^ skip^=1 %%i in (serial_tmp.txt) do if not defined xprvar set "xprvar=%%i"
 
-rem Final serial number from device with PM
-set pm_serial=PM%xprvar%
+rem Add PM if needed
+set serial=%xprvar%
+if "%SERIAL_PM%"=="true" set serial=PM%xprvar%
 
 rem If serial number scanned is the same as the one in the device then goto pass
-if "%pm_serial%" == "%read_in_serial%" goto _test_pass
+if "%serial%" == "%read_in_serial%" goto _test_pass
 
 :_test_fail
 set ERRORLEVEL=1
@@ -43,7 +45,7 @@ for /F "skip=4 delims=" %%i in (%language_file%) do if not defined xprvar set "x
 call color.bat 0c "** "
 echo %xprvar%
 endlocal
-@echo Serial test - failed expected %pm_serial% got %read_in_serial% >> testResults\%result_file_name%.txt
+@echo Serial test - failed expected %serial% got %read_in_serial% >> testResults\%result_file_name%.txt
 goto _end_of_file
 
 rem   ############## TEST STATUS ############
@@ -54,10 +56,10 @@ for /F "skip=5 delims=" %%i in (%language_file%) do if not defined xprvar set "x
 call color.bat 0a "** "
 echo %xprvar%
 endlocal
-@echo Serial test - passed %pm_serial% >> testResults\%result_file_name%.txt
+@echo Serial test - passed %serial% >> testResults\%result_file_name%.txt
 
 :_end_of_file
 if exist %serial_name% del %serial_name%
 set Result=
 set read_in_serial=
-set pm_serial=
+set serial=

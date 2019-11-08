@@ -2,8 +2,8 @@ Scan IMEI:
 IMEI test - failed expected !Result:~37,15! got !imei!
 IMEI test - passed !imei!
 Scan Serial Number:
-Serial test - failed expected !pm_serial! got !read_in_serial!
-Serial test - passed !pm_serial!
+Serial test - failed expected !serial! got !read_in_serial!
+Serial test - passed !serial!
 Do you see the 3 LEDs in white and same brightness [Y/N] ?
 LED test - failed
 LED test - passed

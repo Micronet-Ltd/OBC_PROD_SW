@@ -2,6 +2,8 @@
 cls
 color 0f
 
+mode con:cols=120 lines=4000
+
 set arg1=
 set arg2=
 set arg3=

@@ -11,7 +11,7 @@ rem echo                AUDIO UD TEST
 rem echo ------------------------------------
 
 echo.
-echo About to perform external Audio test...
+echo About to perform Audio test...
 
 rem Tests the external speaker on the UD unit
 :_start_test
@@ -21,7 +21,9 @@ rem Tests the external speaker on the UD unit
 set choice=
 set "xprvar="
 for /F "skip=41 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
-echo.&set /p choice=%xprvar%
+echo.
+call color.bat 0b "-> "
+set /p choice=%xprvar%
 if /I %choice% == Y goto _test_pass
 if /I %choice% == N goto _ask_if_retry
 echo Invalid option

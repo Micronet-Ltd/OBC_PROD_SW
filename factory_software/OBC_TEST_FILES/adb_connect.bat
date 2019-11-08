@@ -105,13 +105,17 @@ rem   ############## TEST STATUS ############
 :_WLAN_test_fail
 set ERRORLEVEL=1
 echo.
-echo ** adb Connect failed %OBC_TESTER_WLAN_CON%
+call color.bat 0c "** "
+echo adb Connect failed %OBC_TESTER_WLAN_CON%
+..\adb kill-server>nul 2>&1
 goto _end_of_test
 
 :_WLAN_test_fail_state
 set ERRORLEVEL=1
 echo.
-echo ** adb Connect failed - error with root or state. device state: %state%
+call color.bat 0c "** "
+echo adb Connect failed - error with root or state. device state: %state%
+..\adb kill-server>nul 2>&1
 goto _end_of_test
 
 :_WLAN_test_pass

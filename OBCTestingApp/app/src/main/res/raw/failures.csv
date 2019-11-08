@@ -14,3 +14,4 @@ data_roaming0
 mock_location
 bluetooth_addr_valid
 shutdown_timeout
+preferred_network_mode

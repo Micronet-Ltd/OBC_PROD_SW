@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
 import android.provider.Telephony;
 import android.telephony.ServiceState;
 import android.telephony.SignalStrength;
@@ -28,6 +29,7 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
     HashMap<String,String> failures;
 
     StringBuilder returnString;
+    String preferredNetworkValue = "";
 
     Context receiverContext;
 
@@ -37,6 +39,14 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
         if (MainActivity.testToolLock.isUnlocked()) {
             receiverContext = context;
             returnString = new StringBuilder();
+
+            // Get passed preferred network mode or it defaults to 3 (3G).
+            // https://android.googlesource.com/platform/hardware/ril/+/master/include/telephony/ril.h#228
+            preferredNetworkValue = intent.getStringExtra("preferred_network_mode");
+            if (preferredNetworkValue == null) {
+                preferredNetworkValue = "";
+            }
+            Log.d(TAG, "Preferred network is: " + preferredNetworkValue);
 
             loadDefaults();
             loadFailures();
@@ -273,6 +283,11 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
             bufferedReader.close();
         } catch (IOException e) {
             Log.e(TAG, e.toString());
+        }
+
+        // Change default network mode if value is passed to receiver
+        if (!preferredNetworkValue.equals("")) {
+            defaults.put("preferred_network_mode", preferredNetworkValue);
         }
     }
 }

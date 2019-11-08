@@ -1,4 +1,5 @@
 compatibility
+compatibility_lte
 imei
 serial
 version
@@ -8,6 +9,7 @@ sd_card
 memory
 wifi
 cell
+cell_lte
 gps
 canbus
 swc

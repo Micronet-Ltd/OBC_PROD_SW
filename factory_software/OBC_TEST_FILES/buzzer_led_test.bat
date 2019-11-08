@@ -1,13 +1,14 @@
 @echo off
 rem Run this command to toggle the Buzzer and LED
 
+echo.
+set "xprvar="
 for /F "skip=47 delims=" %%i in (%language_file%) do if not defined xprvar set "xprvar=%%i"
 echo %xprvar%
-echo.
 
 :_start_test
 ..\adb shell mctl api 0x1c>nul
-timeout /t 1 > nul 2>&1
+timeout /t 2 > nul 2>&1
 ..\adb shell mctl api 0x1c>nul
 
 :_ask_if_on

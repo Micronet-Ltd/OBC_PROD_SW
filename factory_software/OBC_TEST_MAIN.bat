@@ -3,10 +3,12 @@ setlocal
 cls
 color 0f
 
+mode con:cols=120 lines=4000
+
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.3.2
+set test_script_version=1.3.4
 set ERRORLEVEL=0
 
 rem args: RMA/Production PartNo CustomerNo
@@ -31,8 +33,8 @@ set TEST_FILE=unknown
 for /f "tokens=1,2 delims=:" %%i in (CUSTOMER_DEVICE_CONFIGURATION\part_numbers\%PART_NUMBER%.dat) do (
  if /i "%%i" == "%TEST_INFO%_TEST_FILE" set TEST_FILE=%%j
 )
-if "%TEST_FILE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: %TEST_INFO%_TEST_FILE not found in %PART_NUMBER% file... Please add test file to configuration. Exiting." & goto :eof
-if not exist OBC_TEST_FILES\input\tests\%TEST_FILE% call OBC_TEST_FILES\color.bat 0c "Error: Test file %TEST_FILE% not found in test folder... Please create or update configuration. Exiting." & goto :eof
+if "%TEST_FILE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: %TEST_INFO%_TEST_FILE not found in %PART_NUMBER% file... Please add test file to configuration. Exiting." & pause & goto :eof
+if not exist OBC_TEST_FILES\input\tests\%TEST_FILE% call OBC_TEST_FILES\color.bat 0c "Error: Test file %TEST_FILE% not found in test folder... Please create or update configuration. Exiting." & pause & goto :eof
 
 rem Set the test type
 if /I "%TEST_INFO%"=="RMA" set "TEST_TYPE=System" & goto :_test_type_set
@@ -45,29 +47,32 @@ set OS_VERSION=unknown
 set MCU_VERSION=unknown
 set FPGA_VERSION=unknown
 set BUILD_TYPE=unknown
+set SERIAL_PM=unknown
 for /f "tokens=1,2 delims=:" %%i in (CUSTOMER_DEVICE_CONFIGURATION\customer_numbers\%CUSTOMER_NUMBER%\%CONFIG_FILE_NAME%) do (
  if /i "%%i" == "OS_VERSION" set OS_VERSION=%%j
  if /i "%%i" == "MCU_VERSION" set MCU_VERSION=%%j
  if /i "%%i" == "FPGA_VERSION" set FPGA_VERSION=%%j
  if /i "%%i" == "BUILD_TYPE" set BUILD_TYPE=%%j
+ if /i "%%i" == "SERIAL_PM" set SERIAL_PM=%%j
 )
-if "%OS_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No OS version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
-if "%MCU_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No MCU version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
-if "%FPGA_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No FPGA version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
-if "%BUILD_TYPE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No BUILD TYPE found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & goto :eof
+if "%OS_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No OS version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & pause & goto :eof
+if "%MCU_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No MCU version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & pause & goto :eof
+if "%FPGA_VERSION%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No FPGA version found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & pause & goto :eof
+if "%BUILD_TYPE%"=="unknown" call OBC_TEST_FILES\color.bat 0c "Error: No BUILD TYPE found in %CUSTOMER_NUMBER%.dat... Please update configuration. Exiting." & pause & goto :eof
 
 rem Prepare the test so it is ready to run
 cls
 call :set_up_test
 
-echo --------------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------------------------------------
 echo  %TEST_INFO% Test Tool: %test_script_version%, P/N: %PART_NUMBER%, Customer: %CUSTOMER_NUMBER%, Addon: %ADDON%, %language_choice%
 echo.
 echo  Required OS: %OS_VERSION%, MCU: %MCU_VERSION%, FPGA: %FPGA_VERSION%, OS Build Type: %BUILD_TYPE%
-echo --------------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------------------------------------
 
 rem connect to device over hotspot
 call adb_connect.bat
+if %ERRORLEVEL% == 1 pause & goto :eof
 
 rem Set up result files
 call :set_up_result_files
@@ -112,7 +117,9 @@ rem ************** Handle Test Result Function *****************
 set column=%1
 rem echo %column%
 
+rem Handle lte and ud tests
 if /I "%column:~-3%"=="_ud" set column=%column:~0,-3%
+if /I "%column:~-4%"=="_lte" set column=%column:~0,-4%
 
 rem echo %column%
 
@@ -243,6 +250,7 @@ setlocal EnableDelayedExpansion
 for /f "delims=" %%G in (input\tests\%test_file%) do (
 	set test=%%G
 	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	if /I "!test:~-4!"=="_lte" set test=!test:~0,-4!
 	@echo !test!>>%temp%
 )
 endlocal
@@ -427,6 +435,7 @@ for /f "delims=" %%G in (input\tests\%test_file%) do (
 	set test=%%G
 
 	if /I "!test:~-3!"=="_ud" set test=!test:~0,-3!
+	if /I "!test:~-4!"=="_lte" set test=!test:~0,-4!
 
 	set test=!test!_test
 
@@ -478,5 +487,5 @@ cd ..
 cd ..
 timeout /t 2 /NOBREAK > nul
 rem color 07
-
+pause
 exit /b
