@@ -22,9 +22,30 @@ if exist %temp_result% del %temp_result%
 rem If language file is not set then default to english
 if not defined language_file set language_file=input/languages/English.dat
 
+set /A ignitionLowerThreshold=9000
+set /A ignitionUpperThreshold=30000
+set /A highLowerThreshold=9000
+set /A highUpperThreshold=30000
+set /A resistedHighLowerThreshold=4000
+set /A resistedHighUpperThreshold=5500
+set /A lowLowerThreshold=0
+set /A lowUpperThreshold=500
+
 rem echo ------------------------------------
 rem echo               GPIO test
 rem echo ------------------------------------
+
+rem Read in input values
+for /f "tokens=1,2 delims=:" %%i in (%options_file%) do (
+ if "%%i" == "ignitionLowerThreshold" set /A ignitionLowerThreshold=%%j
+ if "%%i" == "ignitionUpperThreshold" set /A ignitionUpperThreshold=%%j
+ if "%%i" == "highLowerThreshold" set /A highLowerThreshold=%%j
+ if "%%i" == "highUpperThreshold" set /A highUpperThreshold=%%j
+ if "%%i" == "resistedHighLowerThreshold" set /A resistedHighLowerThreshold=%%j
+ if "%%i" == "resistedHighUpperThreshold" set /A resistedHighUpperThreshold=%%j
+ if "%%i" == "lowLowerThreshold" set /A lowLowerThreshold=%%j
+ if "%%i" == "lowUpperThreshold" set /A lowUpperThreshold=%%j
+)
 
 :_test_loop
 rem For testing, Output 0 is connected to Input 1 and 5, Output 1 is connected to Input 2 and 6, Output 2 is connected
@@ -34,7 +55,7 @@ rem Result code 0 = app isn't installed or started, 1 = success, 2 = fail and re
 rem In the case that one of the GPIO tests fail a "F" will be placed in result data instead of "P"
 
 rem Send broadcast to run test and get result
-..\adb shell am broadcast -a com.micronet.obctestingapp.GET_GPIO_RESULT> %temp_result%
+..\adb shell am broadcast -a com.micronet.obctestingapp.GET_GPIO_RESULT --eia thresholds %ignitionLowerThreshold%,%ignitionUpperThreshold%,%highLowerThreshold%,%highUpperThreshold%,%resistedHighLowerThreshold%,%resistedHighUpperThreshold%,%lowLowerThreshold%,%lowUpperThreshold%> %temp_result%
 rem Get the second line with the results
 set "xprvar="
 for /F "skip=1 delims=" %%i in (tmp.txt) do if not defined xprvar set "xprvar=%%i"
@@ -130,3 +151,11 @@ set gpo0_fail=
 set gpo1_fail=
 set gpo2_fail=
 set gpo3_fail=
+set ignitionLowerThreshold=
+set ignitionUpperThreshold=
+set highLowerThreshold=
+set highUpperThreshold=
+set resistedHighLowerThreshold=
+set resistedHighUpperThreshold=
+set lowLowerThreshold=
+set lowUpperThreshold=

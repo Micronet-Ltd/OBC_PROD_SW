@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.Arrays;
+
 /**
  * Runs an automated GPIO test.
  *
@@ -11,20 +13,11 @@ import android.util.Log;
  */
 
 public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
-
     private final String TAG = "OBCTestingApp";
 
     private StringBuilder returnString;
-
     private boolean finalResult = true;
-
     private MControl mControl;
-
-    // Holds whether the given input should be high or low
-    private boolean[] inputsHighOrLowArray;
-
-    // An array that holds the input voltages as they are read
-    private int[] inputVoltages;
 
     // GPIO numbers for the outputs
     private static final int GP_OUTPUT_0 = 267;
@@ -32,12 +25,43 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
     private static final int GP_OUTPUT_2 = 273;
     private static final int GP_OUTPUT_3 = 261;
 
+    // Default thresholds
+    private int[] thresholds = new int[]{9000, 30000, 9000, 30000, 4000, 5500, 0, 500};
+
+    private int ignitionLowerThreshold;
+    private int ignitionUpperThreshold;
+    private int highLowerThreshold;
+    private int highUpperThreshold;
+    private int resistedHighLowerThreshold;
+    private int resistedHighUpperThreshold;
+    private int lowLowerThreshold;
+    private int lowUpperThreshold;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
         if (MainActivity.testToolLock.isUnlocked()) {
+            // Check for passed threshold values
+            int[] tmpThresholds = intent.getIntArrayExtra("thresholds");
+            if(tmpThresholds != null && tmpThresholds.length == 8) {
+                thresholds = tmpThresholds;
+                Log.d(TAG, "Using passed threshold values: " + Arrays.toString(thresholds));
+            } else {
+                Log.d(TAG, "Using default threshold values: " + Arrays.toString(thresholds));
+            }
+
+            ignitionLowerThreshold = thresholds[0];
+            ignitionUpperThreshold = thresholds[1];
+
+            highLowerThreshold = thresholds[2];
+            highUpperThreshold = thresholds[3];
+
+            resistedHighLowerThreshold = thresholds[4];
+            resistedHighUpperThreshold = thresholds[5];
+
+            lowLowerThreshold = thresholds[6];
+            lowUpperThreshold = thresholds[7];
 
             // Initialize MControl
             mControl = new MControl();
@@ -92,56 +116,56 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check ignition
-        if(checkInputValue(0, 4000, 14000)){
+        if(checkInputValue(0, ignitionLowerThreshold, ignitionUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 1
-        if(checkInputValue(1, 9000, 14000)){
+        if(checkInputValue(1, highLowerThreshold, highUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 2
-        if(checkInputValue(2, 4500, 5200)){
+        if(checkInputValue(2, resistedHighLowerThreshold, resistedHighUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 3
-        if(checkInputValue(3, 9000, 14000)){
+        if(checkInputValue(3, highLowerThreshold, highUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 4
-        if(checkInputValue(4, 4500, 5200)){
+        if(checkInputValue(4, resistedHighLowerThreshold, resistedHighUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 5
-        if(checkInputValue(5, 9000, 14000)){
+        if(checkInputValue(5, highLowerThreshold, highUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 6
-        if(checkInputValue(6, 4500, 5200)){
+        if(checkInputValue(6, resistedHighLowerThreshold, resistedHighUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
         }
 
         // Check Input 7
-        if(checkInputValue(7, 9000, 14000)){
+        if(checkInputValue(7, highLowerThreshold, highUpperThreshold)){
             returnString.append("P");
         }else{
             returnString.append("F");
@@ -160,11 +184,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
 
         boolean output0WorkingProperly = true;
 
-        if(!checkGPIOValue(1, 0, 500, 0, "high")){
+        if(!checkGPIOValue(1, lowLowerThreshold, lowUpperThreshold, 0, "high")){
             output0WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(5, 0, 500, 0, "high")){
+        if(!checkGPIOValue(5, lowLowerThreshold, lowUpperThreshold, 0, "high")){
             output0WorkingProperly = false;
         }
 
@@ -177,11 +201,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
             Log.e(TAG,e.toString());
         }
 
-        if(!checkGPIOValue(1, 9000, 13000, 0, "low")){
+        if(!checkGPIOValue(1, highLowerThreshold, highUpperThreshold, 0, "low")){
             output0WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(5, 9000, 13000, 0, "low")){
+        if(!checkGPIOValue(5, highLowerThreshold, highUpperThreshold, 0, "low")){
             output0WorkingProperly = false;
         }
 
@@ -204,11 +228,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
 
         boolean output1WorkingProperly = true;
 
-        if(!checkGPIOValue(2, 0, 500, 1, "high")){
+        if(!checkGPIOValue(2, lowLowerThreshold, lowUpperThreshold, 1, "high")){
             output1WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(6, 0, 500, 1, "high")){
+        if(!checkGPIOValue(6, lowLowerThreshold, lowUpperThreshold, 1, "high")){
             output1WorkingProperly = false;
         }
 
@@ -221,11 +245,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
             Log.e(TAG,e.toString());
         }
 
-        if(!checkGPIOValue(2, 4000, 5000, 1, "low")){
+        if(!checkGPIOValue(2, resistedHighLowerThreshold, resistedHighUpperThreshold, 1, "low")){
             output1WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(6, 4000, 5000, 1, "low")){
+        if(!checkGPIOValue(6, resistedHighLowerThreshold, resistedHighUpperThreshold, 1, "low")){
             output1WorkingProperly = false;
         }
 
@@ -248,11 +272,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
 
         boolean output2WorkingProperly = true;
 
-        if(!checkGPIOValue(3, 0, 500, 2, "high")){
+        if(!checkGPIOValue(3, lowLowerThreshold, lowUpperThreshold, 2, "high")){
             output2WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(7, 0, 500, 2, "high")){
+        if(!checkGPIOValue(7, lowLowerThreshold, lowUpperThreshold, 2, "high")){
             output2WorkingProperly = false;
         }
 
@@ -265,11 +289,11 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
             Log.e(TAG,e.toString());
         }
 
-        if(!checkGPIOValue(3, 9000, 13000, 2, "low")){
+        if(!checkGPIOValue(3, highLowerThreshold, highUpperThreshold, 2, "low")){
             output2WorkingProperly = false;
         }
 
-        if(!checkGPIOValue(7, 9000, 13000, 2, "low")){
+        if(!checkGPIOValue(7, highLowerThreshold, highUpperThreshold, 2, "low")){
             output2WorkingProperly = false;
         }
 
@@ -292,7 +316,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
 
         boolean output3WorkingProperly = true;
 
-        if(!checkGPIOValue(4, 0, 500, 3, "high")){
+        if(!checkGPIOValue(4, lowLowerThreshold, lowUpperThreshold, 3, "high")){
             output3WorkingProperly = false;
         }
 
@@ -305,7 +329,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
             Log.e(TAG,e.toString());
         }
 
-        if(!checkGPIOValue(4, 4000, 5500, 3, "low")){
+        if(!checkGPIOValue(4, resistedHighLowerThreshold, resistedHighUpperThreshold, 3, "low")){
             output3WorkingProperly = false;
         }
 

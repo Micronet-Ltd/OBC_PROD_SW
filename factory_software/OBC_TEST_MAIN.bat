@@ -8,7 +8,7 @@ mode con:cols=120 lines=4000
 rem ************************************************************
 rem ************************ MAIN TEST *************************
 rem ************************************************************
-set test_script_version=1.3.4
+set test_script_version=1.3.5
 set ERRORLEVEL=0
 
 rem args: RMA/Production PartNo CustomerNo

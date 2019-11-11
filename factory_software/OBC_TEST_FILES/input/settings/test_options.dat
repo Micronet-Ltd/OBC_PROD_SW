@@ -34,3 +34,13 @@ asuLowerBound:6
 asuUpperBound:32
 asuLteLowerBound:25
 asuLteUpperBound:90
+
+--- GPIO Test ---
+ignitionLowerThreshold:9000
+ignitionUpperThreshold:30000
+highLowerThreshold:9000
+highUpperThreshold:30000
+resistedHighLowerThreshold:4000
+resistedHighUpperThreshold:5500
+lowLowerThreshold:0
+lowUpperThreshold:500
