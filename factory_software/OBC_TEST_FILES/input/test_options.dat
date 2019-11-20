@@ -5,7 +5,7 @@ All settings are case-insensitive.
 
 --- Test Setup ---
 TEST_TYPE:System
-DEVICE_TYPE:MTR-A003-001
+DEVICE_TYPE:MTR-A001-001
 LANGUAGE:English
 
 --- Version Test ---
