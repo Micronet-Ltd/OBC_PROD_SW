@@ -21,14 +21,14 @@ public class GetSerialReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+//        if (MainActivity.testToolLock.isUnlocked()) {
 
             setResultData(getSerialNumber());
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
     }

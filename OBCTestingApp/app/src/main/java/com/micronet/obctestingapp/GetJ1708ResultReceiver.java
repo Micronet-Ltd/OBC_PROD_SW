@@ -10,6 +10,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -50,40 +53,40 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+        // if (MainActivity.testToolLock.isUnlocked()) {
 
-            // Runs an automated J1708 test.
-            automatedJ1708Test();
+        // Runs an automated J1708 test.
+        automatedJ1708Test();
 
-            // Depending on test result returns a result.
-            if(finalResult){
-                Log.i(TAG, "*** J1708 Test Passed ***");
-                setResultCode(1);
-                setResultData(returnString.toString());
-            }else{
-                Log.i(TAG, "*** J1708 Test Failed ***");
-                setResultCode(2);
-                setResultData(returnString.toString());
-            }
-
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
+        // Depending on test result returns a result.
+        if (finalResult) {
+            Log.i(TAG, "*** J1708 Test Passed ***");
+            setResultCode(1);
+            setResultData(returnString.toString());
+        } else {
+            Log.i(TAG, "*** J1708 Test Failed ***");
+            setResultCode(2);
+            setResultData(returnString.toString());
         }
 
-
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
     }
 
     private native static FileDescriptor open(String path, int Baudrate);
+
     private native void close();
 
     /**
      * Automated J1708 test.
      */
-    public void automatedJ1708Test(){
+    public void automatedJ1708Test() {
 
         Log.i(TAG, "*** J1708 Test Started ***");
+        enableJ1708();
 
         finalResult = true;
 
@@ -93,16 +96,16 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         mFd = open("/dev/ttyMICRONET_J1708", 115200);
         close();
 
-        try{
+        try {
             writeReceiveTest(J1708_write, J1708_read);
 
-            if(pass){
+            if (pass) {
                 returnString.append("P");
-            }else{
+            } else {
                 returnString.append("F");
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
             finalResult = false;
             // Clear what is in the returnStringCurrently and set all to fail
@@ -112,12 +115,11 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
     }
 
     /**
-     * Used to test sending and receiving a string with J1708 (/dev/ttyACM4). Will write to file with results for each step and also if there
-     * are any errors.
-     * @param fileToSendOutOf
-     *      The file to send out of
-     * @param fileToReceiveIn
-     *      The file to receive in
+     * Used to test sending and receiving a string with J1708 (/dev/ttyACM4). Will write to file with results for each step and also if there are any
+     * errors.
+     *
+     * @param fileToSendOutOf The file to send out of
+     * @param fileToReceiveIn The file to receive in
      */
     public String writeReceiveTest(final File fileToSendOutOf, final File fileToReceiveIn) throws FileNotFoundException {
 
@@ -133,23 +135,24 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
         // Make sure to clear any previous sends so if there are available bytes then skip them.
         // This needs to finish before we start reading and writing.
-        try{
+        try {
             int available = inputStream.available();
             long skipped = inputStream.skip(available);
             //Log.i(TAG, "Bytes available: " + available + " | Bytes skipped: " + skipped);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 
         // Send the data
-        try{
+        try {
             FileOutputStream outputStream;
 
             // Set to whatever is inputted by the user
             outputStream = new FileOutputStream(fileToSendOutOf);
 
             // Sending "~1j1708(checksum)~"
-            byte[] bytesToSend = {(byte)0x7e,(byte)0x31,(byte)0x6a,(byte)0x31,(byte)0x37,(byte)0x30,(byte)0x38,(byte)0x95,(byte)0x7e};
+            byte[] bytesToSend = {(byte) 0x7e, (byte) 0x31, (byte) 0x6a, (byte) 0x31, (byte) 0x37, (byte) 0x30, (byte) 0x38, (byte) 0x95,
+                (byte) 0x7e};
 
             // Write bytes to /dev/ttyMICRONET_J1708
             outputStream.write(bytesToSend);
@@ -162,24 +165,24 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
             outputStream.close();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
             finalResult = false;
             pass = false;
         }
 
-        try{
+        try {
             Thread.sleep(1000);
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 
         // After the data has been sent now try to read the data.
-        try{
+        try {
             sb = new StringBuilder();
 
-            readBuffer = new byte [128];
-            char[] bufferChar = new char [128];
+            readBuffer = new byte[128];
+            char[] bufferChar = new char[128];
 
             // Using a callable and a future allows the app to read, but not block indefinitely if there is nothing to read,
             // (for example if canbus wires don't send or receive the data properly).
@@ -197,8 +200,8 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
             int bytesRead = future.get(2000, TimeUnit.MILLISECONDS);
 
             // Convert bytes to chars
-            if(bytesRead > 0){
-                for(int i = 0; i < bytesRead; i++){
+            if (bytesRead > 0) {
+                for (int i = 0; i < bytesRead; i++) {
                     bufferChar[i] = (char) readBuffer[i];
                     sb.append(bufferChar[i]);
                 }
@@ -214,7 +217,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
 
             inputStream.close();
 
-        }catch (TimeoutException e){
+        } catch (TimeoutException e) {
             Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + " | Read took longer than allowed time (2 seconds): Timeout" + e.toString());
             finalResult = false;
             pass = false;
@@ -224,7 +227,7 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "Error reading in " + fileToReceiveIn.getName() + ": " + e.toString());
             finalResult = false;
             pass = false;
@@ -237,25 +240,50 @@ public class GetJ1708ResultReceiver extends MicronetBroadcastReceiver {
         }
 
         // Check to make sure that sent string contains j1708 characters.
-        if(readSB.toString().contains("j1708")){
+        if (readSB.toString().contains("j1708")) {
             Log.i(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " successfully.");
             // (used to write to the file here, but don't need to anymore since the app uses a broadcast)
-        }else {
+        } else {
             finalResult = false;
             pass = false;
 
             StringBuilder sent = new StringBuilder(sentSB.toString());
 
             StringBuilder read = new StringBuilder("");
-            if(readSB.toString().length() > 0){
+            if (readSB.toString().length() > 0) {
                 read.append(readSB.toString());
             }
 
-            Log.e(TAG, "Data sent out of " + fileToSendOutOf.getName() + " was not received in " + fileToReceiveIn.getName() + " correctly. Sent - \"" + sent.toString() + "\" | Read - \"" + read.toString() + "\"");
+            Log.e(TAG,
+                "Data sent out of " + fileToSendOutOf.getName() + " was not received in " + fileToReceiveIn.getName() + " correctly. Sent - \"" + sent
+                    .toString() + "\" | Read - \"" + read.toString() + "\"");
 
         }
 
         // Only return whether the test passed or failed.
         return String.valueOf(pass);
+    }
+
+    public void enableJ1708() {
+        try {
+            @SuppressWarnings("rawtypes")
+            Class SerialService = Class.forName("com.android.server.serial.SerialService");
+            Constructor<?> constructor = SerialService.getConstructor();
+            Object enablePortInstanse = constructor.newInstance();
+            Method enableJ1708 = SerialService.getMethod("enableJ1708");
+            enableJ1708.invoke(enablePortInstanse);
+        } catch (IllegalArgumentException iAE) {
+            throw iAE;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (java.lang.InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 }

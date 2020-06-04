@@ -66,7 +66,7 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
      */
     public void automatedRS485Test(){
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+    //    if (MainActivity.testToolLock.isUnlocked()) {
 
             Log.i(TAG, "*** RS485 Test Started ***");
 
@@ -101,10 +101,10 @@ public class GetRS485ResultReceiver extends MicronetBroadcastReceiver {
                 returnString.append("F");
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
     }
 

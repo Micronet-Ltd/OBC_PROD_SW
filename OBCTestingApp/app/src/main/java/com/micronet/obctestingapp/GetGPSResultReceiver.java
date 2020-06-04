@@ -18,7 +18,7 @@ public class GetGPSResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+       // if (MainActivity.testToolLock.isUnlocked()) {
 
             int numOfSatellitesToTakeAverageOf = intent.getIntExtra("NumOfAverageSatellites", 3);
 
@@ -39,10 +39,10 @@ public class GetGPSResultReceiver extends MicronetBroadcastReceiver {
                         +timeToFirstFix+",Average SNR in Fix:"+averageSNRUsedInFix+",Average SNR of top satellites:" + averageSNROfTopSatellites);
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
 

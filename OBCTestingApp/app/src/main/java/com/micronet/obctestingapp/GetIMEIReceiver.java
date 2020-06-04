@@ -18,7 +18,7 @@ public class GetIMEIReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+     //   if (MainActivity.testToolLock.isUnlocked()) {
 
             TelephonyManager telephonyManager = ((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
             String  imei;
@@ -35,10 +35,10 @@ public class GetIMEIReceiver extends MicronetBroadcastReceiver {
 
             setResultData(imei);
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
     }

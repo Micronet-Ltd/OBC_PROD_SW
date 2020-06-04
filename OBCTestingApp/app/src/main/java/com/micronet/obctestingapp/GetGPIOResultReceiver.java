@@ -37,7 +37,7 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+//        if (MainActivity.testToolLock.isUnlocked()) {
 
             // Initialize MControl
             mControl = new MControl();
@@ -56,10 +56,10 @@ public class GetGPIOResultReceiver extends MicronetBroadcastReceiver {
                 setResultData(returnString.toString());
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
     }

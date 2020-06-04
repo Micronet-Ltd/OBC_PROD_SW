@@ -34,7 +34,7 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (MainActivity.testToolLock.isUnlocked()) {
+       // if (MainActivity.testToolLock.isUnlocked()) {
             receiverContext = context;
             returnString = new StringBuilder();
 
@@ -49,10 +49,10 @@ public class GetSettingsResultReceiver extends MicronetBroadcastReceiver {
             }
 
             setResultData(returnString.toString());
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
     }
 
     private boolean settingsTest() {

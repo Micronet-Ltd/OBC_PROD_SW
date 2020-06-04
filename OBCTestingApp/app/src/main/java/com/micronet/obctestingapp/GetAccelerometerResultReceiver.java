@@ -25,7 +25,7 @@ public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+        //if (MainActivity.testToolLock.isUnlocked()) {
             automatedAccelerometerTest();
 
             if(finalResult){
@@ -37,10 +37,10 @@ public class GetAccelerometerResultReceiver extends MicronetBroadcastReceiver {
                 setResultCode(2);
                 setResultData(returnString.toString() + " " + Arrays.toString(acceleration));
             }
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
     }
 
     private void automatedAccelerometerTest(){

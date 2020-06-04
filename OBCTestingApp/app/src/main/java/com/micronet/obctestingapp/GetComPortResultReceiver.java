@@ -46,7 +46,7 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+      //  if (MainActivity.testToolLock.isUnlocked()) {
 
             // Run the automated test
             automatedTest();
@@ -62,10 +62,10 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
                 setResultData(returnString.toString()); // + resultStringBuilder.toString());
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
 
@@ -100,20 +100,27 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
             }else{
                 returnString.append("F");
             }
-            writeReceiveTest(Com3, Com4, "Com3Out");
 
-            if(pass){
-                returnString.append("P");
-            }else{
-                returnString.append("F");
-            }
-            writeReceiveTest(Com4, Com3, "Com4Out");
+            //this code added instead of code in comment below.
+            //we don't have ttyUSB2 and ttyUSB3 anymore.
+            // in batch file we don't use this FF values
+            returnString.append("F");
+            returnString.append("F");
 
-            if(pass){
-                returnString.append("P");
-            }else{
-                returnString.append("F");
-            }
+//            writeReceiveTest(Com3, Com4, "Com3Out");
+//
+//            if(pass){
+//                returnString.append("P");
+//            }else{
+//                returnString.append("F");
+//            }
+//            writeReceiveTest(Com4, Com3, "Com4Out");
+//
+//            if(pass){
+//                returnString.append("P");
+//            }else{
+//                returnString.append("F");
+//            }
 
         }catch (FileNotFoundException e){
             Log.e(TAG, e.toString());
@@ -253,9 +260,12 @@ public class GetComPortResultReceiver extends MicronetBroadcastReceiver {
 
         // Check to make sure that sent string is the same as the read string.
         // Then write to the file to results.
+        Log.d("AAAA", "before if");
         if(readSB.toString().contains(sentSB.toString())){
+            Log.d("AAAA", " if true");
             resultStringBuilder.append("SUCCESS: Data sent out of " + fileToSendOutOf.getName() + " was received in " + fileToReceiveIn.getName() + " correctly.\n");
         }else {
+            Log.d("AAAA", "if false");
             finalResult = false;
 
             // Get strings without newline chars

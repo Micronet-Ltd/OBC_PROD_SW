@@ -15,7 +15,7 @@ public class GetAudioResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+      //  if (MainActivity.testToolLock.isUnlocked()) {
             AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
             SoundPool sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
@@ -28,10 +28,10 @@ public class GetAudioResultReceiver extends MicronetBroadcastReceiver {
             int track = R.raw.flutey_phone;
             sp.load(context, track, 1);
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
     }

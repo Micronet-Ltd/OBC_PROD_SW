@@ -43,7 +43,7 @@ public class GPS implements GpsStatus.Listener {  //, LocationListener {
 
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        locationManager.addGpsStatusListener(this);
+//        locationManager.addGpsStatusListener(this);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL_ONE_SECOND, 0, this);
     }
 

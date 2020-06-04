@@ -48,7 +48,7 @@ public class GetSingleWireCanResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+       // if (MainActivity.testToolLock.isUnlocked()) {
 
             // Run automated test
             automatedSingleWireCanTest();
@@ -64,10 +64,10 @@ public class GetSingleWireCanResultReceiver extends MicronetBroadcastReceiver {
                 setResultData(returnString.toString());
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
 

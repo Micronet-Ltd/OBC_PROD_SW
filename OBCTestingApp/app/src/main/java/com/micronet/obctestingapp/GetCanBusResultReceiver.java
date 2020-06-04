@@ -51,7 +51,7 @@ public class GetCanBusResultReceiver extends MicronetBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (MainActivity.testToolLock.isUnlocked()) {
+       // if (MainActivity.testToolLock.isUnlocked()) {
 
             // Run test
             automatedCanBusTest();
@@ -67,10 +67,10 @@ public class GetCanBusResultReceiver extends MicronetBroadcastReceiver {
                 setResultData(returnString.toString());
             }
 
-        }else{
-            setResultCode(3);
-            setResultData("F app locked");
-        }
+//        }else{
+//            setResultCode(3);
+//            setResultData("F app locked");
+//        }
 
 
 
